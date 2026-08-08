@@ -47,6 +47,7 @@ export interface Match {
   scoreB: number;
   isWin: boolean;
   xpGained: number;
+  bpGained?: number;
 }
 
 export interface LeaderboardEntry {

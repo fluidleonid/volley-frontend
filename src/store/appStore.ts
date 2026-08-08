@@ -100,7 +100,46 @@ export const useAppStore = create<AppState>((set) => ({
   ],
 
   todaysPlayers: [],
-  recentMatches: [],
+  recentMatches: [
+    {
+      id: 'm1',
+      date: 'Today',
+      time: '14:30',
+      courtName: '#1',
+      isHardmode: true,
+      teamA: [
+        { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+        { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' }
+      ],
+      teamB: [
+        { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
+        { name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80' }
+      ],
+      scoreA: 15,
+      scoreB: 12,
+      isWin: true,
+      xpGained: 54,
+      bpGained: 12
+    },
+    {
+      id: 'm2',
+      date: 'Today',
+      time: '12:00',
+      courtName: '#2',
+      isHardmode: false,
+      teamA: [
+        { name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80' }
+      ],
+      teamB: [
+        { name: 'John Doe', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }
+      ],
+      scoreA: 8,
+      scoreB: 15,
+      isWin: false,
+      xpGained: 12,
+      bpGained: 0
+    }
+  ],
 
   leaderboard: [
     { rank: 1, player: { id: 'lb-1', name: 'Sarah M.', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 }, wins: 55, winRate: 68.7, xp: 4200 },

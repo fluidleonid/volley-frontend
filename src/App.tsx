@@ -16,7 +16,8 @@ export function App() {
 
   useEffect(() => {
     // Initialize Telegram WebApp SDK & Trigger Fullscreen Mode
-    const tg = window.Telegram?.WebApp as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tg = (window as any).Telegram?.WebApp;
     if (tg) {
       tg.ready();
 

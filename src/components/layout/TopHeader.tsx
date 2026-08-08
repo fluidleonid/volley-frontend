@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../store/appStore';
 import { Shield, User, Coffee, Sparkles, Box } from 'lucide-react';
+import { Avatar } from '../ui/Avatar';
 
 export const TopHeader: React.FC = () => {
   const { role, setRole, currentUser, playerState } = useAppStore();
@@ -21,23 +22,27 @@ export const TopHeader: React.FC = () => {
   const statusInfo = getStatusDisplay();
   const StatusIcon = statusInfo.icon;
 
+  // Level tracker 10 frames of 10px width each (Node 11420:16392)
+  const filledFramesCount = Math.min(10, Math.max(1, Math.floor((currentUser.xp % 1000) / 100) || 7));
+
   return (
-    <header className="sticky top-0 z-40 bg-[#121212] px-4 pt-3 pb-2 text-white">
+    <header className="sticky top-0 z-40 bg-[#121212] px-4 pt-[84px] pb-2 text-white border-b border-transparent">
       <div className="flex items-center justify-between">
-        {/* Left: Avatar & Name & Status */}
+        {/* Left: Avatar with Level Ring & Name & Status */}
         <div className="flex items-center gap-3">
+          {/* Avatar Container with Background Color Border & Level Accent Ring Shadow */}
           <div className="relative">
-            <div className="h-11 w-11 overflow-hidden rounded-full border border-white/20 bg-[#1C1C1E]">
-              {currentUser.avatarUrl ? (
-                <img src={currentUser.avatarUrl} alt={currentUser.name} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center font-bold text-[#68BD44]">
-                  {currentUser.name[0]}
-                </div>
-              )}
+            <div className="rounded-full border-2 border-[#121212] shadow-[0_0_0_2px_#68BD44] transition-all duration-300">
+              <Avatar
+                src={currentUser.avatarUrl}
+                alt={currentUser.name}
+                initials={currentUser.name[0]}
+                size="lg"
+                className="border-none" // We use the container's border above for the specific design
+              />
             </div>
             {role === 'coach' && (
-              <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#68BD44] text-[9px] font-bold text-black" title="Coach">
+              <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#68BD44] text-[9px] font-bold text-black shadow-md" title="Coach">
                 ★
               </span>
             )}
@@ -45,42 +50,42 @@ export const TopHeader: React.FC = () => {
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-bold tracking-tight text-white">{currentUser.name}</span>
+              <span className="font-display text-[17px] font-bold tracking-tight text-white leading-tight">{currentUser.name}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#8E8E93]">
+            <div className="flex items-center gap-1 text-[12px] font-medium text-[#8E8E93] mt-0.5">
               <StatusIcon className={`h-3.5 w-3.5 ${statusInfo.color}`} />
               <span className={statusInfo.color}>{statusInfo.label}</span>
             </div>
           </div>
         </div>
 
-        {/* Right: XP & Progress Dotted Bar & Role Switcher */}
-        <div className="flex flex-col items-end gap-1">
+        {/* Right: XP Value & 10-Frame Level Tracker (Each 10px wide, White/Neutral Level Fill) */}
+        <div className="flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-extrabold text-white">
+            <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
               {currentUser.xp.toFixed(1)} XP
             </span>
+            
+            {/* User Role Switcher for Testing (will be removed after testing) */}
             <button
               onClick={() => setRole(role === 'player' ? 'coach' : 'player')}
-              className="rounded-full bg-[#1C1C1E] px-2 py-0.5 text-[10px] font-semibold text-[#8E8E93] hover:text-white"
-              title="Switch Role"
+              className="rounded-full bg-[#1C1C1E] px-2 py-0.5 text-[10px] font-semibold text-[#8E8E93] hover:text-white transition-colors"
+              title="Switch Role for Testing"
             >
               {role === 'coach' ? <Shield className="h-3 w-3 text-[#68BD44] inline" /> : <User className="h-3 w-3 inline" />}
             </button>
           </div>
 
-          {/* Dotted / Pill Progress Indicator Bar (Figma spec: --- -------) */}
-          <div className="flex items-center gap-0.5">
-            <span className="h-1 w-2 rounded-full bg-[#68BD44]" />
-            <span className="h-1 w-2 rounded-full bg-[#68BD44]" />
-            <span className="h-1 w-2 rounded-full bg-[#68BD44]" />
-            <span className="h-1 w-3.5 rounded-full bg-[#68BD44]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
-            <span className="h-1 w-1.5 rounded-full bg-[#2C2C2E]" />
+          {/* XP Level Tracker Bar: 10 Frame Segments (10px wide each) with White/Neutral Level Fill */}
+          <div className="flex items-center gap-[3px]">
+            {Array.from({ length: 10 }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-[4px] w-[10px] rounded-full transition-colors duration-300 ${
+                  idx < filledFramesCount ? 'bg-white' : 'bg-[#2C2C2E]'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>

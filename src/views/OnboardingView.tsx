@@ -4,6 +4,8 @@ import { Check } from 'lucide-react';
 import logotextSvg from '../assets/logotext.svg';
 import playerCardPng from '../assets/player-card.png';
 import shuttleIconSvg from '../assets/shuttle-icon.svg';
+import { Button } from '../components/ui/button';
+import { Avatar } from '../components/ui/Avatar';
 
 export interface SkillLevelOption {
   id: string;
@@ -97,7 +99,7 @@ export const OnboardingView: React.FC = () => {
         <h1 className="mt-[24px] text-[24px] font-extrabold tracking-tight text-white leading-tight">
           Welcome to the Game!
         </h1>
-        <p className="mt-1 text-[13px] font-medium text-[#8E8E93]">
+        <p className="mt-1 text-[14px] font-medium text-[#8E8E93]">
           Choose your skill level
         </p>
       </div>
@@ -105,7 +107,7 @@ export const OnboardingView: React.FC = () => {
       {/* Group 2: Center Player Card Component (40px empty space above and below) */}
       <div className="my-[40px] flex w-full justify-center">
         <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#08080A] p-3.5 transition-all duration-300 w-full">
-
+          
           {/* True Vector Shape Card Window */}
           <div className="relative w-full">
             <svg
@@ -143,17 +145,14 @@ export const OnboardingView: React.FC = () => {
             </svg>
 
             {/* Central Circular Avatar */}
-            <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              <div
-                className="h-20 w-20 overflow-hidden rounded-full border-2 bg-[#242426] shadow-xl transition-all duration-300"
+            <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300" style={{ filter: `drop-shadow(0 0 8px ${activeLevel.glowColor})` }}>
+              <Avatar
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+                alt="Player Avatar"
+                size="xl"
+                className="border-2 shadow-xl"
                 style={{ borderColor: activeLevel.ringColor }}
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
-                  alt="Player Avatar"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              />
             </div>
 
             {/* Shuttlecock Level Icons (Inside the bottom cutout tab) */}
@@ -189,10 +188,11 @@ export const OnboardingView: React.FC = () => {
             <div
               key={level.id}
               onClick={() => setSelectedLevelId(level.id)}
-              className={`group flex h-[52px] cursor-pointer items-center justify-between rounded-[12px] px-4 transition-all duration-200 active:scale-[0.99] ${isSelected
+              className={`group flex h-[52px] cursor-pointer items-center justify-between rounded-[12px] px-4 transition-all duration-200 active:scale-[0.99] ${
+                isSelected
                   ? 'bg-[#1C1C1E] border border-[#68BD44]'
                   : 'bg-[#1C1C1E]/70 hover:bg-[#1C1C1E] border border-transparent'
-                }`}
+              }`}
             >
               {/* Left Side: Title & Subtitle ONLY */}
               <div>
@@ -215,14 +215,11 @@ export const OnboardingView: React.FC = () => {
         })}
       </div>
 
-      {/* Group 4: Bottom Continue Action Button (Full width w-full, h=44px) */}
+      {/* Group 4: Bottom Continue Action Button (Using Reusable Button Component) */}
       <div className="mt-auto w-full">
-        <button
-          onClick={handleContinue}
-          className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] font-display text-[15px] font-extrabold tracking-tight text-black shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
-        >
+        <Button onClick={handleContinue}>
           Continue
-        </button>
+        </Button>
       </div>
     </div>
   );
