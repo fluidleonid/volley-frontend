@@ -10,7 +10,7 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
         "2xl": "1400px",
       },
@@ -50,12 +50,34 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: {
+          lime: "#68BD44",
+          dark: "#121212",
+          surface: "#1C1C1E",
+          surfaceElevated: "#242426",
+          border: "#2C2C2E",
+          hardmode: "#FF9500",
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "pulse-subtle": {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.7 },
+        },
+        "slide-up": {
+          "0%": { transform: "translateY(100%)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        }
+      },
+      animation: {
+        "pulse-subtle": "pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "slide-up": "slide-up 0.3s ease-out forwards",
+      }
     },
   },
   plugins: [],

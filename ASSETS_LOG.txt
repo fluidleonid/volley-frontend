@@ -1,0 +1,91 @@
+================================================================================
+                        VOLLEY APP - ASSETS LOG & GUIDE
+================================================================================
+
+This file tracks all image and SVG vector assets used in the Volley Telegram Mini App.
+You can replace these files in your repository to match your exact Figma designs.
+
+--------------------------------------------------------------------------------
+1. BRAND & GENERAL ASSETS
+--------------------------------------------------------------------------------
+[Path]        : public/assets/logo.svg
+[Description] : Main cursive "volley" brand logo (Header & Splash Screen).
+[Format]      : SVG
+[Current]     : Rendered via CSS/SVG font fallback. Replace with exported logo.svg from Figma.
+
+[Path]        : public/assets/shuttle-icon.svg
+[Description] : Shuttlecock icon used in headers, cards, and achievements.
+[Format]      : SVG (24x24 or 32x32)
+
+[Path]        : public/assets/default-avatar.png
+[Description] : Default user profile avatar.
+[Format]      : PNG / JPG (200x200)
+
+--------------------------------------------------------------------------------
+2. ONBOARDING SKILL LEVEL CARDS & ASSETS
+--------------------------------------------------------------------------------
+Each skill level card in Onboarding has its own unique color theme, ring border, 
+and background image/pattern according to the Figma design:
+
+--- Level 1: BEGINNER ("I want to learn") ---
+[Accent Color]: #68BD44 (Lime Green)
+[Avatar Ring] : #D4AF37 (Gold Bronze Ring)
+[Badge Icon]  : Feather / Shuttlecock (🪶)
+[Card Asset]  : public/assets/onboarding/card-beginner.png (Net string pattern)
+
+--- Level 2: AMATEUR ("I play for fun") ---
+[Accent Color]: #34C759 (Emerald Green)
+[Avatar Ring] : #34C759 (Emerald Ring)
+[Badge Icon]  : Racket / Shuttlecock (🏸)
+[Card Asset]  : public/assets/onboarding/card-amateur.png
+
+--- Level 3: ADVANCED ("I play to win") ---
+[Accent Color]: #FF9500 (Amber / Hardmode Orange)
+[Avatar Ring] : #FF9500 (Fire Ring)
+[Badge Icon]  : Flame (🔥)
+[Card Asset]  : public/assets/onboarding/card-advanced.png
+
+--- Level 4: PRO ("I live for this game") ---
+[Accent Color]: #AF52DE / #FFD700 (Crown Purple & Gold)
+[Avatar Ring] : #FFD700 (Gold Crown Ring)
+[Badge Icon]  : Crown (👑)
+[Card Asset]  : public/assets/onboarding/card-pro.png
+
+--------------------------------------------------------------------------------
+3. COURT CARDS & VECTOR ASSETS (Figma Node: 11430:5493 & 11562:13829)
+--------------------------------------------------------------------------------
+[Path]        : public/assets/courts/card-court-bg.svg
+[Node ID]     : 11430:5493
+[Description] : Base Court Card container frame with rounded-3xl corners.
+
+[Path]        : public/assets/courts/vector-left.svg
+[Node ID]     : 11430:5456
+[Description] : Left semi-circle notch cut-out vector for middle court card divider.
+
+[Path]        : public/assets/courts/vector-right.svg
+[Node ID]     : 11430:5458
+[Description] : Right semi-circle notch cut-out vector for middle court card divider.
+
+[Path]        : public/assets/courts/admin-toggle-switch.svg
+[Node ID]     : 11562:13829
+[Description] : Coach availability toggle switch (ON = Available, OFF = Disabled).
+
+[Path]        : public/assets/courts/matching-spinner.svg
+[Description] : Animated loader spinner for Matching... search banner.
+
+--------------------------------------------------------------------------------
+4. FLOATING TABBAR & NAV ICONS
+--------------------------------------------------------------------------------
+[Path]        : public/assets/nav/floating-tabbar-bg.svg
+[Description] : Floating dark pill capsule background (#141416, rounded-[28px], backdrop-blur).
+
+[Path]        : public/assets/nav/icon-home.svg
+[Description] : Home tab icon.
+
+[Path]        : public/assets/nav/icon-leaderboard.svg
+[Description] : Leaderboard trophy tab icon.
+
+[Path]        : public/assets/nav/icon-mygames.svg
+[Description] : My Games list tab icon.
+
+================================================================================
