@@ -1,5 +1,4 @@
 import React from 'react';
-import { Card } from './card';
 import { AvatarGroup } from './AvatarGroup';
 import { Badge } from './badge';
 import { Match } from '../../types';
