@@ -15,13 +15,34 @@ export function App() {
   const { flowState, role, activeTab } = useAppStore();
 
   useEffect(() => {
-    // Initialize Telegram WebApp SDK if available
-    const tg = window.Telegram?.WebApp;
+    // Initialize Telegram WebApp SDK & Trigger Fullscreen Mode
+    const tg = window.Telegram?.WebApp as any;
     if (tg) {
       tg.ready();
-      tg.expand();
-      tg.setHeaderColor('#121212');
-      tg.setBackgroundColor('#121212');
+
+      // Request Fullscreen Mode (Telegram Mini App Bot API 8.0+)
+      if (typeof tg.requestFullscreen === 'function') {
+        try {
+          tg.requestFullscreen();
+        } catch (e) {
+          console.log('requestFullscreen not supported or deferred:', e);
+          tg.expand();
+        }
+      } else if (typeof tg.expand === 'function') {
+        tg.expand();
+      }
+
+      // Disable vertical swipe down gesture to prevent accidental closing
+      if (typeof tg.disableVerticalSwipes === 'function') {
+        tg.disableVerticalSwipes();
+      }
+
+      if (typeof tg.setHeaderColor === 'function') {
+        tg.setHeaderColor('#121212');
+      }
+      if (typeof tg.setBackgroundColor === 'function') {
+        tg.setBackgroundColor('#121212');
+      }
     }
   }, []);
 
@@ -35,22 +56,39 @@ export function App() {
     return <OnboardingView />;
   }
 
-  // 3. Flow State: Main Application with Top Header and Bottom Navigation
+  // 3. Flow State: Main App Navigation View
+  const renderTabContent = () => {
+    if (role === 'coach' && activeTab === 'home') {
+      return <CoachHomeView />;
+    }
+
+    switch (activeTab) {
+      case 'home':
+        return <HomeView />;
+      case 'leaderboard':
+        return <LeaderboardView />;
+      case 'games':
+        return <GamesView />;
+      case 'profile':
+        return <ProfileView />;
+      case 'coach':
+        return <CoachView />;
+      default:
+        return <HomeView />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#121212] text-white flex flex-col font-sans max-w-md mx-auto relative">
-      {/* Sticky Top Header */}
+    <div className="relative min-h-screen bg-[#121212] text-white selection:bg-[#68BD44] selection:text-black">
+      {/* Top Header Navigation */}
       <TopHeader />
 
-      {/* Main Tab Content */}
-      <main className="flex-1">
-        {activeTab === 'home' && (role === 'coach' ? <CoachHomeView /> : <HomeView />)}
-        {activeTab === 'leaderboard' && <LeaderboardView />}
-        {activeTab === 'games' && <GamesView />}
-        {activeTab === 'profile' && <ProfileView />}
-        {activeTab === 'coach' && <CoachView />}
+      {/* Main Page View Content */}
+      <main className="mx-auto max-w-md">
+        {renderTabContent()}
       </main>
 
-      {/* Fixed Bottom Navigation */}
+      {/* Floating Bottom Capsule Tabbar */}
       <BottomNav />
     </div>
   );

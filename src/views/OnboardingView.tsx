@@ -23,7 +23,7 @@ const skillLevels: SkillLevelOption[] = [
     accentColor: '#68BD44',
     ringColor: '#68BD44',
     iconCount: 1,
-    glowColor: 'rgba(104,189,68,0.7)',
+    glowColor: 'rgba(104,189,68,0.9)',
   },
   {
     id: 'amateur',
@@ -32,7 +32,7 @@ const skillLevels: SkillLevelOption[] = [
     accentColor: '#34C759',
     ringColor: '#34C759',
     iconCount: 2,
-    glowColor: 'rgba(52,199,89,0.7)',
+    glowColor: 'rgba(52,199,89,0.9)',
   },
   {
     id: 'advanced',
@@ -41,7 +41,7 @@ const skillLevels: SkillLevelOption[] = [
     accentColor: '#FF9500',
     ringColor: '#FF9500',
     iconCount: 3,
-    glowColor: 'rgba(255,149,0,0.75)',
+    glowColor: 'rgba(255,149,0,0.95)',
   },
   {
     id: 'pro',
@@ -50,7 +50,7 @@ const skillLevels: SkillLevelOption[] = [
     accentColor: '#AF52DE',
     ringColor: '#AF52DE',
     iconCount: 4,
-    glowColor: 'rgba(175,82,222,0.8)',
+    glowColor: 'rgba(175,82,222,0.95)',
   },
 ];
 
@@ -106,17 +106,17 @@ export const OnboardingView: React.FC = () => {
         </p>
       </div>
 
-      {/* Center Player Card Component (True SVG Vector Contour Clipping & Exact Contour Glow) */}
+      {/* Center Player Card Component (Clean Outer Box, Concentric Equal Padding, Crisp Border Contour Glow) */}
       <div className="my-4 flex justify-center">
-        <div className="relative flex flex-col items-center rounded-[32px] bg-[#050505] p-3.5 shadow-2xl transition-all duration-300 w-full max-w-[361px]">
+        <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#08080A] p-3.5 transition-all duration-300 w-full max-w-[361px]">
           
           {/* True Vector Shape Card Window */}
           <div className="relative w-full max-w-[333px]">
             <svg
-              viewBox="0 0 333 180"
+              viewBox="0 0 333 172"
               className="w-full h-auto overflow-visible transition-all duration-300"
               style={{
-                filter: `drop-shadow(0px 0px 14px ${activeLevel.glowColor})`,
+                filter: `drop-shadow(0px 0px 4px ${activeLevel.glowColor})`,
               }}
             >
               <defs>
@@ -141,15 +141,15 @@ export const OnboardingView: React.FC = () => {
                 d={cardContourPath}
                 fill="none"
                 stroke={activeLevel.accentColor}
-                strokeWidth="2"
+                strokeWidth="1.75"
                 className="transition-colors duration-300"
               />
             </svg>
 
-            {/* Central Circular Avatar (Overlaid on vector card center) */}
-            <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+            {/* Central Circular Avatar */}
+            <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
               <div
-                className="h-20 w-20 overflow-hidden rounded-full border-2 bg-[#242426] shadow-2xl transition-all duration-300"
+                className="h-20 w-20 overflow-hidden rounded-full border-2 bg-[#242426] shadow-xl transition-all duration-300"
                 style={{ borderColor: activeLevel.ringColor }}
               >
                 <img
