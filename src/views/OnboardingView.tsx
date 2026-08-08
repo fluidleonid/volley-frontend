@@ -64,10 +64,6 @@ export const OnboardingView: React.FC = () => {
     completeOnboarding('player');
   };
 
-  const handleCoachLogin = () => {
-    completeOnboarding('coach');
-  };
-
   // Exact vector contour path (rounded rectangle + bottom cutout notch)
   const cardContourPath = `
     M 22,0
@@ -89,16 +85,16 @@ export const OnboardingView: React.FC = () => {
   `;
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-[#121212] px-4 py-6 text-white max-w-md mx-auto select-none">
-      {/* Top Header & Brand Logo (Figma Node: 11411:13797, h=28px) */}
-      <div className="flex flex-col items-center pt-2 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-start bg-[#121212] px-4 pt-[84px] pb-10 text-white w-full max-w-md mx-auto select-none">
+      {/* Group 1: Top Header & Brand Logo (Figma Node: 11411:13797, h=28px) */}
+      <div className="flex flex-col items-center text-center w-full">
         <img
           src={logotextSvg}
           alt="volley"
           className="h-[28px] w-auto object-contain select-none"
         />
 
-        <h1 className="mt-4 text-[24px] font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="mt-[24px] text-[24px] font-extrabold tracking-tight text-white leading-tight">
           Welcome to the Game!
         </h1>
         <p className="mt-1 text-[13px] font-medium text-[#8E8E93]">
@@ -106,12 +102,12 @@ export const OnboardingView: React.FC = () => {
         </p>
       </div>
 
-      {/* Center Player Card Component (Clean Outer Box, Concentric Equal Padding, Crisp Border Contour Glow) */}
-      <div className="my-4 flex justify-center">
-        <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#08080A] p-3.5 transition-all duration-300 w-full max-w-[361px]">
-          
+      {/* Group 2: Center Player Card Component (40px empty space above and below) */}
+      <div className="my-[40px] flex w-full justify-center">
+        <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#08080A] p-3.5 transition-all duration-300 w-full">
+
           {/* True Vector Shape Card Window */}
-          <div className="relative w-full max-w-[333px]">
+          <div className="relative w-full">
             <svg
               viewBox="0 0 333 172"
               className="w-full h-auto overflow-visible transition-all duration-300"
@@ -161,11 +157,11 @@ export const OnboardingView: React.FC = () => {
             </div>
 
             {/* Shuttlecock Level Icons (Inside the bottom cutout tab) */}
-            <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
+            <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
               {Array.from({ length: activeLevel.iconCount }).map((_, idx) => (
                 <div
                   key={idx}
-                  className="h-4 w-4 shrink-0 transition-colors duration-300"
+                  className="h-5 w-5 shrink-0 transition-colors duration-300"
                   style={{
                     backgroundColor: activeLevel.accentColor,
                     maskImage: `url(${shuttleIconSvg})`,
@@ -184,8 +180,8 @@ export const OnboardingView: React.FC = () => {
         </div>
       </div>
 
-      {/* Skill Level Options List (Selected items ALWAYS use Primary Brand Green #68BD44!) */}
-      <div className="space-y-2.5 max-w-[361px] mx-auto w-full">
+      {/* Group 3: Skill Level Options List (Full width w-full inside px-4 16px side padding) */}
+      <div className="space-y-2.5 w-full mb-8">
         {skillLevels.map((level) => {
           const isSelected = selectedLevelId === level.id;
 
@@ -193,11 +189,10 @@ export const OnboardingView: React.FC = () => {
             <div
               key={level.id}
               onClick={() => setSelectedLevelId(level.id)}
-              className={`group flex cursor-pointer items-center justify-between rounded-[20px] px-4 py-3.5 transition-all duration-200 active:scale-[0.99] ${
-                isSelected
-                  ? 'bg-[#1C1C1E] border border-[#68BD44] shadow-[0_0_15px_rgba(104,189,68,0.25)]'
+              className={`group flex h-[52px] cursor-pointer items-center justify-between rounded-[12px] px-4 transition-all duration-200 active:scale-[0.99] ${isSelected
+                  ? 'bg-[#1C1C1E] border border-[#68BD44]'
                   : 'bg-[#1C1C1E]/70 hover:bg-[#1C1C1E] border border-transparent'
-              }`}
+                }`}
             >
               {/* Left Side: Title & Subtitle ONLY */}
               <div>
@@ -220,24 +215,14 @@ export const OnboardingView: React.FC = () => {
         })}
       </div>
 
-      {/* Bottom Actions (Figma Node: 11411:13925, button/base w=361px, h=44px, bg=#68BD44 for ALL levels) */}
-      <div className="mt-6 flex flex-col gap-3 max-w-[361px] mx-auto w-full">
+      {/* Group 4: Bottom Continue Action Button (Full width w-full, h=44px) */}
+      <div className="mt-auto w-full">
         <button
           onClick={handleContinue}
-          className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-sm font-extrabold text-black shadow-lg shadow-[#68BD44]/25 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
+          className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] font-display text-[15px] font-extrabold tracking-tight text-black shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
         >
           Continue
         </button>
-
-        {/* Coach Entrance Link */}
-        <div className="text-center">
-          <button
-            onClick={handleCoachLogin}
-            className="text-xs font-semibold text-[#68BD44] underline-offset-4 hover:underline"
-          >
-            Enter as Coach →
-          </button>
-        </div>
       </div>
     </div>
   );
