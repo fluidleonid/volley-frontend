@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { Check } from 'lucide-react';
+import logotextSvg from '../assets/logotext.svg';
+import playerCardPng from '../assets/player-card.png';
+import shuttleIconSvg from '../assets/shuttle-icon.svg';
 
 export interface SkillLevelOption {
   id: string;
@@ -8,8 +11,8 @@ export interface SkillLevelOption {
   subtitle: string;
   accentColor: string;
   ringColor: string;
-  badgeIcon: string;
-  cardPatternClass: string;
+  iconCount: number;
+  glowColor: string;
 }
 
 const skillLevels: SkillLevelOption[] = [
@@ -18,9 +21,9 @@ const skillLevels: SkillLevelOption[] = [
     title: 'Beginner',
     subtitle: 'I want to learn',
     accentColor: '#68BD44',
-    ringColor: '#D4AF37',
-    badgeIcon: '🪶',
-    cardPatternClass: 'from-[#68BD44]/15 via-[#1C1C1E] to-[#1C1C1E]',
+    ringColor: '#68BD44',
+    iconCount: 1,
+    glowColor: 'rgba(104,189,68,0.7)',
   },
   {
     id: 'amateur',
@@ -28,8 +31,8 @@ const skillLevels: SkillLevelOption[] = [
     subtitle: 'I play for fun',
     accentColor: '#34C759',
     ringColor: '#34C759',
-    badgeIcon: '🏸',
-    cardPatternClass: 'from-[#34C759]/15 via-[#1C1C1E] to-[#1C1C1E]',
+    iconCount: 2,
+    glowColor: 'rgba(52,199,89,0.7)',
   },
   {
     id: 'advanced',
@@ -37,17 +40,17 @@ const skillLevels: SkillLevelOption[] = [
     subtitle: 'I play to win',
     accentColor: '#FF9500',
     ringColor: '#FF9500',
-    badgeIcon: '🔥',
-    cardPatternClass: 'from-[#FF9500]/20 via-[#1C1C1E] to-[#1C1C1E]',
+    iconCount: 3,
+    glowColor: 'rgba(255,149,0,0.75)',
   },
   {
     id: 'pro',
     title: 'Pro',
     subtitle: 'I live for this game',
     accentColor: '#AF52DE',
-    ringColor: '#FFD700',
-    badgeIcon: '👑',
-    cardPatternClass: 'from-[#AF52DE]/25 via-[#1C1C1E] to-[#1C1C1E]',
+    ringColor: '#AF52DE',
+    iconCount: 4,
+    glowColor: 'rgba(175,82,222,0.8)',
   },
 ];
 
@@ -65,59 +68,124 @@ export const OnboardingView: React.FC = () => {
     completeOnboarding('coach');
   };
 
-  return (
-    <div className="flex min-h-screen flex-col justify-between bg-[#121212] px-5 py-6 text-white max-w-md mx-auto">
-      {/* Top Header & Brand Logo */}
-      <div className="flex flex-col items-center pt-2 text-center">
-        {/* Volley Cursive Logo Header */}
-        <div className="font-serif italic text-3xl font-extrabold tracking-tight text-white select-none">
-          volley
-        </div>
+  // Exact vector contour path (rounded rectangle + bottom cutout notch)
+  const cardContourPath = `
+    M 22,0
+    H 311
+    A 22,22 0 0 1 333,22
+    V 150
+    A 22,22 0 0 1 311,172
+    H 251.531
+    C 246.252,172 241.736,168.202 240.832,162.999
+    C 239.926,157.796 235.41,154 230.131,154
+    H 102.869
+    C 97.59,154 93.074,157.796 92.168,162.999
+    C 91.264,168.202 86.748,172 81.469,172
+    H 22
+    A 22,22 0 0 1 0,150
+    V 22
+    A 22,22 0 0 1 22,0
+    Z
+  `;
 
-        <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-white">
+  return (
+    <div className="flex min-h-screen flex-col justify-between bg-[#121212] px-4 py-6 text-white max-w-md mx-auto select-none">
+      {/* Top Header & Brand Logo (Figma Node: 11411:13797, h=28px) */}
+      <div className="flex flex-col items-center pt-2 text-center">
+        <img
+          src={logotextSvg}
+          alt="volley"
+          className="h-[28px] w-auto object-contain select-none"
+        />
+
+        <h1 className="mt-4 text-[24px] font-extrabold tracking-tight text-white leading-tight">
           Welcome to the Game!
         </h1>
-        <p className="mt-1 text-sm font-medium text-[#8E8E93]">
+        <p className="mt-1 text-[13px] font-medium text-[#8E8E93]">
           Choose your skill level
         </p>
       </div>
 
-      {/* Center Card with Dynamic Level Styling, Net Pattern & Avatar */}
-      <div className="my-5 flex justify-center">
-        <div
-          className={`relative flex h-44 w-full max-w-xs flex-col items-center justify-center overflow-hidden rounded-3xl border bg-gradient-to-b shadow-2xl transition-all duration-300 ${activeLevel.cardPatternClass}`}
-          style={{ borderColor: activeLevel.accentColor + '60' }}
-        >
-          {/* Badminton Net Background Pattern SVG */}
-          <svg className="absolute inset-0 h-full w-full opacity-20 stroke-[#555]" xmlns="http://www.w3.org/2000/svg">
-            <pattern id="net-pattern" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="20" stroke="currentColor" strokeWidth="1" />
-              <line x1="0" y1="0" x2="20" y2="0" stroke="currentColor" strokeWidth="1" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#net-pattern)" />
-          </svg>
+      {/* Center Player Card Component (True SVG Vector Contour Clipping & Exact Contour Glow) */}
+      <div className="my-4 flex justify-center">
+        <div className="relative flex flex-col items-center rounded-[32px] bg-[#050505] p-3.5 shadow-2xl transition-all duration-300 w-full max-w-[361px]">
+          
+          {/* True Vector Shape Card Window */}
+          <div className="relative w-full max-w-[333px]">
+            <svg
+              viewBox="0 0 333 180"
+              className="w-full h-auto overflow-visible transition-all duration-300"
+              style={{
+                filter: `drop-shadow(0px 0px 14px ${activeLevel.glowColor})`,
+              }}
+            >
+              <defs>
+                {/* SVG ClipPath with exact cutout contour */}
+                <clipPath id="playerCardContourClip">
+                  <path d={cardContourPath} />
+                </clipPath>
+              </defs>
 
-          {/* Central Avatar with Dynamic Level Ring */}
-          <div
-            className="relative z-10 h-20 w-20 overflow-hidden rounded-full border-2 bg-[#242426] shadow-xl transition-all duration-300"
-            style={{ borderColor: activeLevel.ringColor }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
-              alt="Player Avatar"
-              className="h-full w-full object-cover"
-            />
-          </div>
+              {/* Background Image clipped to exact contour path */}
+              <image
+                href={playerCardPng}
+                width="333"
+                height="172"
+                preserveAspectRatio="xMidYMid slice"
+                clipPath="url(#playerCardContourClip)"
+                opacity="0.85"
+              />
 
-          {/* Dynamic Badge Icon for Level */}
-          <div className="relative z-10 mt-3 text-sm transition-transform duration-300 animate-bounce">
-            {activeLevel.badgeIcon}
+              {/* Contour Stroke along exact cutout shape */}
+              <path
+                d={cardContourPath}
+                fill="none"
+                stroke={activeLevel.accentColor}
+                strokeWidth="2"
+                className="transition-colors duration-300"
+              />
+            </svg>
+
+            {/* Central Circular Avatar (Overlaid on vector card center) */}
+            <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <div
+                className="h-20 w-20 overflow-hidden rounded-full border-2 bg-[#242426] shadow-2xl transition-all duration-300"
+                style={{ borderColor: activeLevel.ringColor }}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+                  alt="Player Avatar"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Shuttlecock Level Icons (Inside the bottom cutout tab) */}
+            <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
+              {Array.from({ length: activeLevel.iconCount }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="h-4 w-4 shrink-0 transition-colors duration-300"
+                  style={{
+                    backgroundColor: activeLevel.accentColor,
+                    maskImage: `url(${shuttleIconSvg})`,
+                    WebkitMaskImage: `url(${shuttleIconSvg})`,
+                    maskSize: 'contain',
+                    WebkitMaskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                    WebkitMaskPosition: 'center',
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Skill Level Options List */}
-      <div className="space-y-2.5">
+      {/* Skill Level Options List (Selected items ALWAYS use Primary Brand Green #68BD44!) */}
+      <div className="space-y-2.5 max-w-[361px] mx-auto w-full">
         {skillLevels.map((level) => {
           const isSelected = selectedLevelId === level.id;
 
@@ -125,18 +193,15 @@ export const OnboardingView: React.FC = () => {
             <div
               key={level.id}
               onClick={() => setSelectedLevelId(level.id)}
-              className={`group flex cursor-pointer items-center justify-between rounded-2xl border px-4 py-3.5 transition-all duration-200 active:scale-[0.99] ${
+              className={`group flex cursor-pointer items-center justify-between rounded-[20px] px-4 py-3.5 transition-all duration-200 active:scale-[0.99] ${
                 isSelected
-                  ? 'bg-[#1C1C1E]'
-                  : 'border-[#2C2C2E] bg-[#1C1C1E]/80 hover:border-[#444]'
+                  ? 'bg-[#1C1C1E] border border-[#68BD44] shadow-[0_0_15px_rgba(104,189,68,0.25)]'
+                  : 'bg-[#1C1C1E]/70 hover:bg-[#1C1C1E] border border-transparent'
               }`}
-              style={{
-                borderColor: isSelected ? level.accentColor : undefined,
-                boxShadow: isSelected ? `0 0 15px ${level.accentColor}30` : undefined,
-              }}
             >
+              {/* Left Side: Title & Subtitle ONLY */}
               <div>
-                <div className="text-base font-semibold text-white">
+                <div className="text-base font-semibold text-white leading-snug">
                   {level.title}
                 </div>
                 <div className="text-xs font-normal text-[#8E8E93]">
@@ -144,11 +209,9 @@ export const OnboardingView: React.FC = () => {
                 </div>
               </div>
 
+              {/* Right Side: Checkmark Badge in Primary Brand Green #68BD44 when selected */}
               {isSelected && (
-                <div
-                  className="flex h-5 w-5 items-center justify-center rounded-full text-black font-bold"
-                  style={{ backgroundColor: level.accentColor }}
-                >
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#68BD44] text-black font-bold shadow-md">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </div>
               )}
@@ -157,11 +220,11 @@ export const OnboardingView: React.FC = () => {
         })}
       </div>
 
-      {/* Bottom Actions */}
-      <div className="mt-6 flex flex-col gap-3">
+      {/* Bottom Actions (Figma Node: 11411:13925, button/base w=361px, h=44px, bg=#68BD44 for ALL levels) */}
+      <div className="mt-6 flex flex-col gap-3 max-w-[361px] mx-auto w-full">
         <button
           onClick={handleContinue}
-          className="flex h-13 w-full items-center justify-center rounded-full bg-[#68BD44] py-3.5 text-base font-bold text-black shadow-lg shadow-[#68BD44]/25 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
+          className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-sm font-extrabold text-black shadow-lg shadow-[#68BD44]/25 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
         >
           Continue
         </button>

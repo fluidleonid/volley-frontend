@@ -6,12 +6,13 @@ This file tracks all image and SVG vector assets used in the Volley Telegram Min
 You can replace these files in your repository to match your exact Figma designs.
 
 --------------------------------------------------------------------------------
-1. BRAND & GENERAL ASSETS
+1. BRAND & SPLASH SCREEN LOGO (Figma Node: 11404:11369)
 --------------------------------------------------------------------------------
 [Path]        : public/assets/logo.svg
-[Description] : Main cursive "volley" brand logo (Header & Splash Screen).
-[Format]      : SVG
-[Current]     : Rendered via CSS/SVG font fallback. Replace with exported logo.svg from Figma.
+[Node ID]     : 11404:11369
+[Description] : Full Volley brand logo centered on primary lime background (#68BD44).
+[Format]      : SVG (Export full SVG logo from Figma and place at public/assets/logo.svg)
+[Current]     : Rendered via <img src="/assets/logo.svg" /> with CSS cursive fallback.
 
 [Path]        : public/assets/shuttle-icon.svg
 [Description] : Shuttlecock icon used in headers, cards, and achievements.
@@ -74,10 +75,10 @@ and background image/pattern according to the Figma design:
 [Description] : Animated loader spinner for Matching... search banner.
 
 --------------------------------------------------------------------------------
-4. FLOATING TABBAR & NAV ICONS
+4. FLOATING TABBAR & NAV ICONS (Figma Node: 11507:13430)
 --------------------------------------------------------------------------------
 [Path]        : public/assets/nav/floating-tabbar-bg.svg
-[Description] : Floating dark pill capsule background (#141416, rounded-[28px], backdrop-blur).
+[Description] : Floating dark pill capsule background (#0A0A0B, rounded-[32px], backdrop-blur).
 
 [Path]        : public/assets/nav/icon-home.svg
 [Description] : Home tab icon.
