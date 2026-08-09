@@ -24,7 +24,7 @@ export interface Court {
   id: string;
   name: string;
   courtNumber: number;
-  statusText?: 'Matching...' | 'In Progress' | 'Reserved...' | 'Disabled';
+  statusText?: 'Matching...' | 'In Progress' | 'Reserved...' | 'Reserved';
   isActive: boolean;
   isAvailable: boolean; // Admin/Coach toggle state
   isHardmode: boolean;

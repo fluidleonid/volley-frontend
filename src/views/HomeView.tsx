@@ -5,6 +5,8 @@ import { CourtCard } from '../components/courts/CourtCard';
 import { EmptyState } from '../components/ui/EmptyState';
 import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
 import { Avatar } from '../components/ui/Avatar';
+import { PlayerDetailSheet } from '../components/ui/PlayerDetailSheet';
+import { Player } from '../types';
 import { Play, Plus, Pause, Square, Zap, Check, Users, History } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
@@ -25,6 +27,7 @@ export const HomeView: React.FC = () => {
   } = useAppStore();
 
   const [copied, setCopied] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const handleInvite = () => {
     navigator.clipboard.writeText('https://t.me/VolleyBot/app?startapp=invite');
@@ -166,7 +169,9 @@ export const HomeView: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
-            <span className="font-display text-lg font-normal text-[#8E8E93]">5/6</span>
+            <span className="font-display text-lg font-normal text-[#8E8E93]">
+              {courts.filter((c) => c.isAvailable).length}/6
+            </span>
           </div>
 
           {role === 'coach' && (
@@ -199,21 +204,35 @@ export const HomeView: React.FC = () => {
         </div>
 
         {todaysPlayers.length > 0 ? (
-          <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
             {todaysPlayers.map((player) => (
-              <Avatar
+              <div
                 key={player.id}
-                src={player.avatarUrl}
-                alt={player.name}
-                initials={player.name[0]}
-                size="lg"
-              />
+                onClick={() => setSelectedPlayer(player)}
+                className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+                title={`View ${player.name} details`}
+              >
+                <Avatar
+                  src={player.avatarUrl}
+                  alt={player.name}
+                  initials={player.name[0]}
+                  size="lg"
+                  hasBorder={false}
+                />
+              </div>
             ))}
           </div>
         ) : (
           <EmptyState message="No players yet" icon={Users} />
         )}
       </div>
+
+      {/* Player Detail Sheet Modal */}
+      <PlayerDetailSheet
+        player={selectedPlayer}
+        isOpen={!!selectedPlayer}
+        onClose={() => setSelectedPlayer(null)}
+      />
 
       {/* 5. Recent Games Section */}
       <div className="space-y-3">

@@ -4,10 +4,11 @@ import { Player } from '../../types';
 
 export interface AvatarGroupProps {
   players: Player[];
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   stacked?: boolean; // Whether avatars overlap or just sit side by side
   ringColor?: string;
+  hasBorder?: boolean;
 }
 
 export const AvatarGroup: React.FC<AvatarGroupProps> = ({ 
@@ -15,7 +16,8 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   size = 'md', 
   className = '',
   stacked = true,
-  ringColor = 'ring-[#1C1C1E]'
+  ringColor = 'ring-[#1C1C1E]',
+  hasBorder = true,
 }) => {
   if (!players || players.length === 0) return null;
 
@@ -28,7 +30,8 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
           alt={p.name}
           initials={p.name[0]}
           size={size}
-          className={stacked ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : ''}
+          hasBorder={hasBorder}
+          className={stacked && ringColor ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : 'relative'}
         />
       ))}
     </div>

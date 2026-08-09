@@ -81,8 +81,8 @@ export function App() {
 
   return (
     <div className="relative min-h-screen bg-[#121212] text-white selection:bg-[#68BD44] selection:text-black">
-      {/* Top Header Navigation */}
-      <TopHeader />
+      {/* Top Header Navigation (Only shown on Main / Home page) */}
+      {activeTab === 'home' && <TopHeader />}
 
       {/* Main Page View Content */}
       <main className="mx-auto max-w-md">

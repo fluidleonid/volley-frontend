@@ -8,7 +8,7 @@ export const GamesView: React.FC = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4 pb-24 pt-2 px-4">
+    <div className="space-y-4 pb-24 pt-[84px] px-4">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[#2C2C2E] pb-3">
         <div>

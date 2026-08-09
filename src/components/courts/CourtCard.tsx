@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Court } from '../../types';
 import { Timer } from 'lucide-react';
 import { AvatarGroup } from '../ui/AvatarGroup';
+import courtSm from '../../assets/court-sm.svg';
 
 export interface CourtCardProps {
   court: Court;
@@ -33,17 +34,17 @@ export const CourtCard: React.FC<CourtCardProps> = ({
 
   return (
     <div
-      className={`relative flex h-52 w-36 shrink-0 flex-col justify-between rounded-[24px] bg-[#1C1C1E] p-3.5 shadow-lg overflow-hidden transition-opacity duration-200 ${
+      className={`relative flex h-[206px] min-h-[206px] max-h-[206px] w-[140px] min-w-[140px] max-w-[140px] shrink-0 flex-col justify-between rounded-[20px] bg-[#1C1C1E] p-3.5 shadow-lg overflow-hidden transition-opacity duration-200 ${
         isAvailable ? 'opacity-100' : 'opacity-40'
       }`}
     >
-      {/* Top Heading: Court Name & Coach Toggle or Hardmode Icon */}
+      {/* Top Heading: Court Name & Coach Toggle */}
       <div className="flex items-center justify-between z-10">
         <span className="font-display text-base font-extrabold text-white tracking-tight">
           {court.name}
         </span>
 
-        {showCoachToggle && onToggleAvailability ? (
+        {showCoachToggle && onToggleAvailability && (
           /* Coach Availability Admin Toggle Switch */
           <button
             onClick={() => onToggleAvailability(court.id)}
@@ -58,12 +59,10 @@ export const CourtCard: React.FC<CourtCardProps> = ({
               }`}
             />
           </button>
-        ) : court.isHardmode ? (
-          <span className="text-xs" title="Hardmode Court">🔥</span>
-        ) : null}
+        )}
       </div>
 
-      {/* Center Content: Team A (1 or 2 players) & Team B (1 or 2 players) */}
+      {/* Center Content: Team A & Team B Avatars */}
       <div className="my-auto flex flex-col items-center justify-center gap-4 z-10">
         {isPlaying ? (
           <>
@@ -78,14 +77,14 @@ export const CourtCard: React.FC<CourtCardProps> = ({
         )}
       </div>
 
-      {/* ABSOLUTE VERTICAL CENTER NOTCH DIVIDER & VECTORS */}
+      {/* ABSOLUTE VERTICAL CENTER NOTCH CUTOUT (using court-sm.svg asset) */}
       <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center justify-between pointer-events-none z-0">
-        {/* Left Semi-Circle Cutout Notch Vector */}
-        <div className="h-4 w-2 rounded-r-full bg-[#121212]" />
+        {/* Left Cutout Notch Vector */}
+        <img src={courtSm} alt="" className="w-[6px] h-[22px] shrink-0" />
         {/* Dashed Middle Line */}
-        <div className="w-full border-b border-dashed border-[#2C2C2E]/60 mx-1" />
-        {/* Right Semi-Circle Cutout Notch Vector */}
-        <div className="h-4 w-2 rounded-l-full bg-[#121212]" />
+        <div className="w-full border-b border-dashed border-[#2C2C2E]/60" />
+        {/* Right Cutout Notch Vector (Rotated 180 deg) */}
+        <img src={courtSm} alt="" className="w-[6px] h-[22px] shrink-0 rotate-180" />
       </div>
 
       {/* Bottom Status / Time Counter */}
@@ -97,7 +96,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
           </div>
         ) : (
           <div className="font-sans text-[11px] font-medium text-[#8E8E93] flex items-center justify-center">
-            {!isAvailable ? 'Disabled' : (
+            {!isAvailable ? 'Reserved' : (
               court.statusText === 'Matching...' ? (
                 <>
                   <span>Matching</span>

@@ -27,11 +27,82 @@ interface AppState {
   completeOnboarding: (asRole?: UserRole) => void;
 }
 
+const initialCourts: Court[] = [
+  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-2', name: '#2', courtNumber: 2, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-3', name: '#3', courtNumber: 3, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-4', name: '#4', courtNumber: 4, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-5', name: '#5', courtNumber: 5, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-6', name: '#6', courtNumber: 6, statusText: 'Reserved', isActive: false, isAvailable: false, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+];
+
+const joinedCourts: Court[] = [
+  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  {
+    id: 'court-2',
+    name: '#2',
+    courtNumber: 2,
+    statusText: 'In Progress',
+    isActive: true,
+    isAvailable: true,
+    isHardmode: false,
+    timerSeconds: 731, // 12:11
+    teamA: [
+      { id: 'p1', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 },
+      { id: 'p2', name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2300, status: 'spectating', gamesPlayed: 40, wins: 22, bpToday: 1.2, winStreak: 2 }
+    ],
+    teamB: [
+      { id: 'p3', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'spectating', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
+      { id: 'p4', name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80', level: 10, xp: 1900, status: 'spectating', gamesPlayed: 30, wins: 18, bpToday: 0.8, winStreak: 1 }
+    ],
+    scoreA: 18,
+    scoreB: 16,
+  },
+  {
+    id: 'court-3',
+    name: '#3',
+    courtNumber: 3,
+    statusText: 'In Progress',
+    isActive: true,
+    isAvailable: true,
+    isHardmode: true,
+    timerSeconds: 412,
+    teamA: [
+      { id: 'p5', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 12, xp: 3100, status: 'spectating', gamesPlayed: 50, wins: 30, bpToday: 2.0, winStreak: 3 },
+      { id: 'p6', name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 13, xp: 3500, status: 'spectating', gamesPlayed: 60, wins: 38, bpToday: 4.2, winStreak: 5 }
+    ],
+    teamB: [
+      { id: 'p7', name: 'Michael B.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2000, status: 'spectating', gamesPlayed: 32, wins: 19, bpToday: 1.1, winStreak: 1 },
+      { id: 'p8', name: 'Anna S.', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80', level: 9, xp: 1800, status: 'spectating', gamesPlayed: 28, wins: 15, bpToday: 0.9, winStreak: 2 }
+    ],
+    scoreA: 11,
+    scoreB: 9,
+  },
+  { id: 'court-4', name: '#4', courtNumber: 4, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-5', name: '#5', courtNumber: 5, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-6', name: '#6', courtNumber: 6, statusText: 'Reserved', isActive: false, isAvailable: false, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+];
+
+const todaysPlayers12: Player[] = [
+  { id: 'p-me', name: 'John Doe (You)', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80', level: 12, xp: 9062, status: 'queued', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4 },
+  { id: 'tp-1', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 },
+  { id: 'tp-2', name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2300, status: 'spectating', gamesPlayed: 40, wins: 22, bpToday: 1.2, winStreak: 2 },
+  { id: 'tp-3', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'spectating', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
+  { id: 'tp-4', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2100, status: 'queued', gamesPlayed: 35, wins: 20, bpToday: 1.5, winStreak: 2 },
+  { id: 'tp-5', name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80', level: 10, xp: 1900, status: 'spectating', gamesPlayed: 30, wins: 18, bpToday: 0.8, winStreak: 1 },
+  { id: 'tp-6', name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 13, xp: 3500, status: 'resting', gamesPlayed: 60, wins: 38, bpToday: 4.2, winStreak: 5 },
+  { id: 'tp-7', name: 'Michael B.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2000, status: 'spectating', gamesPlayed: 32, wins: 19, bpToday: 1.1, winStreak: 1 },
+  { id: 'tp-8', name: 'Anna S.', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80', level: 9, xp: 1800, status: 'spectating', gamesPlayed: 28, wins: 15, bpToday: 0.9, winStreak: 2 },
+  { id: 'tp-9', name: 'Dmitry V.', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80', level: 12, xp: 2800, status: 'queued', gamesPlayed: 45, wins: 26, bpToday: 1.8, winStreak: 4 },
+  { id: 'tp-10', name: 'Maria K.', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2400, status: 'spectating', gamesPlayed: 38, wins: 21, bpToday: 1.4, winStreak: 2 },
+  { id: 'tp-11', name: 'Pavel N.', avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80', level: 13, xp: 3200, status: 'spectating', gamesPlayed: 52, wins: 32, bpToday: 2.1, winStreak: 3 },
+];
+
 export const useAppStore = create<AppState>((set) => ({
   role: 'player',
   flowState: 'splash',
   activeTab: 'home',
-  playerState: 'spectating', // Initial default state: 'spectating' (Start training mode)
+  playerState: 'spectating', // Initial default state: 'spectating' (Unjoined / Start training mode)
   isHardmode: false,
   
   currentUser: {
@@ -48,98 +119,9 @@ export const useAppStore = create<AppState>((set) => ({
     winStreak: 4,
   },
   
-  courts: [
-    {
-      id: 'court-1',
-      name: '#1',
-      courtNumber: 1,
-      statusText: 'Matching...',
-      isActive: true,
-      isAvailable: true,
-      isHardmode: false,
-      timerSeconds: 0,
-      teamA: [],
-      teamB: [],
-      scoreA: 0,
-      scoreB: 0,
-    },
-    {
-      id: 'court-2',
-      name: '#2',
-      courtNumber: 2,
-      statusText: 'In Progress',
-      isActive: true,
-      isAvailable: true,
-      isHardmode: false,
-      timerSeconds: 731, // 12:11
-      teamA: [
-        { id: 'p1', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 },
-        { id: 'p2', name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2300, status: 'spectating', gamesPlayed: 40, wins: 22, bpToday: 1.2, winStreak: 2 }
-      ],
-      teamB: [
-        { id: 'p3', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'spectating', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
-        { id: 'p4', name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80', level: 10, xp: 1900, status: 'spectating', gamesPlayed: 30, wins: 18, bpToday: 0.8, winStreak: 1 }
-      ],
-      scoreA: 18,
-      scoreB: 16,
-    },
-    {
-      id: 'court-3',
-      name: '#3',
-      courtNumber: 3,
-      statusText: 'Reserved...',
-      isActive: false,
-      isAvailable: false,
-      isHardmode: false,
-      timerSeconds: 0,
-      teamA: [],
-      teamB: [],
-      scoreA: 0,
-      scoreB: 0,
-    }
-  ],
-
+  courts: initialCourts,
   todaysPlayers: [],
-  recentMatches: [
-    {
-      id: 'm1',
-      date: 'Today',
-      time: '14:30',
-      courtName: '#1',
-      isHardmode: true,
-      teamA: [
-        { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
-        { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' }
-      ],
-      teamB: [
-        { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
-        { name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80' }
-      ],
-      scoreA: 15,
-      scoreB: 12,
-      isWin: true,
-      xpGained: 54,
-      bpGained: 12
-    },
-    {
-      id: 'm2',
-      date: 'Today',
-      time: '12:00',
-      courtName: '#2',
-      isHardmode: false,
-      teamA: [
-        { name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80' }
-      ],
-      teamB: [
-        { name: 'John Doe', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }
-      ],
-      scoreA: 8,
-      scoreB: 15,
-      isWin: false,
-      xpGained: 12,
-      bpGained: 0
-    }
-  ],
+  recentMatches: [],
 
   leaderboard: [
     { rank: 1, player: { id: 'lb-1', name: 'Sarah M.', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 }, wins: 55, winRate: 68.7, xp: 4200 },
@@ -163,7 +145,7 @@ export const useAppStore = create<AppState>((set) => ({
         ? {
             ...court,
             isAvailable: !court.isAvailable,
-            statusText: !court.isAvailable ? 'Matching...' : 'Disabled',
+            statusText: !court.isAvailable ? 'Matching...' : 'Reserved',
           }
         : court
     ),
@@ -172,12 +154,47 @@ export const useAppStore = create<AppState>((set) => ({
   startTraining: () => set((state) => ({
     playerState: 'queued',
     currentUser: { ...state.currentUser, status: 'queued' },
-    todaysPlayers: [
-      { id: 'p-me', name: 'John Doe', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80', level: 12, xp: 9062, status: 'queued', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4 },
-      { id: 'tp-1', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 },
-      { id: 'tp-2', name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2300, status: 'spectating', gamesPlayed: 40, wins: 22, bpToday: 1.2, winStreak: 2 },
-      { id: 'tp-3', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'spectating', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
-      { id: 'tp-4', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2100, status: 'queued', gamesPlayed: 35, wins: 20, bpToday: 1.5, winStreak: 2 },
+    courts: joinedCourts,
+    todaysPlayers: todaysPlayers12,
+    recentMatches: [
+      {
+        id: 'm1',
+        date: 'Today',
+        time: '14:30',
+        courtName: '#1',
+        isHardmode: true,
+        teamA: [
+          { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+          { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' }
+        ],
+        teamB: [
+          { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
+          { name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80' }
+        ],
+        scoreA: 15,
+        scoreB: 12,
+        isWin: true,
+        xpGained: 54,
+        bpGained: 12
+      },
+      {
+        id: 'm2',
+        date: 'Today',
+        time: '12:00',
+        courtName: '#2',
+        isHardmode: false,
+        teamA: [
+          { name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80' }
+        ],
+        teamB: [
+          { name: 'John Doe', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }
+        ],
+        scoreA: 8,
+        scoreB: 15,
+        isWin: false,
+        xpGained: 12,
+        bpGained: 0
+      }
     ]
   })),
 
@@ -189,7 +206,9 @@ export const useAppStore = create<AppState>((set) => ({
   stopTraining: () => set((state) => ({
     playerState: 'spectating',
     currentUser: { ...state.currentUser, status: 'spectating' },
-    todaysPlayers: []
+    courts: initialCourts,
+    todaysPlayers: [],
+    recentMatches: []
   })),
 
   continueToPlay: () => set((state) => ({

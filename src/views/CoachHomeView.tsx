@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { Card } from '../components/ui/card';
 import { CourtCard } from '../components/courts/CourtCard';
 import { EmptyState } from '../components/ui/EmptyState';
-import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
 import { Avatar } from '../components/ui/Avatar';
-import { Play, Plus, Pause, Square, Zap, Check, Lock, Users, History } from 'lucide-react';
+import { PlayerDetailSheet } from '../components/ui/PlayerDetailSheet';
+import { Player } from '../types';
+import { Play, Plus, Pause, Square, Zap, Check, Users, CalendarClock } from 'lucide-react';
+
+interface PrivateSession {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  time: string;
+}
+
+const mockPrivateSessions: PrivateSession[] = [
+  {
+    id: 'p-1',
+    name: 'John Doe',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+    time: '10:00',
+  },
+  {
+    id: 'p-2',
+    name: 'Alena Krasnova',
+    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80',
+    time: '12:00',
+  },
+];
 
 export const CoachHomeView: React.FC = () => {
   const {
-    currentUser,
     role,
     playerState,
     isHardmode,
@@ -21,10 +42,10 @@ export const CoachHomeView: React.FC = () => {
     continueToPlay,
     courts,
     todaysPlayers,
-    recentMatches,
   } = useAppStore();
 
   const [copied, setCopied] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const handleInvite = () => {
     navigator.clipboard.writeText('https://t.me/VolleyBot/app?startapp=invite');
@@ -32,39 +53,11 @@ export const CoachHomeView: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const activeCourtsCount = courts.filter((c) => c.isAvailable).length;
+
   return (
     <div className="space-y-6 pb-36 pt-3 px-4 max-w-md mx-auto select-none">
-      {/* 1. Statistics Section (Figma Node: 11420:16325, gap=8px, h=73px, radius=20px) */}
-      <div className="grid grid-cols-3 gap-2">
-        <Card className="flex flex-col justify-between p-2.5 bg-[#1C1C1E] rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
-            {currentUser.gamesPlayed}
-          </span>
-          <span className="font-sans text-xs font-medium text-[#8E8E93] tracking-tight">
-            Games played
-          </span>
-        </Card>
-
-        <Card className="flex flex-col justify-between p-2.5 bg-[#1C1C1E] rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
-            {currentUser.wins}
-          </span>
-          <span className="font-sans text-xs font-medium text-[#8E8E93] tracking-tight">
-            Wins
-          </span>
-        </Card>
-
-        <Card className="flex flex-col justify-between p-2.5 bg-[#1C1C1E] rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
-            {currentUser.bpToday.toFixed(1)}
-          </span>
-          <span className="font-sans text-xs font-medium text-[#8E8E93] tracking-tight">
-            BP today
-          </span>
-        </Card>
-      </div>
-
-      {/* 2. Dynamic Action Buttons Container (2nd type: Buttons with label under container, h=44px, icon color=#050505) */}
+      {/* 1. Dynamic Action Buttons Container */}
       <div className="flex flex-col items-center">
         {/* STATE 1: Spectating ("Start training" mode) */}
         {playerState === 'spectating' && (
@@ -81,10 +74,9 @@ export const CoachHomeView: React.FC = () => {
           </div>
         )}
 
-        {/* STATE 2: Queued mode ("In queue" active, Node: 11420:16289) */}
+        {/* STATE 2: Queued mode */}
         {playerState === 'queued' && (
           <div className="flex w-full items-center gap-2.5 text-center">
-            {/* Hard mode button (w=90.5px, h=44px, radius=20px) */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
                 onClick={toggleHardmode}
@@ -101,7 +93,6 @@ export const CoachHomeView: React.FC = () => {
               </span>
             </div>
 
-            {/* Invite to play button (w=160px, h=44px, radius=100px) */}
             <div className="flex flex-[1.6] flex-col items-center">
               <button
                 onClick={handleInvite}
@@ -114,7 +105,6 @@ export const CoachHomeView: React.FC = () => {
               </span>
             </div>
 
-            {/* Sit out button (w=90.5px, h=44px, radius=20px) */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
                 onClick={sitOut}
@@ -129,10 +119,9 @@ export const CoachHomeView: React.FC = () => {
           </div>
         )}
 
-        {/* STATE 3: Resting mode ("Sit out" active) */}
+        {/* STATE 3: Resting mode */}
         {playerState === 'resting' && (
           <div className="grid w-full grid-cols-2 gap-3 text-center">
-            {/* Stop button */}
             <div className="flex flex-col items-center">
               <button
                 onClick={stopTraining}
@@ -145,7 +134,6 @@ export const CoachHomeView: React.FC = () => {
               </span>
             </div>
 
-            {/* Continue to play button */}
             <div className="flex flex-col items-center">
               <button
                 onClick={continueToPlay}
@@ -161,20 +149,15 @@ export const CoachHomeView: React.FC = () => {
         )}
       </div>
 
-      {/* 3. Courts Horizontal Slider Section with Coach Toggle */}
+      {/* 2. Courts Horizontal Slider Section */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
-            <span className="font-display text-lg font-normal text-[#8E8E93]">5/6</span>
-          </div>
-
-          <span className="font-sans text-xs font-semibold text-[#68BD44]">
-            Coach Availability Toggle
+        <div className="flex items-center gap-1.5">
+          <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
+          <span className="font-display text-lg font-normal text-[#8E8E93]">
+            {activeCourtsCount}/6
           </span>
         </div>
 
-        {/* Horizontal Scrollable Courts with Admin Toggle Switch & Invisible Scrollbar */}
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
           {courts.map((court) => (
             <CourtCard
@@ -187,48 +170,38 @@ export const CoachHomeView: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Private Sessions Section (Coach feature) */}
+      {/* 3. Today's Players Horizontal Row */}
       <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <h2 className="font-display text-lg font-bold text-white tracking-tight">Private sessions</h2>
-          <span className="font-display text-lg font-normal text-[#8E8E93]">0</span>
-        </div>
-
-        <Card className="flex items-center justify-between p-3.5 bg-[#1C1C1E] rounded-[20px] border border-[#2C2C2E]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2C2C2E] text-white">
-              <Lock className="h-4 w-4" />
-            </div>
-            <div>
-              <div className="font-display text-sm font-semibold text-white">Reserve Court 1 for 1-on-1</div>
-              <div className="font-sans text-xs text-[#8E8E93]">Coach privilege</div>
-            </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
+            <span className="font-display text-lg font-normal text-[#8E8E93]">
+              {todaysPlayers.length}
+            </span>
           </div>
-          <button className="rounded-full bg-[#2C2C2E] px-3 py-1 font-display text-xs font-bold text-white hover:bg-[#3A3A3C]">
-            Reserve
-          </button>
-        </Card>
-      </div>
 
-      {/* 5. Today's Players Horizontal Row */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
-          <span className="font-display text-lg font-normal text-[#8E8E93]">
-            {todaysPlayers.length}
-          </span>
+          <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
+            <Plus className="h-4 w-4 stroke-[3]" /> Add
+          </button>
         </div>
 
         {todaysPlayers.length > 0 ? (
-          <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
             {todaysPlayers.map((player) => (
-              <Avatar
+              <div
                 key={player.id}
-                src={player.avatarUrl}
-                alt={player.name}
-                initials={player.name[0]}
-                size="lg"
-              />
+                onClick={() => setSelectedPlayer(player)}
+                className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+                title={`View ${player.name} details`}
+              >
+                <Avatar
+                  src={player.avatarUrl}
+                  alt={player.name}
+                  initials={player.name[0]}
+                  size="lg"
+                  hasBorder={false}
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -236,20 +209,56 @@ export const CoachHomeView: React.FC = () => {
         )}
       </div>
 
-      {/* 6. Recent Games Section */}
+      {/* 4. Today's Privates Section (Figma Node: 11562:13788) */}
       <div className="space-y-3">
-        <h2 className="font-display text-lg font-bold text-white tracking-tight">Recent games</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's privates</h2>
+            <span className="font-display text-lg font-normal text-[#8E8E93]">
+              {mockPrivateSessions.length}
+            </span>
+          </div>
 
-        {recentMatches.length > 0 ? (
-          <div className="flex flex-col">
-            {recentMatches.map((match) => (
-              <MatchHistoryCard key={match.id} match={match} />
+          <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
+            <Plus className="h-4 w-4 stroke-[3]" /> Add
+          </button>
+        </div>
+
+        {mockPrivateSessions.length > 0 ? (
+          <div className="flex flex-col border-t border-[#2C2C2E]/60 pt-1">
+            {mockPrivateSessions.map((session) => (
+              <div
+                key={session.id}
+                className="flex items-center justify-between py-3 border-b border-[#2C2C2E]/60 last:border-b-0"
+              >
+                <div className="flex items-center gap-3">
+                  <img
+                    src={session.avatarUrl}
+                    alt={session.name}
+                    className="w-9 h-9 rounded-full object-cover"
+                  />
+                  <span className="font-display text-base font-semibold text-white tracking-tight">
+                    {session.name}
+                  </span>
+                </div>
+
+                <span className="font-display text-base font-normal text-[#8E8E93]">
+                  {session.time}
+                </span>
+              </div>
             ))}
           </div>
         ) : (
-          <EmptyState message="No games yet" icon={History} />
+          <EmptyState message="No scheduled sessions yet" icon={CalendarClock} />
         )}
       </div>
+
+      {/* Player Detail Sheet Modal (Admin View) */}
+      <PlayerDetailSheet
+        player={selectedPlayer}
+        isOpen={!!selectedPlayer}
+        onClose={() => setSelectedPlayer(null)}
+      />
     </div>
   );
 };

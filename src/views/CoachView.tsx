@@ -4,7 +4,7 @@ import { Shield, Users, UserPlus, Calendar, DollarSign } from 'lucide-react';
 
 export const CoachView: React.FC = () => {
   return (
-    <div className="space-y-4 pb-24 pt-2 px-4">
+    <div className="space-y-4 pb-24 pt-[84px] px-4">
       {/* Header Banner */}
       <div className="rounded-2xl border border-[#68BD44]/40 bg-[#68BD44]/10 p-4 text-[#68BD44]">
         <div className="flex items-center gap-3">

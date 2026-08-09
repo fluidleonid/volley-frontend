@@ -4,15 +4,17 @@ export interface AvatarProps {
   src?: string;
   alt?: string;
   initials?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   style?: React.CSSProperties;
+  hasBorder?: boolean;
 }
 
 const sizeClasses = {
+  xs: 'h-[22px] w-[22px] text-[9px]',
   sm: 'h-7 w-7 text-[10px]',
   md: 'h-9 w-9 text-xs',
-  lg: 'h-11 w-11 text-sm',
+  lg: 'h-[44px] w-[44px] text-sm',
   xl: 'h-20 w-20 text-2xl',
 };
 
@@ -23,10 +25,11 @@ export const Avatar: React.FC<AvatarProps> = ({
   size = 'md',
   className = '',
   style,
+  hasBorder = true,
 }) => {
   return (
     <div
-      className={`overflow-hidden rounded-full border border-white/20 bg-[#242426] flex items-center justify-center shrink-0 ${sizeClasses[size]} ${className}`}
+      className={`overflow-hidden rounded-full ${hasBorder ? 'border border-white/20' : 'border-0'} bg-[#242426] flex items-center justify-center shrink-0 ${sizeClasses[size]} ${className}`}
       style={style}
     >
       {src ? (

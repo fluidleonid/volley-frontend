@@ -8,7 +8,7 @@ export const LeaderboardView: React.FC = () => {
   const [tab, setTab] = useState<'total' | 'today' | 'empty'>('total');
 
   return (
-    <div className="space-y-4 pb-24 pt-2 px-4">
+    <div className="space-y-4 pb-24 pt-[84px] px-4">
       {/* Top Banner Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#68BD44]/20 via-[#1C1C1E] to-[#1C1C1E] p-4 border border-[#68BD44]/30">
         <div className="flex items-center gap-3">

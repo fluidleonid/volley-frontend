@@ -1,129 +1,165 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAppStore } from '../store/appStore';
-import { Card } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Trophy, Calendar, CreditCard, Award, Flame, Zap, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Receipt, LogOut } from 'lucide-react';
+import { PlayerCard } from '../components/ui/PlayerCard';
+import { MenuRowItem } from '../components/ui/MenuRowItem';
 
 export const ProfileView: React.FC = () => {
-  const { currentUser } = useAppStore();
-  const [activeSection, setActiveSection] = useState<'achievements' | 'attendance' | 'billing'>('achievements');
+  const { currentUser, setActiveTab, setFlowState } = useAppStore();
 
-  const categories = [
-    { title: '🏋️ Training Attendance', count: '8 achievements', icon: Calendar },
-    { title: '🏸 Matches Played', count: '8 achievements', icon: Trophy },
-    { title: '🏆 Total Wins', count: '9 achievements', icon: Award },
-    { title: '⚡ Hard Mode Wins', count: '9 achievements', icon: Flame },
-    { title: '🔥 Win Streaks', count: '8 achievements', icon: Zap },
-    { title: '💀 Hard Mode Streaks', count: '8 achievements', icon: Flame },
+  const achievements = [
+    {
+      id: 'ach-1',
+      title: 'Fresh Blood',
+      desc: 'Attended your ver...',
+      rarity: 'Common',
+      badgeColor: 'bg-[#242426] text-[#8E8E93]',
+      icon: '💧',
+    },
+    {
+      id: 'ach-2',
+      title: 'Marathon Man',
+      desc: 'Played 15+ match...',
+      rarity: 'Rare',
+      badgeColor: 'bg-[#007AFF]/20 text-[#007AFF]',
+      icon: '👟',
+    },
+    {
+      id: 'ach-3',
+      title: 'Welcome to Hell',
+      desc: 'Won your first Har...',
+      rarity: 'Uncommon',
+      badgeColor: 'bg-[#30D158]/20 text-[#30D158]',
+      icon: '👹',
+    },
   ];
 
   return (
-    <div className="space-y-4 pb-24 pt-2 px-4">
-      {/* Profile Header */}
-      <Card className="p-4 bg-[#1C1C1E] border-[#2C2C2E]">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-[#68BD44] bg-[#242426]">
-            {currentUser.avatarUrl ? (
-              <img src={currentUser.avatarUrl} alt={currentUser.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center font-bold text-xl text-[#68BD44]">
-                {currentUser.name[0]}
-              </div>
-            )}
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-white">{currentUser.name}</h1>
-            <div className="mt-1 flex items-center gap-2">
-              <Badge variant="default" className="text-[10px]">
-                Level {currentUser.level}
-              </Badge>
-              <span className="text-xs text-[#8E8E93]">{currentUser.xp} XP</span>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#121212] text-white pb-24 pt-[84px] px-4 space-y-6 max-w-md mx-auto">
+      {/* 1. Header with Back Button */}
+      <div className="relative flex items-center justify-center pt-2">
+        <button
+          onClick={() => setActiveTab('home')}
+          className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426]"
+          title="Back to Home"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
 
-        {/* Quick Stats Grid */}
-        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[#2C2C2E] pt-3 text-center">
-          <div>
-            <span className="block text-[10px] text-[#8E8E93]">Games</span>
-            <span className="text-sm font-bold text-white">{currentUser.gamesPlayed}</span>
-          </div>
-          <div>
-            <span className="block text-[10px] text-[#8E8E93]">Wins</span>
-            <span className="text-sm font-bold text-[#68BD44]">{currentUser.wins}</span>
-          </div>
-          <div>
-            <span className="block text-[10px] text-[#8E8E93]">Streak</span>
-            <span className="text-sm font-bold text-[#FF9500]">🔥 {currentUser.winStreak}</span>
-          </div>
-        </div>
-      </Card>
-
-      {/* Tabs Switcher */}
-      <div className="flex rounded-xl bg-[#1C1C1E] p-1 border border-[#2C2C2E]">
-        <button
-          onClick={() => setActiveSection('achievements')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            activeSection === 'achievements' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          Achievements
-        </button>
-        <button
-          onClick={() => setActiveSection('attendance')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            activeSection === 'attendance' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          Attendance
-        </button>
-        <button
-          onClick={() => setActiveSection('billing')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            activeSection === 'billing' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          Balance
-        </button>
+        <h1 className="font-display text-lg font-bold text-white tracking-tight">
+          Profile
+        </h1>
       </div>
 
-      {/* Section Content */}
-      {activeSection === 'achievements' && (
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold text-[#8E8E93] uppercase tracking-wider">Achievement Categories (50 Total)</h2>
-          {categories.map((cat, idx) => (
-            <Card key={idx} className="flex items-center justify-between p-3.5 bg-[#1C1C1E] border-[#2C2C2E] hover:border-[#68BD44]/40 cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2C2C2E] text-[#68BD44]">
-                  <cat.icon className="h-5 w-5" />
+      {/* 2. Hero Player Banner Card */}
+      <PlayerCard avatarUrl={currentUser.avatarUrl} iconCount={4} />
+
+      {/* 3. User Name & Rank Progress */}
+      <div className="space-y-3">
+        <h2 className="font-display text-2xl font-bold text-white text-center tracking-tight">
+          {currentUser.name}
+        </h2>
+
+        {/* Pro Rank & XP Tracker */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between font-display">
+            <span className="text-base font-bold text-white">Pro</span>
+            <span className="text-xs text-[#8E8E93]">
+              <strong className="text-white">9302</strong>/10000
+            </span>
+          </div>
+
+          {/* 10 Segment Progress Bar */}
+          <div className="flex items-center gap-1">
+            {Array.from({ length: 10 }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-[4px] flex-1 rounded-full transition-colors duration-300 ${
+                  idx < 4 ? 'bg-white' : 'bg-[#2C2C2E]'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Quick Stats 3 Grid Cards */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-[20px] bg-[#1C1C1E] p-4 flex flex-col justify-between h-[90px]">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight">
+            {currentUser.gamesPlayed}
+          </span>
+          <span className="font-sans text-xs text-[#8E8E93] font-medium leading-tight">
+            Games played
+          </span>
+        </div>
+
+        <div className="rounded-[20px] bg-[#1C1C1E] p-4 flex flex-col justify-between h-[90px]">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight">
+            {currentUser.wins}
+          </span>
+          <span className="font-sans text-xs text-[#8E8E93] font-medium leading-tight">
+            Wins
+          </span>
+        </div>
+
+        <div className="rounded-[20px] bg-[#1C1C1E] p-4 flex flex-col justify-between h-[90px]">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight">
+            867
+          </span>
+          <span className="font-sans text-xs text-[#8E8E93] font-medium leading-tight">
+            BP
+          </span>
+        </div>
+      </div>
+
+      {/* 5. Achievements Section */}
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              Achievements
+            </h3>
+            <span className="font-display text-lg font-normal text-[#8E8E93]">4</span>
+          </div>
+
+          <button className="text-[#8E8E93] hover:text-white transition-colors">
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Achievements Cards Horizontal Row */}
+        <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+          {achievements.map((ach) => (
+            <div
+              key={ach.id}
+              className="w-[125px] min-w-[125px] h-[155px] rounded-[20px] bg-[#1C1C1E] p-3.5 flex flex-col items-center justify-between text-center shrink-0 border border-[#2C2C2E]/40"
+            >
+              <div className="text-3xl my-auto">{ach.icon}</div>
+              <div className="w-full space-y-1">
+                <div className="font-display text-xs font-bold text-white truncate">
+                  {ach.title}
                 </div>
-                <div>
-                  <div className="text-xs font-bold text-white">{cat.title}</div>
-                  <span className="text-[10px] text-[#8E8E93]">{cat.count}</span>
+                <div className="text-[10px] text-[#8E8E93] truncate">
+                  {ach.desc}
+                </div>
+                <div className="pt-1">
+                  <span className={`inline-block text-[9px] font-semibold px-2 py-0.5 rounded-full ${ach.badgeColor}`}>
+                    {ach.rarity}
+                  </span>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-[#8E8E93]" />
-            </Card>
+            </div>
           ))}
         </div>
-      )}
+      </div>
 
-      {activeSection === 'attendance' && (
-        <Card className="p-4 bg-[#1C1C1E] border-[#2C2C2E] text-center space-y-2">
-          <Calendar className="h-10 w-10 text-[#68BD44] mx-auto" />
-          <h3 className="text-sm font-bold text-white">Attendance Calendar</h3>
-          <p className="text-xs text-[#8E8E93]">Attended 12 training sessions this month. Perfect attendance!</p>
-        </Card>
-      )}
-
-      {activeSection === 'billing' && (
-        <Card className="p-4 bg-[#1C1C1E] border-[#2C2C2E] text-center space-y-3">
-          <CreditCard className="h-10 w-10 text-[#68BD44] mx-auto" />
-          <h3 className="text-sm font-bold text-white">Account Balance</h3>
-          <span className="block text-2xl font-extrabold text-[#68BD44]">$ 0</span>
-          <p className="text-xs text-[#8E8E93]">All past sessions are paid</p>
-        </Card>
-      )}
+      {/* 6. Action Menu Links */}
+      <div className="space-y-2.5 pt-2">
+        <MenuRowItem icon={Calendar} label="Attendance" />
+        <MenuRowItem icon={Receipt} label="Billing" />
+        <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />
+      </div>
     </div>
   );
 };

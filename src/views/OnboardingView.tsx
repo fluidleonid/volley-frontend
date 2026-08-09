@@ -106,7 +106,7 @@ export const OnboardingView: React.FC = () => {
 
       {/* Group 2: Center Player Card Component (40px empty space above and below) */}
       <div className="my-[40px] flex w-full justify-center">
-        <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#08080A] p-3.5 transition-all duration-300 w-full">
+        <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-[#1C1C1E] p-3.5 transition-all duration-300 w-full">
           
           {/* True Vector Shape Card Window */}
           <div className="relative w-full">

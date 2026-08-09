@@ -17,7 +17,7 @@ export const SplashScreen: React.FC = () => {
   return (
     <div
       onClick={() => setFlowState('onboarding')}
-      className="flex min-h-screen w-full cursor-pointer flex-col items-center justify-center bg-[#68BD44] px-6 text-white max-w-md mx-auto transition-opacity duration-500 select-none overflow-hidden"
+      className="fixed inset-0 z-50 flex h-full w-full cursor-pointer flex-col items-center justify-center bg-[#68BD44] px-6 text-white transition-opacity duration-500 select-none overflow-hidden"
     >
       {/* Centered Full Brand Logo (Figma Node: 11404:11369, w=140px visually centered) */}
       <div className="flex items-center justify-center animate-fade-in my-auto">
