@@ -12,6 +12,8 @@ export const TopHeader: React.FC = () => {
         return { label: 'Spectating', icon: Box, color: 'text-[#8E8E93]' };
       case 'queued':
         return { label: 'Queued', icon: Sparkles, color: 'text-[#68BD44]' };
+      case 'match_found':
+        return { label: 'Match Found!', icon: Sparkles, color: 'text-[#68BD44]' };
       case 'resting':
         return { label: 'Resting', icon: Coffee, color: 'text-amber-400' };
       default:

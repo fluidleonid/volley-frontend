@@ -8,12 +8,14 @@ export interface CourtCardProps {
   court: Court;
   showCoachToggle?: boolean;
   onToggleAvailability?: (courtId: string) => void;
+  onSelectCourt?: (court: Court) => void;
 }
 
 export const CourtCard: React.FC<CourtCardProps> = ({
   court,
   showCoachToggle = false,
   onToggleAvailability,
+  onSelectCourt,
 }) => {
   const isPlaying = court.teamA.length > 0 || court.teamB.length > 0;
   const isAvailable = court.isAvailable;
@@ -22,7 +24,8 @@ export const CourtCard: React.FC<CourtCardProps> = ({
   const [dotCount, setDotCount] = useState(1);
 
   useEffect(() => {
-    if (!isPlaying && isAvailable && court.statusText === 'Matching...') {
+    const isMatchingStatus = court.statusText === 'Matching...' || court.statusText === 'Matchmaking...';
+    if (!isPlaying && isAvailable && isMatchingStatus) {
       const interval = setInterval(() => {
         setDotCount((prev) => (prev % 3) + 1);
       }, 500);
@@ -34,9 +37,10 @@ export const CourtCard: React.FC<CourtCardProps> = ({
 
   return (
     <div
-      className={`relative flex h-[206px] min-h-[206px] max-h-[206px] w-[140px] min-w-[140px] max-w-[140px] shrink-0 flex-col justify-between rounded-[20px] bg-[#1C1C1E] p-3.5 shadow-lg overflow-hidden transition-opacity duration-200 ${
+      onClick={() => onSelectCourt && onSelectCourt(court)}
+      className={`relative flex h-[206px] min-h-[206px] max-h-[206px] w-[140px] min-w-[140px] max-w-[140px] shrink-0 flex-col justify-between rounded-[20px] bg-[#1C1C1E] p-3.5 shadow-lg overflow-hidden transition-all duration-200 ${
         isAvailable ? 'opacity-100' : 'opacity-40'
-      }`}
+      } ${onSelectCourt ? 'cursor-pointer hover:bg-[#242426] active:scale-95' : ''}`}
     >
       {/* Top Heading: Court Name & Coach Toggle */}
       <div className="flex items-center justify-between z-10">
@@ -47,7 +51,10 @@ export const CourtCard: React.FC<CourtCardProps> = ({
         {showCoachToggle && onToggleAvailability && (
           /* Coach Availability Admin Toggle Switch */
           <button
-            onClick={() => onToggleAvailability(court.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleAvailability(court.id);
+            }}
             className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
               court.isAvailable ? 'bg-[#68BD44]' : 'bg-[#3A3A3C]'
             }`}
@@ -96,15 +103,15 @@ export const CourtCard: React.FC<CourtCardProps> = ({
           </div>
         ) : (
           <div className="font-sans text-[11px] font-medium text-[#8E8E93] flex items-center justify-center">
-            {!isAvailable ? 'Reserved' : (
-              court.statusText === 'Matching...' ? (
-                <>
-                  <span>Matching</span>
-                  <span className="inline-block w-3 text-left">{animatedDots}</span>
-                </>
-              ) : (
-                court.statusText || 'Available'
-              )
+            {!isAvailable ? (
+              'Reserved'
+            ) : court.statusText === 'Matching...' || court.statusText === 'Matchmaking...' ? (
+              <>
+                <span>Matchmaking</span>
+                <span className="inline-block w-3 text-left">{animatedDots}</span>
+              </>
+            ) : (
+              court.statusText || 'Available'
             )}
           </div>
         )}

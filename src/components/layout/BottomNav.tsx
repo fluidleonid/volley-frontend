@@ -1,7 +1,8 @@
 import React from 'react';
 import { useAppStore } from '../../store/appStore';
 import { NavigationTab } from '../../types';
-import { Home, Trophy, Menu, ShieldCheck, Loader2 } from 'lucide-react';
+import { Home, Trophy, Menu, ShieldCheck } from 'lucide-react';
+import { MatchingBanner } from './MatchingBanner';
 
 interface NavItem {
   id: NavigationTab;
@@ -10,7 +11,7 @@ interface NavItem {
 }
 
 export const BottomNav: React.FC = () => {
-  const { activeTab, setActiveTab, role, playerState } = useAppStore();
+  const { activeTab, setActiveTab, role } = useAppStore();
 
   const navItems: NavItem[] = [
     { id: 'home', label: 'Home', icon: Home },
@@ -24,18 +25,8 @@ export const BottomNav: React.FC = () => {
       {/* Outer Floating Container (matching Figma Tabbar/bar Node: 11507:13430, fill=#0a0a0b, NO borders!) */}
       <nav className="flex flex-col overflow-hidden rounded-[32px] bg-[#0A0A0B]/95 p-1 shadow-2xl backdrop-blur-2xl space-y-1">
         
-        {/* Search / Matching Banner embedded INSIDE Floating Tabbar when Queued (Node ID: I11507:13430;11507:11409, fill=#1C1C1E, NO borders!) */}
-        {playerState === 'queued' && activeTab === 'home' && (
-          <div className="flex h-[52px] items-center justify-between rounded-[28px] bg-[#1C1C1E] pl-3.5 pr-2.5 py-1.5 animate-slide-up">
-            <div>
-              <div className="text-xs font-bold text-white leading-none">Matching...</div>
-              <div className="mt-1 text-[11px] text-[#8E8E93] leading-none">
-                Looking for free players around
-              </div>
-            </div>
-            <Loader2 className="h-5 w-5 animate-spin text-[#68BD44]" />
-          </div>
-        )}
+        {/* Search / Matching Banner embedded INSIDE Floating Tabbar */}
+        {activeTab === 'home' && <MatchingBanner />}
 
         {/* Tab Buttons Row (Node ID: I11507:13430;11507:11211, h=56px, w=353px, equal flex-1 children) */}
         <div className="flex h-[56px] items-center justify-between gap-1">

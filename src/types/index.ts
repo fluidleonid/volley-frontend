@@ -4,7 +4,7 @@ export type AppFlowState = 'splash' | 'onboarding' | 'app';
 
 export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach';
 
-export type PlayerState = 'spectating' | 'queued' | 'resting';
+export type PlayerState = 'spectating' | 'queued' | 'match_found' | 'resting';
 
 export interface Player {
   id: string;
@@ -24,7 +24,7 @@ export interface Court {
   id: string;
   name: string;
   courtNumber: number;
-  statusText?: 'Matching...' | 'In Progress' | 'Reserved...' | 'Reserved';
+  statusText?: 'Matching...' | 'Matchmaking...' | 'In Progress' | 'Reserved...' | 'Reserved';
   isActive: boolean;
   isAvailable: boolean; // Admin/Coach toggle state
   isHardmode: boolean;

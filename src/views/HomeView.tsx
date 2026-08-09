@@ -6,7 +6,8 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
 import { Avatar } from '../components/ui/Avatar';
 import { PlayerDetailSheet } from '../components/ui/PlayerDetailSheet';
-import { Player } from '../types';
+import { ActiveGameSheet } from '../components/ui/ActiveGameSheet';
+import { Player, Court } from '../types';
 import { Play, Plus, Pause, Square, Zap, Check, Users, History } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
@@ -24,10 +25,13 @@ export const HomeView: React.FC = () => {
     courts,
     todaysPlayers,
     recentMatches,
+    isMatchDetailOpen,
+    setMatchDetailOpen,
   } = useAppStore();
 
   const [copied, setCopied] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [selectedGameCourt, setSelectedGameCourt] = useState<Court | null>(null);
 
   const handleInvite = () => {
     navigator.clipboard.writeText('https://t.me/VolleyBot/app?startapp=invite');
@@ -84,8 +88,8 @@ export const HomeView: React.FC = () => {
           </div>
         )}
 
-        {/* STATE 2: Queued mode ("In queue" active, Node: 11420:16289) */}
-        {playerState === 'queued' && (
+        {/* STATE 2: Queued / Match Found mode ("In queue" active, Node: 11420:16289) */}
+        {(playerState === 'queued' || playerState === 'match_found') && (
           <div className="flex w-full items-center gap-2.5 text-center">
             {/* Hard mode button (w=90.5px, h=44px, radius=20px) */}
             <div className="flex flex-[0.9] flex-col items-center">
@@ -189,6 +193,7 @@ export const HomeView: React.FC = () => {
               court={court}
               showCoachToggle={role === 'coach'}
               onToggleAvailability={toggleCourtAvailability}
+              onSelectCourt={(c) => setSelectedGameCourt(c)}
             />
           ))}
         </div>
@@ -205,12 +210,11 @@ export const HomeView: React.FC = () => {
 
         {todaysPlayers.length > 0 ? (
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-            {todaysPlayers.map((player) => (
+            {todaysPlayers.map((player, idx) => (
               <div
-                key={player.id}
+                key={player.id || idx}
                 onClick={() => setSelectedPlayer(player)}
                 className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
-                title={`View ${player.name} details`}
               >
                 <Avatar
                   src={player.avatarUrl}
@@ -232,6 +236,15 @@ export const HomeView: React.FC = () => {
         player={selectedPlayer}
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
+      />
+
+      {/* Active Game Detail Sheet Modal */}
+      <ActiveGameSheet
+        isOpen={isMatchDetailOpen || !!selectedGameCourt}
+        onClose={() => {
+          setMatchDetailOpen(false);
+          setSelectedGameCourt(null);
+        }}
       />
 
       {/* 5. Recent Games Section */}

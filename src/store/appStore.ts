@@ -12,6 +12,7 @@ interface AppState {
   todaysPlayers: Player[];
   recentMatches: Match[];
   leaderboard: LeaderboardEntry[];
+  isMatchDetailOpen: boolean;
   
   // Actions
   setRole: (role: UserRole) => void;
@@ -25,6 +26,8 @@ interface AppState {
   stopTraining: () => void;
   continueToPlay: () => void;
   completeOnboarding: (asRole?: UserRole) => void;
+  finishMatch: (scoreA: number, scoreB: number) => void;
+  setMatchDetailOpen: (open: boolean) => void;
 }
 
 const initialCourts: Court[] = [
@@ -104,6 +107,7 @@ export const useAppStore = create<AppState>((set) => ({
   activeTab: 'home',
   playerState: 'spectating', // Initial default state: 'spectating' (Unjoined / Start training mode)
   isHardmode: false,
+  isMatchDetailOpen: false,
   
   currentUser: {
     id: 'p-me',
@@ -220,5 +224,46 @@ export const useAppStore = create<AppState>((set) => ({
     role: asRole,
     flowState: 'app',
     activeTab: 'home'
-  })
+  }),
+
+  finishMatch: (scoreA: number, scoreB: number) => set((state) => {
+    const isWin = scoreA > scoreB;
+    const newMatch: Match = {
+      id: `m-${Date.now()}`,
+      date: 'Today',
+      time: 'Just now',
+      courtName: '#2',
+      isHardmode: state.isHardmode,
+      teamA: [
+        { name: state.currentUser.name, avatarUrl: state.currentUser.avatarUrl },
+        { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+      ],
+      teamB: [
+        { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' },
+        { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
+      ],
+      scoreA,
+      scoreB,
+      isWin,
+      xpGained: isWin ? 65 : 20,
+      bpGained: isWin ? 1.5 : 0.5,
+    };
+
+    return {
+      playerState: 'spectating',
+      currentUser: {
+        ...state.currentUser,
+        status: 'spectating',
+        gamesPlayed: state.currentUser.gamesPlayed + 1,
+        wins: isWin ? state.currentUser.wins + 1 : state.currentUser.wins,
+        xp: state.currentUser.xp + (isWin ? 65 : 20),
+        bpToday: state.currentUser.bpToday + (isWin ? 1.5 : 0.5),
+        winStreak: isWin ? state.currentUser.winStreak + 1 : 0,
+      },
+      recentMatches: [newMatch, ...state.recentMatches],
+      isMatchDetailOpen: false,
+    };
+  }),
+
+  setMatchDetailOpen: (open: boolean) => set({ isMatchDetailOpen: open }),
 }));

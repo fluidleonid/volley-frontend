@@ -8,6 +8,7 @@ export interface AvatarProps {
   className?: string;
   style?: React.CSSProperties;
   hasBorder?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const sizeClasses = {
@@ -26,10 +27,12 @@ export const Avatar: React.FC<AvatarProps> = ({
   className = '',
   style,
   hasBorder = true,
+  onClick,
 }) => {
   return (
     <div
-      className={`overflow-hidden rounded-full ${hasBorder ? 'border border-white/20' : 'border-0'} bg-[#242426] flex items-center justify-center shrink-0 ${sizeClasses[size]} ${className}`}
+      onClick={onClick}
+      className={`overflow-hidden rounded-full ${hasBorder ? 'border border-white/20' : 'border-0'} bg-[#242426] flex items-center justify-center shrink-0 ${sizeClasses[size]} ${onClick ? 'cursor-pointer hover:opacity-90 active:scale-95 transition-all' : ''} ${className}`}
       style={style}
     >
       {src ? (

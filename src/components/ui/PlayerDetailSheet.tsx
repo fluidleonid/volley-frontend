@@ -28,7 +28,7 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   const filledFrames = Math.min(10, Math.max(1, Math.floor((xpValue % 10000) / 1000) || 4));
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[140] flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       {/* Backdrop overlay listener */}
       <div className="absolute inset-0" onClick={onClose} />
 

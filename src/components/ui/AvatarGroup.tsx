@@ -9,6 +9,7 @@ export interface AvatarGroupProps {
   stacked?: boolean; // Whether avatars overlap or just sit side by side
   ringColor?: string;
   hasBorder?: boolean;
+  onSelectPlayer?: (player: Player) => void;
 }
 
 export const AvatarGroup: React.FC<AvatarGroupProps> = ({ 
@@ -18,6 +19,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   stacked = true,
   ringColor = 'ring-[#1C1C1E]',
   hasBorder = true,
+  onSelectPlayer,
 }) => {
   if (!players || players.length === 0) return null;
 
@@ -31,6 +33,12 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
           initials={p.name[0]}
           size={size}
           hasBorder={hasBorder}
+          onClick={(e) => {
+            if (onSelectPlayer) {
+              e.stopPropagation();
+              onSelectPlayer(p);
+            }
+          }}
           className={stacked && ringColor ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : 'relative'}
         />
       ))}
