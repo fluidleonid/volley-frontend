@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ChevronLeft } from 'lucide-react';
 
 export interface SheetContextType {
@@ -106,7 +107,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     closeAll: handleCloseAll,
   };
 
-  return (
+  return createPortal(
     <SheetContext.Provider value={currentContextValue}>
       <div
         className="fixed inset-0 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 !mt-0"
@@ -190,6 +191,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           {children}
         </div>
       </div>
-    </SheetContext.Provider>
+    </SheetContext.Provider>,
+    document.body
   );
 };
