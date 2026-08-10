@@ -15,11 +15,11 @@ export const LeaderboardView: React.FC = () => {
   const [tab, setTab] = useState<TabType>('total');
 
   const getPlayerByRank = (rank: number) => leaderboard.find((l) => l.rank === rank);
-  
+
   const p1 = getPlayerByRank(1);
   const p2 = getPlayerByRank(2);
   const p3 = getPlayerByRank(3);
-  
+
   const rest = leaderboard.filter((l) => l.rank > 3);
 
   const tabs: { id: TabType; label: string }[] = [
@@ -35,7 +35,7 @@ export const LeaderboardView: React.FC = () => {
     <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
       {/* Background Graphic */}
       <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center bg-[#0a0a0b] rounded-b-[20px]">
-        <div 
+        <div
           className="w-[633px] shrink-0 h-full relative"
           style={{
             backgroundImage: `url(${bgImage})`,
@@ -45,10 +45,10 @@ export const LeaderboardView: React.FC = () => {
           }}
         >
           {/* Light Effect */}
-          <img 
-            src={lightSvg} 
-            className="absolute bottom-[98px] left-1/2 -translate-x-1/2 blur-[16px]" 
-            alt="" 
+          <img
+            src={lightSvg}
+            className="absolute bottom-[98px] left-1/2 -translate-x-1/2 blur-[16px]"
+            alt=""
           />
           {/* Bottom fade mask to blend with the #121212 background */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#121212] from-0% via-transparent to-transparent" />
@@ -56,14 +56,14 @@ export const LeaderboardView: React.FC = () => {
       </div>
 
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between mb-[5px] h-[44px]">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
-          
+
           <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[32px] rounded-full">
             <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
-            <div 
+            <div
               className="w-[22px] h-[22px] bg-[#78D850]"
               style={{
                 maskImage: `url(${bpIcon})`,
@@ -149,16 +149,15 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* Segment Controller */}
-        <div className="flex rounded-[12px] bg-[#1C1C1E] p-1 mb-6 relative z-20 max-w-[370px] mx-auto">
+        <div className="flex rounded-[20px] bg-[#1C1C1E] p-1 mb-6 relative z-20 w-full">
           {tabs.map((t, i) => {
             const isActive = tab === t.id;
             return (
               <div key={t.id} className="relative flex-1 flex">
                 <button
                   onClick={() => setTab(t.id)}
-                  className={`flex-1 rounded-[10px] py-1.5 text-xs font-bold transition-all relative z-10 ${
-                    isActive ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
-                  }`}
+                  className={`flex-1 rounded-[20px] py-1.5 text-xs font-bold transition-all relative z-10 ${isActive ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
+                    }`}
                 >
                   {t.label}
                 </button>
@@ -176,7 +175,7 @@ export const LeaderboardView: React.FC = () => {
           <div className="flex flex-col items-center justify-center mt-12 text-center">
             <div className="w-16 h-16 rounded-full border-2 border-[#78D850] flex items-center justify-center mb-4">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 16H17M7 11H13M8 4H16C17.1046 4 18 4.89543 18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6C6 4.89543 6.89543 4 8 4Z" stroke="#78D850" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 16H17M7 11H13M8 4H16C17.1046 4 18 4.89543 18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6C6 4.89543 6.89543 4 8 4Z" stroke="#78D850" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <h3 className="text-lg font-bold text-white">No rankings yet</h3>
