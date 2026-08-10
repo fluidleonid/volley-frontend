@@ -49,7 +49,6 @@ export const CoachHomeView: React.FC = () => {
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
 
   const handleInvite = () => {
-    sitOut(); // Exit the queue when pressing Invite
     setIsInviteOpen(true);
   };
 
