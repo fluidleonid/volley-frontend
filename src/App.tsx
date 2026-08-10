@@ -137,10 +137,10 @@ export function App() {
       {activeTab !== 'profile' && (
         <>
           <div
-            className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-[#121212] via-[#121212]/85 to-transparent backdrop-blur-md"
+            className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-[#121212]/80 via-[#121212]/40 to-transparent backdrop-blur-md"
             style={{
-              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
-              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
             }}
           />
 

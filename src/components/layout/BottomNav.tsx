@@ -23,7 +23,7 @@ export const BottomNav: React.FC = () => {
   return (
     <div className="fixed bottom-8 left-0 right-0 z-50 mx-auto w-full max-w-[480px] px-4 pointer-events-none">
       {/* Outer Floating Container (matching Figma Tabbar/bar Node: 11507:13430, fill=#0a0a0b, NO borders!) */}
-      <nav className="flex flex-col overflow-hidden rounded-[32px] bg-[#0A0A0B]/95 p-1 shadow-2xl backdrop-blur-2xl space-y-1 pointer-events-auto">
+      <nav className="flex flex-col overflow-hidden rounded-[32px] bg-[#0A0A0B]/60 p-1 shadow-2xl backdrop-blur-2xl space-y-1 pointer-events-auto">
         
         {/* Search / Matching Banner embedded INSIDE Floating Tabbar */}
         <MatchingBanner />
