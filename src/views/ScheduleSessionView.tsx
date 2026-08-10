@@ -46,9 +46,25 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
   const [selectedMinute, setSelectedMinute] = useState('00');
 
   // Special Date Picker Sheet State
+  const todayStr = new Date().toISOString().split('T')[0];
   const [isSpecialPickerOpen, setIsSpecialPickerOpen] = useState(false);
-  const [specialDateVal, setSpecialDateVal] = useState('2026-08-25');
-  const [specialTimeVal, setSpecialTimeVal] = useState('15:00');
+  const [specialDateVal, setSpecialDateVal] = useState(todayStr);
+  const [specialTimeVal, setSpecialTimeVal] = useState('');
+
+  const getFormattedDate = (dateStr: string) => {
+    if (!dateStr) return 'Pick a date';
+    const parts = dateStr.split('-');
+    const localDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return localDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const getFormattedTime = (timeStr: string) => {
+    if (!timeStr) return 'Pick a time';
+    const [h, m] = timeStr.split(':');
+    const date = new Date();
+    date.setHours(Number(h), Number(m));
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
 
   const toggleDay = (id: string) => {
     setDays((prev) =>
@@ -310,30 +326,32 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-4 pt-2 pb-4">
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Date</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
-                <Calendar className="h-5 w-5" />
-              </div>
+            <div className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 overflow-hidden">
+              <Calendar className="h-5 w-5 text-[#8E8E93] mr-3" />
+              <span className={`font-sans text-sm font-semibold ${specialDateVal ? 'text-white' : 'text-[#8E8E93]'}`}>
+                {getFormattedDate(specialDateVal)}
+              </span>
               <input
                 type="date"
                 value={specialDateVal}
                 onChange={(e) => setSpecialDateVal(e.target.value)}
-                className="w-full h-[44px] rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
             </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Start Time</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
-                <Clock className="h-5 w-5" />
-              </div>
+            <div className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 overflow-hidden">
+              <Clock className="h-5 w-5 text-[#8E8E93] mr-3" />
+              <span className={`font-sans text-sm font-semibold ${specialTimeVal ? 'text-white' : 'text-[#8E8E93]'}`}>
+                {getFormattedTime(specialTimeVal)}
+              </span>
               <input
                 type="time"
                 value={specialTimeVal}
                 onChange={(e) => setSpecialTimeVal(e.target.value)}
-                className="w-full h-[44px] rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
             </div>
           </div>
