@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
+import { User } from 'lucide-react';
 import bgImage from '../assets/leaderboard.png';
 import lightSvg from '../assets/light.svg';
 import place1Svg from '../assets/place1.svg';
 import place2Svg from '../assets/place2.svg';
 import place3Svg from '../assets/place3.svg';
 import bpIcon from '../assets/bp-icon.svg';
-import playerCardImg from '../assets/player-card.png';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 
@@ -185,16 +185,23 @@ export const LeaderboardView: React.FC = () => {
         ) : (
           <div className="flex flex-col relative z-20">
             {rest.map((entry) => (
-              <div key={entry.player.id} className="flex items-center justify-between py-3 border-b border-[#2C2C2E]/40 last:border-0">
-                <div className="flex items-center gap-4">
-                  <span className="text-white font-bold text-base w-6">{entry.rank}</span>
-                  <img src={entry.player.avatarUrl || playerCardImg} className="w-9 h-9 rounded-full object-cover bg-[#2C2C2E]" alt={entry.player.name} />
-                  <span className="text-white text-sm font-medium">{entry.player.name}</span>
+              <div key={entry.player.id} className="flex items-center px-4 py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
+                <div className="w-6 text-center mr-3 font-bold text-white text-[15px]">{entry.rank}</div>
+                <div className="flex-1 flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-[#1C1C1E] mr-3 border border-[#2C2C2E] flex items-center justify-center overflow-hidden">
+                    {entry.player.avatarUrl ? (
+                      <img src={entry.player.avatarUrl} className="w-full h-full object-cover" alt={entry.player.name} />
+                    ) : (
+                      <User className="h-5 w-5 text-[#8E8E93]" />
+                    )}
+                  </div>
+                  <span className="text-white text-[15px] font-medium">{entry.player.name}</span>
                 </div>
-                <span className="text-[#D4D4D4] text-sm">{entry.xp}</span>
+                <div className="text-right flex items-center gap-1.5">
+                  <span className="text-[#8E8E93] text-[15px]">{entry.xp} BP</span>
+                </div>
               </div>
-            ))}
-          </div>
+            ))}</div>
         )}
       </div>
     </div>
