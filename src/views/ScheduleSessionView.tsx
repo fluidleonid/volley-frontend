@@ -130,8 +130,8 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
             {days.map((day) => (
               <div
                 key={day.id}
-                className={`rounded-[20px] bg-[#1C1C1E] p-4 border transition-colors ${
-                  day.enabled ? 'border-[#2C2C2E]' : 'border-[#1C1C1E] opacity-60'
+                className={`rounded-[20px] bg-[#1C1C1E] p-4 transition-colors ${
+                  day.enabled ? '' : 'opacity-60'
                 }`}
               >
                 {/* Day Header Row with Toggle Switch */}
@@ -160,7 +160,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
                     {day.slots.map((slot, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3 py-1 text-xs font-semibold text-white border border-[#3A3A3C]"
+                        className="flex h-7 items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3 text-xs font-semibold text-white"
                       >
                         <span>{slot}</span>
                         <button
@@ -175,7 +175,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
                     {/* Add Slot Pill */}
                     <button
                       onClick={() => openTimePicker(day.id)}
-                      className="flex items-center gap-1 rounded-full bg-[#68BD44]/15 px-3 py-1 text-xs font-bold text-[#68BD44] hover:bg-[#68BD44]/25 transition-all cursor-pointer"
+                      className="flex h-7 items-center gap-1 rounded-full bg-[#68BD44]/15 px-3 text-xs font-bold text-[#68BD44] hover:bg-[#68BD44]/25 transition-all cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       <span>Add slot</span>
@@ -250,35 +250,45 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         title="Select slot time"
       >
         <div className="space-y-6 pt-2 pb-4">
-          <div className="flex items-center justify-center gap-4 bg-[#1C1C1E] p-4 rounded-[24px]">
+          <div className="flex items-center justify-center gap-4">
             {/* Hours Picker */}
-            <div className="flex flex-col items-center">
-              <span className="text-xs font-semibold text-[#8E8E93] mb-2">Hour</span>
-              <select
-                value={selectedHour}
-                onChange={(e) => setSelectedHour(e.target.value)}
-                className="bg-[#2C2C2E] text-white text-xl font-bold rounded-xl px-4 py-2 border border-[#3A3A3C] outline-none"
-              >
-                {hoursList.map((h) => (
-                  <option key={h} value={h}>{h}</option>
-                ))}
-              </select>
+            <div className="flex flex-col flex-1">
+              <span className="text-xs font-semibold text-[#8E8E93] mb-2 text-center">Hour</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <select
+                  value={selectedHour}
+                  onChange={(e) => setSelectedHour(e.target.value)}
+                  className="w-full h-[44px] appearance-none rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+                >
+                  {hoursList.map((h) => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <span className="text-2xl font-bold text-white pt-6">:</span>
+            <span className="text-2xl font-bold text-[#8E8E93] pt-6">:</span>
 
             {/* Minutes Picker */}
-            <div className="flex flex-col items-center">
-              <span className="text-xs font-semibold text-[#8E8E93] mb-2">Minute</span>
-              <select
-                value={selectedMinute}
-                onChange={(e) => setSelectedMinute(e.target.value)}
-                className="bg-[#2C2C2E] text-white text-xl font-bold rounded-xl px-4 py-2 border border-[#3A3A3C] outline-none"
-              >
-                {minutesList.map((m) => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+            <div className="flex flex-col flex-1">
+              <span className="text-xs font-semibold text-[#8E8E93] mb-2 text-center">Minute</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <select
+                  value={selectedMinute}
+                  onChange={(e) => setSelectedMinute(e.target.value)}
+                  className="w-full h-[44px] appearance-none rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+                >
+                  {minutesList.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -300,22 +310,32 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-4 pt-2 pb-4">
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Date</label>
-            <input
-              type="date"
-              value={specialDateVal}
-              onChange={(e) => setSpecialDateVal(e.target.value)}
-              className="w-full h-12 bg-[#1C1C1E] border border-[#2C2C2E] rounded-xl px-4 text-white text-sm outline-none"
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
+                <Calendar className="h-5 w-5" />
+              </div>
+              <input
+                type="date"
+                value={specialDateVal}
+                onChange={(e) => setSpecialDateVal(e.target.value)}
+                className="w-full h-[44px] rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Start Time</label>
-            <input
-              type="time"
-              value={specialTimeVal}
-              onChange={(e) => setSpecialTimeVal(e.target.value)}
-              className="w-full h-12 bg-[#1C1C1E] border border-[#2C2C2E] rounded-xl px-4 text-white text-sm outline-none"
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
+                <Clock className="h-5 w-5" />
+              </div>
+              <input
+                type="time"
+                value={specialTimeVal}
+                onChange={(e) => setSpecialTimeVal(e.target.value)}
+                className="w-full h-[44px] rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
+              />
+            </div>
           </div>
 
           <button

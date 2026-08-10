@@ -235,7 +235,7 @@ export const HomeView: React.FC = () => {
               {role === 'coach' && (
                 <button
                   onClick={() => setIsEndSessionConfirmOpen(true)}
-                  className="font-sans text-xs font-semibold text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
+                  className="font-sans text-sm font-bold text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
                 >
                   End Session
                 </button>
