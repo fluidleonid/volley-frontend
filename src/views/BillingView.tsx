@@ -110,7 +110,7 @@ export const BillingView: React.FC = () => {
                       ) : (
                         <button 
                           onClick={() => setSelectedRecord(record)}
-                          className="bg-white text-black px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-transform"
+                          className="bg-[#1C1C1E] text-white hover:bg-[#242426] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-all"
                         >
                           Settle
                         </button>
