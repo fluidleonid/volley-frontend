@@ -42,6 +42,8 @@ export const CoachHomeView: React.FC = () => {
     continueToPlay,
     courts,
     todaysPlayers,
+    isSessionActive,
+    toggleSession,
   } = useAppStore();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -56,146 +58,190 @@ export const CoachHomeView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-28 pt-[84px] px-4 max-w-[480px] mx-auto select-none">
-      {/* 1. Dynamic Action Buttons Container */}
-      <div className="flex flex-col items-center">
-        {/* STATE 1: Spectating ("Start training" mode) */}
-        {playerState === 'spectating' && (
-          <div className="w-full text-center">
+      {/* 1. Session Status Banner for Coach */}
+      {!isSessionActive ? (
+        <div className="relative overflow-hidden rounded-[24px] bg-[#1C1C1E] p-5 border border-[#2C2C2E]/60 shadow-xl flex flex-col justify-between h-[160px]">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#68BD44]/10 blur-2xl pointer-events-none" />
+          <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none flex items-center justify-center text-white text-7xl font-bold">
+            🎾
+          </div>
+
+          <div>
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3 py-1 text-xs font-semibold text-[#8E8E93] mb-2">
+              <span>Public Open Session</span>
+            </div>
+            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              No active training session
+            </h3>
+            <p className="font-sans text-xs text-[#8E8E93] mt-1 max-w-[260px] leading-relaxed">
+              Start or schedule a training session to open court matchmaking and player check-ins.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 pt-2 z-10">
             <button
-              onClick={startTraining}
-              className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
+              onClick={toggleSession}
+              className="flex-1 h-9 rounded-full bg-[#68BD44] text-[#050505] font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer"
             >
-              <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
-            </button>
-            <span className="mt-2 block font-sans text-sm font-medium text-[#8E8E93]">
               Start training
-            </span>
+            </button>
+            <button
+              onClick={toggleSession}
+              className="flex-1 h-9 rounded-full bg-[#2C2C2E] text-white font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
+            >
+              Schedule training
+            </button>
           </div>
-        )}
-
-        {/* STATE 2: Queued / Match Found mode for Coach (Sit out on LEFT, Invite to play on RIGHT, EQUAL WIDTH) */}
-        {(playerState === 'queued' || playerState === 'match_found') && (
-          <div className="grid grid-cols-2 gap-2.5 w-full text-center">
-            {/* Sit out button (LEFT) */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={sitOut}
-                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
-              >
-                <Pause className="h-5 w-5 fill-white text-white" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Sit out
-              </span>
-            </div>
-
-            {/* Invite to play button (RIGHT) */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={handleInvite}
-                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
-              >
-                <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Invite to play
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* STATE 3: Resting mode */}
-        {playerState === 'resting' && (
-          <div className="grid w-full grid-cols-2 gap-3 text-center">
-            {/* Stop button */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={stopTraining}
-                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
-              >
-                <Square className="h-5 w-5 fill-white text-white" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Stop
-              </span>
-            </div>
-
-            {/* Continue to play button */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={continueToPlay}
-                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
-              >
-                <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Continue to play
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 2. Courts Horizontal Slider Section */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
-          <span className="font-display text-lg font-normal text-[#8E8E93]">
-            {activeCourtsCount}/6
-          </span>
         </div>
-
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-          {courts.map((court) => (
-            <CourtCard
-              key={court.id}
-              court={court}
-              showCoachToggle={role === 'coach'}
-              onToggleAvailability={toggleCourtAvailability}
-              onSelectCourt={(c) => setSelectedCourt(c)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* 3. Today's Players Horizontal Row */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
-            <span className="font-display text-lg font-normal text-[#8E8E93]">
-              {todaysPlayers.length}
-            </span>
-          </div>
-
-          <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
-            <Plus className="h-4 w-4 stroke-[3]" /> Add
-          </button>
-        </div>
-
-        {todaysPlayers.length > 0 ? (
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-            {todaysPlayers.map((player) => (
-              <div
-                key={player.id}
-                onClick={() => setSelectedPlayer(player)}
-                className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
-                title={`View ${player.name} details`}
-              >
-                <Avatar
-                  src={player.avatarUrl}
-                  alt={player.name}
-                  initials={player.name[0]}
-                  size="lg"
-                  hasBorder={false}
-                />
+      ) : (
+        <>
+          {/* Dynamic Action Buttons Container */}
+          <div className="flex flex-col items-center">
+            {/* STATE 1: Spectating ("Start training" mode) */}
+            {playerState === 'spectating' && (
+              <div className="w-full text-center">
+                <button
+                  onClick={startTraining}
+                  className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
+                >
+                  <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
+                </button>
+                <span className="mt-2 block font-sans text-sm font-medium text-[#8E8E93]">
+                  Start training
+                </span>
               </div>
-            ))}
+            )}
+
+            {/* STATE 2: Queued / Match Found mode for Coach */}
+            {(playerState === 'queued' || playerState === 'match_found') && (
+              <div className="grid grid-cols-2 gap-2.5 w-full text-center">
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={sitOut}
+                    className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
+                  >
+                    <Pause className="h-5 w-5 fill-white text-white" />
+                  </button>
+                  <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                    Sit out
+                  </span>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={handleInvite}
+                    className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+                  >
+                    <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
+                  </button>
+                  <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                    Invite to play
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* STATE 3: Resting mode */}
+            {playerState === 'resting' && (
+              <div className="grid w-full grid-cols-2 gap-3 text-center">
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={stopTraining}
+                    className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
+                  >
+                    <Square className="h-5 w-5 fill-white text-white" />
+                  </button>
+                  <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                    Stop
+                  </span>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={continueToPlay}
+                    className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+                  >
+                    <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
+                  </button>
+                  <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                    Continue to play
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <EmptyState message="No players yet" icon={Users} />
-        )}
-      </div>
+
+          {/* 2. Courts Horizontal Slider Section */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
+                <span className="font-display text-lg font-normal text-[#8E8E93]">
+                  {activeCourtsCount}/6
+                </span>
+              </div>
+
+              <button
+                onClick={toggleSession}
+                className="font-sans text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors"
+              >
+                End Session
+              </button>
+            </div>
+
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+              {courts.map((court) => (
+                <CourtCard
+                  key={court.id}
+                  court={court}
+                  showCoachToggle={role === 'coach'}
+                  onToggleAvailability={toggleCourtAvailability}
+                  onSelectCourt={(c) => setSelectedCourt(c)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* 3. Today's Players Horizontal Row */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
+                <span className="font-display text-lg font-normal text-[#8E8E93]">
+                  {todaysPlayers.length}
+                </span>
+              </div>
+
+              <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
+                <Plus className="h-4 w-4 stroke-[3]" /> Add
+              </button>
+            </div>
+
+            {todaysPlayers.length > 0 ? (
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+                {todaysPlayers.map((player) => (
+                  <div
+                    key={player.id}
+                    onClick={() => setSelectedPlayer(player)}
+                    className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+                    title={`View ${player.name} details`}
+                  >
+                    <Avatar
+                      src={player.avatarUrl}
+                      alt={player.name}
+                      initials={player.name[0]}
+                      size="lg"
+                      hasBorder={false}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="No players yet" icon={Users} />
+            )}
+          </div>
+        </>
+      )}
 
       {/* 4. Today's Privates Section (Figma Node: 11562:13788) */}
       <div className="space-y-3">
