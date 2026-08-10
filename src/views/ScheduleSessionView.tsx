@@ -4,6 +4,7 @@ import { BottomSheet } from '../components/ui/BottomSheet';
 import { CustomTimePicker } from '../components/ui/CustomTimePicker';
 import { CustomDatePicker } from '../components/ui/CustomDatePicker';
 import { Plus, Trash2, Calendar, Clock } from 'lucide-react';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export interface ScheduleSessionViewProps {
   onClose: () => void;
@@ -32,10 +33,7 @@ const INITIAL_DAYS: DaySchedule[] = [
   { id: 'sun', dayName: 'Sunday', enabled: false, slots: [] },
 ];
 
-const INITIAL_SPECIAL: SpecialDateSchedule[] = [
-  { id: 'sp-1', date: '2026-08-15', time: '14:00' },
-  { id: 'sp-2', date: '2026-08-20', time: '10:30' },
-];
+const INITIAL_SPECIAL: SpecialDateSchedule[] = [];
 
 export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClose }) => {
   const [days, setDays] = useState<DaySchedule[]>(INITIAL_DAYS);
@@ -69,9 +67,17 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
   };
 
   const toggleDay = (id: string) => {
+    const day = days.find((d) => d.id === id);
+    if (!day) return;
+    const newlyEnabled = !day.enabled;
+    
     setDays((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, enabled: !d.enabled } : d))
+      prev.map((d) => (d.id === id ? { ...d, enabled: newlyEnabled } : d))
     );
+
+    if (newlyEnabled && day.slots.length === 0) {
+      openTimePicker(id);
+    }
   };
 
   const removeSlot = (dayId: string, slotIndex: number) => {
@@ -220,31 +226,35 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
           </div>
 
           <div className="space-y-2">
-            {specialDates.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between rounded-[20px] bg-[#1C1C1E] p-4 border border-[#2C2C2E]"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2C2C2E] text-[#68BD44]">
-                    <Calendar className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="font-display text-sm font-bold text-white">
-                      {item.date}
-                    </div>
-                    <div className="text-xs text-[#8E8E93]">Start at {item.time}</div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => removeSpecialDate(item.id)}
-                  className="text-[#8E8E93] hover:text-rose-400 p-2 transition-colors cursor-pointer"
+            {specialDates.length === 0 ? (
+              <EmptyState message="No special dates yet" icon={Calendar} />
+            ) : (
+              specialDates.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between rounded-[20px] bg-[#1C1C1E] p-4 border border-[#2C2C2E]"
                 >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2C2C2E] text-[#68BD44]">
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-display text-sm font-bold text-white">
+                        {item.date}
+                      </div>
+                      <div className="text-xs text-[#8E8E93]">Start at {item.time}</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => removeSpecialDate(item.id)}
+                    className="text-[#8E8E93] hover:text-rose-400 p-2 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
