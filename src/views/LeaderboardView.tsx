@@ -61,7 +61,7 @@ export const LeaderboardView: React.FC = () => {
         <div className="flex items-center justify-between mb-[5px] h-[44px]">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
 
-          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[32px] rounded-full">
+          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[28px] rounded-full">
             <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
             <div
               className="w-[22px] h-[22px] bg-[#78D850] -translate-y-[2px]"
@@ -185,7 +185,7 @@ export const LeaderboardView: React.FC = () => {
           <div className="flex flex-col relative z-20">
             {rest.map((entry) => (
               <div key={entry.player.id} className="flex items-center px-4 py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
-                <div className="w-6 text-center mr-3 font-bold text-white text-[15px]">{entry.rank}</div>
+                <div className="w-7 text-center mr-3 font-bold text-white text-[20px]">{entry.rank}</div>
                 <div className="flex-1 flex items-center">
                   <div className="w-10 h-10 rounded-full bg-[#1C1C1E] mr-3 border border-[#2C2C2E] flex items-center justify-center overflow-hidden">
                     {entry.player.avatarUrl ? (
@@ -194,10 +194,10 @@ export const LeaderboardView: React.FC = () => {
                       <User className="h-5 w-5 text-[#8E8E93]" />
                     )}
                   </div>
-                  <span className="text-white text-[15px] font-medium">{entry.player.name}</span>
+                  <span className="text-white text-[16px] font-medium">{entry.player.name}</span>
                 </div>
                 <div className="text-right flex items-center gap-1.5">
-                  <span className="text-[#8E8E93] text-[15px]">{entry.xp} BP</span>
+                  <span className="text-[#8E8E93] text-[16px]">{entry.xp} BP</span>
                 </div>
               </div>
             ))}</div>
