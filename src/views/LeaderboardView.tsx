@@ -36,9 +36,21 @@ export const LeaderboardView: React.FC = () => {
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
           
-          <div className="flex items-center gap-1.5 bg-[#1E311A]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#78D850]/20">
-            <span className="text-[#78D850] font-bold text-sm tracking-tight">{currentUser?.bpToday || 867}</span>
-            <img src={bpIcon} alt="BP" className="w-5 h-5 text-[#78D850]" />
+          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-2.5 h-6 rounded-full">
+            <span className="text-[#78D850] font-bold text-xs tracking-tight">{currentUser?.bpToday || 867}</span>
+            <div 
+              className="w-3.5 h-3.5 bg-[#78D850]"
+              style={{
+                maskImage: `url(${bpIcon})`,
+                WebkitMaskImage: `url(${bpIcon})`,
+                maskSize: 'contain',
+                WebkitMaskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                WebkitMaskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                WebkitMaskPosition: 'center'
+              }}
+            />
           </div>
         </div>
 
