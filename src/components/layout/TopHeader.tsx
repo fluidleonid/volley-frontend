@@ -57,7 +57,7 @@ export const TopHeader: React.FC = () => {
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-display text-[17px] font-bold tracking-tight text-white leading-tight group-hover:text-[#68BD44] transition-colors">
+              <span className="font-display text-[30px] font-bold tracking-tight text-white leading-tight group-hover:text-[#68BD44] transition-colors">
                 {currentUser.name}
               </span>
             </div>

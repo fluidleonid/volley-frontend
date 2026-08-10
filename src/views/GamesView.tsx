@@ -43,7 +43,7 @@ export const GamesView: React.FC = () => {
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
         {/* Header - Like Leaderboard but without BP badge */}
         <div className="flex items-center mb-5 h-[44px]">
-          <h1 className="text-[28px] font-bold text-white tracking-tight">My Games</h1>
+          <h1 className="text-[30px] font-bold text-white tracking-tight">My Games</h1>
         </div>
 
         {/* Grouped Matches */}

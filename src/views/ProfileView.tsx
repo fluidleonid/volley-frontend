@@ -50,7 +50,7 @@ export const ProfileView: React.FC = () => {
 
       {/* 3. User Name & Rank Progress */}
       <div className="space-y-3 mt-6">
-        <h2 className="font-display text-2xl font-bold text-white text-center tracking-tight">
+        <h2 className="font-display text-[30px] font-bold text-white text-center tracking-tight leading-none">
           {currentUser.name}
         </h2>
 
