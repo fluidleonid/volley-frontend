@@ -232,18 +232,15 @@ export const useAppStore = create<AppState>((set) => ({
   })),
 
   sendInvite: (teamA: Player[], teamB: Player[]) => set((state) => {
-    // Host creates a slot — goes to queued state so MatchingBanner shows radar animation
-    const isCurrentlyPlaying = state.playerState === 'playing';
-    const nextState: PlayerState = isCurrentlyPlaying ? 'playing' : 'queued';
     const allInvited = [...teamA.filter(p => p.id !== state.currentUser.id), ...teamB];
 
     return {
       invitedPlayers: allInvited,
       inviteTeamA: teamA,
       inviteTeamB: teamB,
-      playerState: nextState,
-      isInviteHost: !isCurrentlyPlaying,
-      currentUser: { ...state.currentUser, status: isCurrentlyPlaying ? 'playing' : 'queued' },
+      playerState: 'queued',
+      isInviteHost: true,
+      currentUser: { ...state.currentUser, status: 'queued' },
     };
   }),
 

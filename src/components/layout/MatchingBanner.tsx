@@ -216,10 +216,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     (acceptedCount >= 4 ? displayTeamB.length - 1 : 0);
   const remainingToWait = Math.max(1, totalPlayers - acceptedSoFar);
 
-  // Check if player is currently playing AND has an incoming/queued invite
-  const isPlayingAndHasInvite = playerState === 'playing' && invitedPlayers.length > 0;
-
-  // Single Banner rendering helper
+  // Helper renderer for single banner
   const renderSingleBanner = () => {
     if (bannerStage === 'searching' && playerState !== 'playing') {
       return (
@@ -298,26 +295,44 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     );
   };
 
-  // If currently playing AND received/created an invite pool for next game:
-  if (isPlayingAndHasInvite) {
+  // Render dual banner carousel whenever there are invited players / next game pool
+  const hasSecondBanner = invitedPlayers.length > 0 || (isInviteHost && hasInviteTeams);
+
+  if (hasSecondBanner) {
+    // Mock incoming invite players for visual demo
+    const incomingTeamA: Player[] = [
+      { id: 'inc-1', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 12, xp: 3100, status: 'playing', gamesPlayed: 50, wins: 30, bpToday: 2.0, winStreak: 3 },
+      { id: 'inc-2', name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 13, xp: 3500, status: 'playing', gamesPlayed: 60, wins: 38, bpToday: 4.2, winStreak: 5 },
+    ];
+    const incomingTeamB: Player[] = [
+      { id: 'inc-3', name: 'Michael B.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2000, status: 'playing', gamesPlayed: 32, wins: 19, bpToday: 1.1, winStreak: 1 },
+      { id: 'inc-4', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'playing', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
+    ];
+
+    const secondTeamA = hasInviteTeams ? inviteTeamA : incomingTeamA;
+    const secondTeamB = hasInviteTeams ? inviteTeamB : incomingTeamB;
+
     return (
       <div className="relative w-full overflow-hidden">
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pb-0.5">
-          {/* Main Active Playing Banner (Shrunk width so next banner peeks 40px) */}
+          {/* Primary Banner (Shrunk width so 2nd banner peeks 40px) */}
           <div className="w-[calc(100%-44px)] shrink-0">
             {renderSingleBanner()}
           </div>
 
           {/* Second Queued/Invited Game Banner (Shows Next Match & Avatars, No status button, 40px peek) */}
-          <div className="w-[calc(100%-44px)] shrink-0 flex h-[56px] items-center justify-between rounded-[28px] bg-[#1C1C1E] p-2 pl-3.5 opacity-90 hover:opacity-100 transition-opacity">
+          <div className="w-[calc(100%-44px)] shrink-0 flex h-[56px] items-center justify-between rounded-[28px] bg-[#1C1C1E] p-2 pl-3.5 opacity-95 hover:opacity-100 transition-opacity">
             <div className="flex flex-col justify-center">
-              <div className="text-xs font-bold text-white leading-none mb-1">Finding a court…</div>
+              <div className="text-xs font-bold text-white leading-none mb-1">
+                {isInviteHost ? 'Finding a court…' : 'Next game invite'}
+              </div>
               <div className="flex items-center gap-1.5">
-                <TeamAvatars players={displayTeamA} forceAccepted />
+                <TeamAvatars players={secondTeamA} forceAccepted />
                 <span className="text-[9px] font-bold text-[#8E8E93]/70 uppercase tracking-tight">vs</span>
-                <TeamAvatars players={displayTeamB} forceAccepted />
+                <TeamAvatars players={secondTeamB} forceAccepted />
               </div>
             </div>
+            {isInviteHost && <RadarBadge />}
           </div>
         </div>
       </div>
