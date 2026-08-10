@@ -29,8 +29,10 @@ export const LeaderboardView: React.FC = () => {
     { id: 'total', label: 'Total' },
   ];
 
+  const isEmpty = tab === 'today';
+
   return (
-    <div className="relative min-h-screen pb-32 select-none overflow-hidden bg-[#121212]">
+    <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
       {/* Background Graphic */}
       <div 
         className="absolute top-0 left-0 right-0 h-[500px] z-0 pointer-events-none"
@@ -49,7 +51,7 @@ export const LeaderboardView: React.FC = () => {
         <div className="flex items-center justify-between mb-10">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
           
-          <div className="flex items-center gap-1.5 bg-[#1E311A]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#78D850]/20 cursor-pointer transition-all active:scale-95" onClick={() => setTab(tab === 'empty' ? 'total' : 'empty')}>
+          <div className="flex items-center gap-1.5 bg-[#1E311A]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#78D850]/20">
             <span className="text-[#78D850] font-bold text-sm tracking-tight">{currentUser?.bpToday || 867}</span>
             <img src={bpIcon} alt="BP" className="w-5 h-5 text-[#78D850]" />
           </div>
@@ -60,7 +62,7 @@ export const LeaderboardView: React.FC = () => {
           {/* 2nd Place */}
           <div className="flex flex-col items-center justify-end flex-1">
             <div className="flex flex-col items-center mb-1 relative">
-              {tab === 'empty' ? (
+              {isEmpty ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
                   <User className="h-6 w-6 text-[#121212]" />
                 </div>
@@ -69,13 +71,13 @@ export const LeaderboardView: React.FC = () => {
               )}
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">2</div>
             </div>
-            {tab !== 'empty' && (
+            {!isEmpty && (
               <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p2?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p2?.xp} BP</span>
               </div>
             )}
-            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            {isEmpty && <div className="h-[40px] mt-3" />}
             <div 
               className="relative w-full max-w-[101px] h-[70px]" 
               style={{ backgroundImage: `url(${place2Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
@@ -85,7 +87,7 @@ export const LeaderboardView: React.FC = () => {
           {/* 1st Place */}
           <div className="flex flex-col items-center justify-end flex-1 z-10 mx-[-8px]">
             <div className="flex flex-col items-center mb-1 relative">
-              {tab === 'empty' ? (
+              {isEmpty ? (
                 <div className="w-[68px] h-[68px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10 shadow-[0_0_20px_rgba(120,216,80,0.15)]">
                   <User className="h-7 w-7 text-[#121212]" />
                 </div>
@@ -94,13 +96,13 @@ export const LeaderboardView: React.FC = () => {
               )}
               <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#121212] z-20">1</div>
             </div>
-            {tab !== 'empty' && (
+            {!isEmpty && (
               <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
                 <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{p1?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p1?.xp} BP</span>
               </div>
             )}
-            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            {isEmpty && <div className="h-[40px] mt-3" />}
             <div 
               className="relative w-full max-w-[100px] h-[98px]" 
               style={{ backgroundImage: `url(${place1Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
@@ -110,7 +112,7 @@ export const LeaderboardView: React.FC = () => {
           {/* 3rd Place */}
           <div className="flex flex-col items-center justify-end flex-1">
             <div className="flex flex-col items-center mb-1 relative">
-              {tab === 'empty' ? (
+              {isEmpty ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
                   <User className="h-6 w-6 text-[#121212]" />
                 </div>
@@ -119,13 +121,13 @@ export const LeaderboardView: React.FC = () => {
               )}
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">3</div>
             </div>
-            {tab !== 'empty' && (
+            {!isEmpty && (
               <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p3?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p3?.xp} BP</span>
               </div>
             )}
-            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            {isEmpty && <div className="h-[40px] mt-3" />}
             <div 
               className="relative w-full max-w-[102px] h-[42px]" 
               style={{ backgroundImage: `url(${place3Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
@@ -149,7 +151,7 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* List Content */}
-        {tab === 'empty' ? (
+        {isEmpty ? (
           <div className="flex flex-col items-center justify-center mt-12 text-center">
             <div className="w-16 h-16 rounded-full border-2 border-[#78D850] flex items-center justify-center mb-4">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
