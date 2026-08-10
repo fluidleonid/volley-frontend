@@ -89,7 +89,7 @@ export const LeaderboardView: React.FC = () => {
               ) : (
                 <img src={p2?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p2?.player.name} />
               )}
-              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">2</div>
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">2</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
@@ -111,7 +111,7 @@ export const LeaderboardView: React.FC = () => {
               ) : (
                 <img src={p1?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p1?.player.name} />
               )}
-              <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">1</div>
+              <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">1</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
@@ -133,7 +133,7 @@ export const LeaderboardView: React.FC = () => {
               ) : (
                 <img src={p3?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p3?.player.name} />
               )}
-              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">3</div>
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">3</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
