@@ -72,7 +72,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
             <button onClick={prevMonth} className="p-2 text-[#8E8E93] hover:text-white bg-[#2C2C2E] rounded-full cursor-pointer">
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="font-bold text-white text-base">
+            <span className="font-display text-lg font-bold text-white tracking-tight">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
             <button onClick={nextMonth} className="p-2 text-[#8E8E93] hover:text-white bg-[#2C2C2E] rounded-full cursor-pointer">
@@ -95,6 +95,11 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
                   selectedDate.getDate() === d && 
                   selectedDate.getMonth() === currentDate.getMonth() && 
                   selectedDate.getFullYear() === currentDate.getFullYear();
+                  
+                const isToday = 
+                  new Date().getDate() === d && 
+                  new Date().getMonth() === currentDate.getMonth() && 
+                  new Date().getFullYear() === currentDate.getFullYear();
 
                 return (
                   <button
@@ -103,7 +108,9 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
                     className={`h-10 w-10 mx-auto rounded-full flex items-center justify-center text-sm font-bold transition-all cursor-pointer ${
                       isSelected 
                         ? 'bg-[#68BD44] text-[#050505]' 
-                        : 'text-white hover:bg-[#2C2C2E]'
+                        : isToday
+                          ? 'text-[#68BD44] hover:bg-[#2C2C2E]'
+                          : 'text-white hover:bg-[#2C2C2E]'
                     }`}
                   >
                     {d}

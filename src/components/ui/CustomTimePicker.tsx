@@ -212,37 +212,33 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
         </div>
 
         {/* Clock Face or empty space */}
-        <div className="h-[232px] flex items-center justify-center">
-          {!isKeyboardMode ? renderClockFace() : (
-             <div className="text-[#8E8E93] text-sm text-center">
-               Enter time manually
-             </div>
-          )}
-        </div>
+        {!isKeyboardMode && (
+          <div className="h-[232px] flex items-center justify-center">
+            {renderClockFace()}
+          </div>
+        )}
 
         {/* Bottom Actions */}
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex items-center gap-3 mt-6">
           <button 
             onClick={() => setIsKeyboardMode(!isKeyboardMode)}
-            className="p-2 -ml-2 text-[#8E8E93] hover:text-white transition-colors rounded-full"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2C2C2E] text-[#8E8E93] hover:text-white transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
           >
             {isKeyboardMode ? <ClockIcon className="h-5 w-5" /> : <Keyboard className="h-5 w-5" />}
           </button>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-[#68BD44] font-bold text-sm hover:bg-[#68BD44]/10 rounded-full transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleConfirm}
-              className="px-4 py-2 text-[#68BD44] font-bold text-sm hover:bg-[#68BD44]/10 rounded-full transition-colors"
-            >
-              OK
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="flex-1 h-12 rounded-full bg-[#2C2C2E] text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="flex-1 h-12 rounded-full bg-[#68BD44] text-[#050505] font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer"
+          >
+            OK
+          </button>
         </div>
 
       </div>
