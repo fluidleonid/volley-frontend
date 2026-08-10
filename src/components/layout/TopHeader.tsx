@@ -94,7 +94,7 @@ export const TopHeader: React.FC = () => {
 
           {/* XP Level Tracker Bar: 10 Frame Segments (Only for Player role) */}
           {role === 'player' && (
-            <div className="flex items-center gap-[3px] h-[18px]">
+            <div className="flex items-center gap-[4px] h-[18px]">
               {Array.from({ length: 10 }).map((_, idx) => (
                 <span
                   key={idx}
