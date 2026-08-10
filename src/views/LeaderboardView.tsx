@@ -64,7 +64,7 @@ export const LeaderboardView: React.FC = () => {
           <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[32px] rounded-full">
             <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
             <div
-              className="w-[22px] h-[22px] bg-[#78D850]"
+              className="w-[22px] h-[22px] bg-[#78D850] -translate-y-[2px]"
               style={{
                 maskImage: `url(${bpIcon})`,
                 WebkitMaskImage: `url(${bpIcon})`,
