@@ -44,8 +44,7 @@ export const TopHeader: React.FC = () => {
                 src={currentUser.avatarUrl}
                 alt={currentUser.name}
                 initials={currentUser.name[0]}
-                size="lg"
-                className="border-none"
+                className="w-[44px] h-[44px] border-none"
               />
             </div>
             {role === 'coach' && (
@@ -55,24 +54,24 @@ export const TopHeader: React.FC = () => {
             )}
           </div>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-display text-[30px] font-bold tracking-tight text-white leading-tight group-hover:text-[#68BD44] transition-colors">
+          <div className="flex flex-col h-[46px] justify-between">
+            <div className="flex items-center leading-none">
+              <span className="font-display text-[30px] font-bold tracking-tight text-white leading-none group-hover:text-[#68BD44] transition-colors">
                 {currentUser.name}
               </span>
             </div>
-            <div className="flex items-center gap-1 text-[12px] font-medium text-[#8E8E93] mt-0.5">
+            <div className="flex items-center gap-1 text-[12px] font-medium text-[#8E8E93] h-[18px]">
               <StatusIcon className={`h-3.5 w-3.5 ${statusInfo.color}`} />
-              <span className={statusInfo.color}>{statusInfo.label}</span>
+              <span className={`${statusInfo.color} leading-none`}>{statusInfo.label}</span>
             </div>
           </div>
         </div>
 
         {/* Right: XP Value & 10-Frame Level Tracker for Player role only */}
-        <div className="flex flex-col items-end gap-1.5">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col h-[46px] justify-between items-end">
+          <div className="flex items-center gap-2 leading-none mt-1">
             {role === 'player' && (
-              <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
+              <span className="font-display text-[18px] font-extrabold tracking-tight text-white leading-none">
                 {currentUser.xp.toFixed(1)} XP
               </span>
             )}
@@ -84,7 +83,7 @@ export const TopHeader: React.FC = () => {
               title="Switch Role for Testing"
             >
               {role === 'coach' ? (
-                <span className="text-[#68BD44] font-bold flex items-center gap-1">
+                <span className="text-[#68BD44] font-bold flex items-center gap-1 leading-none">
                   <Shield className="h-3 w-3 text-[#68BD44]" /> Admin
                 </span>
               ) : (
@@ -95,7 +94,7 @@ export const TopHeader: React.FC = () => {
 
           {/* XP Level Tracker Bar: 10 Frame Segments (Only for Player role) */}
           {role === 'player' && (
-            <div className="flex items-center gap-[3px]">
+            <div className="flex items-center gap-[3px] h-[18px]">
               {Array.from({ length: 10 }).map((_, idx) => (
                 <span
                   key={idx}
