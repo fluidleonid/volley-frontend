@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Keyboard, Clock as ClockIcon } from 'lucide-react';
+import { Keyboard, Clock as ClockIcon, X } from 'lucide-react';
 
 const CLOCK_RADIUS = 100;
 const NUMBER_RADIUS = CLOCK_RADIUS - 24;
@@ -124,10 +124,22 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-[340px] bg-[#1C1C1E] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6">
+      <div className="w-full max-w-[340px] bg-[#121212] rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
         
-        {/* Header Title */}
-        <h3 className="font-sans text-xs font-semibold text-[#8E8E93] mb-5">{title}</h3>
+        {/* Header Row */}
+        <div className="relative flex h-[44px] items-center justify-center pt-0 mb-[24px] select-none shrink-0">
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            {title}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
+            title="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
         {/* Digital Time Display */}
         <div className="flex items-center justify-center gap-2 mb-8">

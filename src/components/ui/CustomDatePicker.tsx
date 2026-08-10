@@ -50,15 +50,24 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-[360px] bg-[#1C1C1E] rounded-[24px] border border-[#2C2C2E] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#2C2C2E]">
-          <h3 className="font-display text-lg font-bold text-white">{title}</h3>
-          <button onClick={onClose} className="text-[#8E8E93] hover:text-white transition-colors cursor-pointer">
+      <div className="w-full max-w-[340px] bg-[#121212] rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
+        
+        {/* Header Row */}
+        <div className="relative flex h-[44px] items-center justify-center pt-0 mb-[24px] select-none shrink-0">
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            {title}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
+            title="Close"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
         
-        <div className="p-5 space-y-6">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <button onClick={prevMonth} className="p-2 text-[#8E8E93] hover:text-white bg-[#2C2C2E] rounded-full cursor-pointer">
               <ChevronLeft className="h-4 w-4" />
