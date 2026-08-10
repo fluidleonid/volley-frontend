@@ -28,6 +28,8 @@ export const HomeView: React.FC = () => {
     recentMatches,
     isMatchDetailOpen,
     setMatchDetailOpen,
+    isSessionActive,
+    toggleSession,
   } = useAppStore();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -167,68 +169,119 @@ export const HomeView: React.FC = () => {
         )}
       </div>
 
-      {/* 3. Courts Horizontal Slider Section (Scrollbar Hidden, radius=24px) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
-            <span className="font-display text-lg font-normal text-[#8E8E93]">
-              {courts.filter((c) => c.isAvailable).length}/6
-            </span>
-          </div>
+      {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
+      {!isSessionActive ? (
+        <div className="space-y-4">
+          {/* Banner Placeholder Card matching app design system */}
+          <div className="relative overflow-hidden rounded-[24px] bg-[#1C1C1E] p-5 border border-[#2C2C2E]/60 shadow-xl flex flex-col justify-between h-[160px]">
+            {/* Banner Background Decorative Placeholder Graphic */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#68BD44]/10 blur-2xl pointer-events-none" />
+            <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none flex items-center justify-center text-white text-7xl font-bold">
+              🎾
+            </div>
 
-          {role === 'coach' && (
-            <span className="font-sans text-xs font-semibold text-[#68BD44]">
-              Coach Availability Active
-            </span>
-          )}
-        </div>
-
-        {/* Horizontal Scrollable Courts with Invisible Scrollbar */}
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-          {courts.map((court) => (
-            <CourtCard
-              key={court.id}
-              court={court}
-              showCoachToggle={role === 'coach'}
-              onToggleAvailability={toggleCourtAvailability}
-              onSelectCourt={(c) => setSelectedGameCourt(c)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* 4. Today's Players Horizontal Row */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
-          <span className="font-display text-lg font-normal text-[#8E8E93]">
-            {todaysPlayers.length}
-          </span>
-        </div>
-
-        {todaysPlayers.length > 0 ? (
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-            {todaysPlayers.map((player, idx) => (
-              <div
-                key={player.id || idx}
-                onClick={() => setSelectedPlayer(player)}
-                className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
-              >
-                <Avatar
-                  src={player.avatarUrl}
-                  alt={player.name}
-                  initials={player.name[0]}
-                  size="lg"
-                  hasBorder={false}
-                />
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3 py-1 text-xs font-semibold text-[#8E8E93] mb-2">
+                <span>Public Open Session</span>
               </div>
-            ))}
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                No active training session
+              </h3>
+              <p className="font-sans text-xs text-[#8E8E93] mt-1 max-w-[260px] leading-relaxed">
+                {role === 'coach'
+                  ? 'Start or schedule a training session to open court matchmaking and player check-ins.'
+                  : 'There are no active training sessions scheduled right now. Check back soon!'}
+              </p>
+            </div>
+
+            {/* Coach Actions */}
+            {role === 'coach' && (
+              <div className="flex items-center gap-2 pt-2 z-10">
+                <button
+                  onClick={toggleSession}
+                  className="flex-1 h-9 rounded-full bg-[#68BD44] text-[#050505] font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer"
+                >
+                  Start training
+                </button>
+                <button
+                  onClick={toggleSession}
+                  className="flex-1 h-9 rounded-full bg-[#2C2C2E] text-white font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
+                >
+                  Schedule training
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
-          <EmptyState message="No players yet" icon={Users} />
-        )}
-      </div>
+        </div>
+      ) : (
+        <>
+          {/* 3. Courts Horizontal Slider Section (Scrollbar Hidden, radius=24px) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
+                <span className="font-display text-lg font-normal text-[#8E8E93]">
+                  {courts.filter((c) => c.isAvailable).length}/6
+                </span>
+              </div>
+
+              {role === 'coach' && (
+                <button
+                  onClick={toggleSession}
+                  className="font-sans text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors"
+                >
+                  End Session
+                </button>
+              )}
+            </div>
+
+            {/* Horizontal Scrollable Courts with Invisible Scrollbar */}
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+              {courts.map((court) => (
+                <CourtCard
+                  key={court.id}
+                  court={court}
+                  showCoachToggle={role === 'coach'}
+                  onToggleAvailability={toggleCourtAvailability}
+                  onSelectCourt={(c) => setSelectedGameCourt(c)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* 4. Today's Players Horizontal Row */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-1.5">
+              <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
+              <span className="font-display text-lg font-normal text-[#8E8E93]">
+                {todaysPlayers.length}
+              </span>
+            </div>
+
+            {todaysPlayers.length > 0 ? (
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+                {todaysPlayers.map((player, idx) => (
+                  <div
+                    key={player.id || idx}
+                    onClick={() => setSelectedPlayer(player)}
+                    className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+                  >
+                    <Avatar
+                      src={player.avatarUrl}
+                      alt={player.name}
+                      initials={player.name[0]}
+                      size="lg"
+                      hasBorder={false}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="No players yet" icon={Users} />
+            )}
+          </div>
+        </>
+      )}
 
       {/* Player Detail Sheet Modal */}
       <PlayerDetailSheet

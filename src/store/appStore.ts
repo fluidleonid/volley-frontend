@@ -18,11 +18,14 @@ interface AppState {
   inviteTeamB: Player[];
   isInviteHost: boolean;
   
+  isSessionActive: boolean;
+  
   // Actions
   setRole: (role: UserRole) => void;
   setFlowState: (flowState: AppFlowState) => void;
   setActiveTab: (tab: NavigationTab) => void;
   setPlayerState: (state: PlayerState) => void;
+  toggleSession: () => void;
   toggleHardmode: () => void;
   toggleCourtAvailability: (courtId: string) => void;
   startTraining: () => void;
@@ -139,10 +142,20 @@ export const useAppStore = create<AppState>((set) => ({
     { rank: 3, player: { id: 'p-me', name: 'John Doe (You)', level: 12, xp: 9062, status: 'spectating', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4 }, wins: 70, winRate: 57.3, xp: 9062 }
   ],
   
+  isSessionActive: false,
+
   setRole: (role) => set({ role }),
   setFlowState: (flowState) => set({ flowState }),
   setActiveTab: (tab) => set({ activeTab: tab }),
   setPlayerState: (playerState) => set({ playerState }),
+  toggleSession: () => set((state) => {
+    const nextSession = !state.isSessionActive;
+    return {
+      isSessionActive: nextSession,
+      courts: nextSession ? joinedCourts : initialCourts,
+      todaysPlayers: nextSession ? todaysPlayers12 : [],
+    };
+  }),
   
   toggleHardmode: () => set((state) => ({ 
     isHardmode: !state.isHardmode,
@@ -162,6 +175,7 @@ export const useAppStore = create<AppState>((set) => ({
   })),
   
   startTraining: () => set((state) => ({
+    isSessionActive: true,
     playerState: 'queued',
     currentUser: { ...state.currentUser, status: 'queued' },
     courts: joinedCourts,
