@@ -30,6 +30,22 @@ export const LeaderboardView: React.FC = () => {
 
   return (
     <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
+      {/* Background Graphic */}
+      <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center">
+        <div 
+          className="w-full max-w-[480px] h-full relative"
+          style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: '100% auto',
+            backgroundPosition: 'bottom center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          {/* Bottom fade mask to blend with the #121212 background */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121212] from-0% via-transparent to-transparent" />
+        </div>
+      </div>
+
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[64px]">
         
         {/* Header */}
@@ -55,18 +71,7 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* Podium Section */}
-        <div 
-          className="relative flex items-end justify-center mb-6 h-[226px] -mx-4 px-4 overflow-hidden"
-          style={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundSize: '100% auto',
-            backgroundPosition: 'bottom center',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          {/* Bottom fade mask to blend with the #121212 background */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent pointer-events-none" />
-
+        <div className="relative flex items-end justify-center mb-6 h-[226px] -mx-4 px-4 overflow-hidden">
           {/* 2nd Place */}
           <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
