@@ -106,10 +106,10 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
         <div className="relative flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95"
+            className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
             title="Back"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
 
           <h1 className="font-display text-lg font-bold text-white tracking-tight">
@@ -118,10 +118,10 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
 
           <button
             onClick={handleBack}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95"
+            className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
             title="Close"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
       </div>

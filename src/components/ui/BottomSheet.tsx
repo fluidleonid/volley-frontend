@@ -156,10 +156,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                     e.stopPropagation();
                     onClose();
                   }}
-                  className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white"
+                  className="absolute left-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white cursor-pointer active:scale-95"
                   title="Back to previous sheet"
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
               )}
 
@@ -179,10 +179,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   e.stopPropagation();
                   handleCloseAll();
                 }}
-                className="absolute right-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white"
+                className="absolute right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white cursor-pointer active:scale-95"
                 title="Close all sheets"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           )}

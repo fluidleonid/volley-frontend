@@ -41,10 +41,10 @@ export const ProfileView: React.FC = () => {
         <div className="relative flex items-center justify-center">
           <button
             onClick={() => setActiveTab('home')}
-            className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426]"
+            className="absolute left-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
             title="Back to Home"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
 
           <h1 className="font-display text-lg font-bold text-white tracking-tight">
