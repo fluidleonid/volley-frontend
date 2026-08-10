@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import bgImage from '../assets/leaderboard.png';
+import lightSvg from '../assets/light.svg';
 import place1Svg from '../assets/place1.svg';
 import place2Svg from '../assets/place2.svg';
 import place3Svg from '../assets/place3.svg';
@@ -33,7 +34,7 @@ export const LeaderboardView: React.FC = () => {
   return (
     <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
       {/* Background Graphic */}
-      <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center">
+      <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center bg-[#0a0a0b] rounded-b-[20px]">
         <div 
           className="w-[633px] shrink-0 h-full relative"
           style={{
@@ -43,15 +44,21 @@ export const LeaderboardView: React.FC = () => {
             backgroundRepeat: 'no-repeat',
           }}
         >
+          {/* Light Effect */}
+          <img 
+            src={lightSvg} 
+            className="absolute bottom-[98px] left-1/2 -translate-x-1/2 blur-[16px]" 
+            alt="" 
+          />
           {/* Bottom fade mask to blend with the #121212 background */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#121212] from-0% via-transparent to-transparent" />
         </div>
       </div>
 
-      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[64px]">
+      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-2 h-[44px]">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
           
           <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-2.5 h-6 rounded-full">
@@ -78,13 +85,13 @@ export const LeaderboardView: React.FC = () => {
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
-                <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-lg">
+                <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10">
                   <span className="text-white text-xl font-bold">?</span>
                 </div>
               ) : (
-                <img src={p2?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover z-10 shadow-lg" alt={p2?.player.name} />
+                <img src={p2?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p2?.player.name} />
               )}
-              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">2</div>
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">2</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
@@ -100,13 +107,13 @@ export const LeaderboardView: React.FC = () => {
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-20">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
-                <div className="w-[68px] h-[68px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-[0_0_20px_rgba(120,216,80,0.15)]">
+                <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10">
                   <span className="text-white text-2xl font-bold">?</span>
                 </div>
               ) : (
-                <img src={p1?.player.avatarUrl || playerCardImg} className="w-[68px] h-[68px] rounded-full object-cover z-10 shadow-[0_0_20px_rgba(120,216,80,0.2)]" alt={p1?.player.name} />
+                <img src={p1?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p1?.player.name} />
               )}
-              <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#121212] z-20">1</div>
+              <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">1</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
@@ -122,13 +129,13 @@ export const LeaderboardView: React.FC = () => {
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
-                <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-lg">
+                <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10">
                   <span className="text-white text-xl font-bold">?</span>
                 </div>
               ) : (
-                <img src={p3?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover z-10 shadow-lg" alt={p3?.player.name} />
+                <img src={p3?.player.avatarUrl} className="w-[60px] h-[60px] rounded-full object-cover z-10" alt={p3?.player.name} />
               )}
-              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">3</div>
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black border-2 border-[#121212] z-20">3</div>
             </div>
             {!isEmpty && (
               <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
