@@ -118,7 +118,7 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
         {/* Action Button */}
         <button
           onClick={onClose}
-          className="flex h-[52px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold shadow-lg transition-all active:scale-95 cursor-pointer mt-6"
+          className="flex h-[60px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold shadow-lg transition-all active:scale-95 cursor-pointer mt-6"
         >
           Finish
         </button>

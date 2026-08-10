@@ -28,7 +28,7 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
     >
       <div className="flex flex-col h-full bg-[#121212]">
         {/* Content with padding similar to match details */}
-        <div className="flex-1 px-4 pb-6 overflow-y-auto pt-2">
+        <div className="flex-1 px-[60px] pb-6 overflow-y-auto pt-2">
           {/* Badge & Amount */}
           <div className="flex flex-col items-center justify-center mt-2 mb-8">
             <div className={`text-sm font-semibold px-4 py-1.5 rounded-full mb-6 ${isPaidAdmin ? 'bg-[#68BD44]/10 text-[#68BD44]' : 'bg-[#1C1C1E] text-[#8E8E93]'}`}>
@@ -60,7 +60,7 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
             {isPaidAdmin ? (
               <button
                 onClick={onClose}
-                className="w-full h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                className="w-full h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
               >
                 Mark as Unpaid
               </button>
@@ -68,14 +68,14 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
               <>
                 <button
                   onClick={onClose}
-                  className="flex-1 h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                  className="flex-1 h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
                 >
                   <CreditCard className="w-5 h-5 text-[#8E8E93]" />
                   Card
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                  className="flex-1 h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
                 >
                   <Banknote className="w-5 h-5 text-[#8E8E93]" />
                   Cash
