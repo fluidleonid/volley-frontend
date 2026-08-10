@@ -139,7 +139,12 @@ export const useAppStore = create<AppState>((set) => ({
   leaderboard: [
     { rank: 1, player: { id: 'lb-1', name: 'Sarah M.', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 }, wins: 55, winRate: 68.7, xp: 4200 },
     { rank: 2, player: { id: 'lb-2', name: 'David L.', level: 13, xp: 3500, status: 'resting', gamesPlayed: 60, wins: 38, bpToday: 4.2, winStreak: 5 }, wins: 38, winRate: 63.3, xp: 3500 },
-    { rank: 3, player: { id: 'p-me', name: 'John Doe (You)', level: 12, xp: 9062, status: 'spectating', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4 }, wins: 70, winRate: 57.3, xp: 9062 }
+    { rank: 3, player: { id: 'p-me', name: 'John Doe (You)', level: 12, xp: 9062, status: 'spectating', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4 }, wins: 70, winRate: 57.3, xp: 9062 },
+    { rank: 4, player: { id: 'lb-4', name: 'Elena T.', level: 14, xp: 3300, status: 'queued', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 }, wins: 48, winRate: 64.0, xp: 3300 },
+    { rank: 5, player: { id: 'lb-5', name: 'Alex R.', level: 10, xp: 3100, status: 'spectating', gamesPlayed: 35, wins: 20, bpToday: 1.5, winStreak: 2 }, wins: 20, winRate: 57.1, xp: 3100 },
+    { rank: 6, player: { id: 'lb-6', name: 'Michael B.', level: 10, xp: 2900, status: 'spectating', gamesPlayed: 32, wins: 19, bpToday: 1.1, winStreak: 1 }, wins: 19, winRate: 59.3, xp: 2900 },
+    { rank: 7, player: { id: 'lb-7', name: 'Anna S.', level: 9, xp: 2750, status: 'spectating', gamesPlayed: 28, wins: 15, bpToday: 0.9, winStreak: 2 }, wins: 15, winRate: 53.5, xp: 2750 },
+    { rank: 8, player: { id: 'lb-8', name: 'Dmitry V.', level: 12, xp: 2600, status: 'queued', gamesPlayed: 45, wins: 26, bpToday: 1.8, winStreak: 4 }, wins: 26, winRate: 57.7, xp: 2600 }
   ],
   
   isSessionActive: false,
