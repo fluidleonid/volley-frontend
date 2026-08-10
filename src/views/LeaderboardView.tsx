@@ -154,7 +154,7 @@ export const LeaderboardView: React.FC = () => {
               <div key={t.id} className="relative flex-1 flex">
                 <button
                   onClick={() => setTab(t.id)}
-                  className={`flex-1 rounded-[20px] py-1.5 text-xs font-bold transition-all relative z-10 ${isActive ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
+                  className={`flex-1 rounded-[20px] py-1.5 text-sm font-bold transition-all relative z-10 ${isActive ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
                     }`}
                 >
                   {t.label}

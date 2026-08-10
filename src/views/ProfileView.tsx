@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppStore } from '../store/appStore';
-import { ChevronRight, Calendar, Receipt, LogOut } from 'lucide-react';
+import { ChevronRight, Calendar, Receipt, LogOut, Trophy } from 'lucide-react';
 import { PlayerCard } from '../components/ui/PlayerCard';
 import { MenuRowItem } from '../components/ui/MenuRowItem';
 import { PageHeader } from '../components/layout/PageHeader';
@@ -149,6 +149,7 @@ export const ProfileView: React.FC = () => {
 
       {/* 6. Action Menu Links (4px gap between menu items) */}
       <div className="space-y-[4px] pt-2 mt-6">
+        <MenuRowItem icon={Trophy} label="My Games" onClick={() => setActiveTab('my_games')} />
         <MenuRowItem icon={Calendar} label="Attendance" />
         <MenuRowItem icon={Receipt} label="Billing" />
         <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />
