@@ -256,7 +256,7 @@ export const CoachHomeView: React.FC = () => {
       />
       {/* Full Page Invite View Overlay (z-[100] hides tab bar completely) */}
       {isInviteOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#121212] overflow-y-auto animate-in fade-in slide-in-from-bottom duration-200">
+        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200">
           <InviteView onClose={() => setIsInviteOpen(false)} />
         </div>
       )}

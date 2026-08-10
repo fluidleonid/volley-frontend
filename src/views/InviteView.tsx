@@ -100,7 +100,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       : teamBPlayers.map((p) => p.id);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none">
+    <div className="h-full min-h-screen flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Page Header (Single unified PageHeader component) */}
       <div className="shrink-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
         <PageHeader
