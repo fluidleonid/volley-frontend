@@ -44,7 +44,7 @@ export const LeaderboardView: React.FC = () => {
 
         {/* Podium Section */}
         <div 
-          className="relative flex items-end justify-center mb-8 h-[226px] -mx-4 px-4 overflow-hidden"
+          className="relative flex items-end justify-center mb-6 h-[226px] -mx-4 px-4 overflow-hidden"
           style={{
             backgroundImage: `url(${bgImage})`,
             backgroundSize: '100% auto',
@@ -126,18 +126,26 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* Segment Controller */}
-        <div className="flex rounded-full bg-[#1C1C1E] p-1 mb-8 relative z-20">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex-1 rounded-full py-2.5 text-xs font-bold transition-all ${
-                tab === t.id ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div className="flex rounded-[12px] bg-[#1C1C1E] p-1 mb-6 relative z-20 max-w-[370px] mx-auto">
+          {tabs.map((t, i) => {
+            const isActive = tab === t.id;
+            return (
+              <div key={t.id} className="relative flex-1 flex">
+                <button
+                  onClick={() => setTab(t.id)}
+                  className={`flex-1 rounded-[10px] py-1.5 text-xs font-bold transition-all relative z-10 ${
+                    isActive ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
+                  }`}
+                >
+                  {t.label}
+                </button>
+                {/* Vertical Divider */}
+                {!isActive && i < tabs.length - 1 && tab !== tabs[i + 1].id && (
+                  <div className="absolute right-0 top-[20%] bottom-[20%] w-[1px] bg-[#2C2C2E] pointer-events-none" />
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* List Content */}
