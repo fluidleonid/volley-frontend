@@ -122,7 +122,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
 
 
   return (
-    <div className="h-full min-h-screen flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none pb-24">
+    <div className="h-full min-h-screen flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none pb-36">
       {/* 1. Header */}
       <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
         <PageHeader
@@ -248,14 +248,27 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
           </div>
         </div>
 
-        {/* Save Schedule CTA */}
-        <div className="pt-4">
-          <button
-            onClick={onClose}
-            className="w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer shadow-lg shadow-[#68BD44]/20"
-          >
-            Save schedule
-          </button>
+        {/* Progressive Blur — fixed, max-w matches main content container, under button */}
+        <div className="fixed bottom-0 inset-x-0 h-[100px] z-[50] pointer-events-none">
+          <div
+            className="mx-auto max-w-[480px] h-full bg-gradient-to-t from-[#121212] via-[#121212]/85 to-transparent backdrop-blur-md"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+            }}
+          />
+        </div>
+
+        {/* Action Button — fixed, max-w matches main content container, above blur */}
+        <div className="fixed bottom-[48px] inset-x-0 z-[60] pointer-events-none">
+          <div className="mx-auto max-w-[480px] px-4">
+            <button
+              onClick={onClose}
+              className="w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer pointer-events-auto"
+            >
+              Save schedule
+            </button>
+          </div>
         </div>
       </div>
 
