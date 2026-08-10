@@ -37,26 +37,29 @@ const RadarBadge: React.FC = () => (
 );
 
 // Team avatars row
-const TeamAvatars: React.FC<{ players: Player[]; accepted?: boolean }> = ({
+const TeamAvatars: React.FC<{ players: (Player & { isAccepted?: boolean })[]; forceAccepted?: boolean }> = ({
   players,
-  accepted = true,
+  forceAccepted = false,
 }) => (
   <div className="flex items-center -space-x-1.5">
-    {players.map((p) => (
-      <div key={p.id} className="relative z-10">
-        {accepted ? (
-          <img
-            src={p.avatarUrl}
-            alt={p.name}
-            className="h-[22px] w-[22px] rounded-full object-cover border-2 border-[#1C1C1E]"
-          />
-        ) : (
-          <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
-            ?
-          </div>
-        )}
-      </div>
-    ))}
+    {players.map((p) => {
+      const showAvatar = forceAccepted || p.isAccepted !== false;
+      return (
+        <div key={p.id} className="relative z-10">
+          {showAvatar ? (
+            <img
+              src={p.avatarUrl}
+              alt={p.name}
+              className="h-[22px] w-[22px] rounded-full object-cover border-2 border-[#1C1C1E]"
+            />
+          ) : (
+            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
+              ?
+            </div>
+          )}
+        </div>
+      );
+    })}
   </div>
 );
 
@@ -240,9 +243,9 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
           <div className="flex flex-col justify-center">
             <div className="text-xs font-bold text-white leading-none mb-1">Finding a court…</div>
             <div className="flex items-center gap-1.5">
-              <TeamAvatars players={displayTeamA} accepted />
+              <TeamAvatars players={displayTeamA} forceAccepted />
               <span className="text-[9px] font-bold text-[#8E8E93]/70 uppercase tracking-tight">vs</span>
-              <TeamAvatars players={displayTeamB} accepted />
+              <TeamAvatars players={displayTeamB} forceAccepted />
             </div>
           </div>
           <RadarBadge />
@@ -308,11 +311,11 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
           {/* Second Queued/Invited Game Banner (Shows Next Match & Avatars, No status button, 40px peek) */}
           <div className="w-[calc(100%-44px)] shrink-0 flex h-[56px] items-center justify-between rounded-[28px] bg-[#1C1C1E] p-2 pl-3.5 opacity-90 hover:opacity-100 transition-opacity">
             <div className="flex flex-col justify-center">
-              <div className="text-xs font-bold text-white leading-none mb-1">Next game</div>
+              <div className="text-xs font-bold text-white leading-none mb-1">Finding a court…</div>
               <div className="flex items-center gap-1.5">
-                <TeamAvatars players={displayTeamA} accepted />
+                <TeamAvatars players={displayTeamA} forceAccepted />
                 <span className="text-[9px] font-bold text-[#8E8E93]/70 uppercase tracking-tight">vs</span>
-                <TeamAvatars players={displayTeamB} accepted />
+                <TeamAvatars players={displayTeamB} forceAccepted />
               </div>
             </div>
           </div>
