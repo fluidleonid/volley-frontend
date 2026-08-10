@@ -48,7 +48,7 @@ export const AttendanceView: React.FC = () => {
 
   return (
     <div className="space-y-4 pb-24 max-w-[480px] mx-auto select-none px-4">
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
+      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] -mx-4 px-4">
         <PageHeader
           title="Attendance"
           onBack={() => setActiveTab('profile')}
@@ -57,7 +57,7 @@ export const AttendanceView: React.FC = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="flex gap-3 mt-2">
+      <div className="flex gap-3">
         <div className="flex-1 bg-[#1C1C1E] rounded-2xl p-4 border-none">
           <div className="font-display text-[24px] font-bold text-white leading-tight">40</div>
           <div className="text-sm text-[#8E8E93] mt-1">Trainings</div>
