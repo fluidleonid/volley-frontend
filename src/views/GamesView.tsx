@@ -51,8 +51,8 @@ export const GamesView: React.FC = () => {
           {Object.entries(groupedByDate).map(([dateLabel, stats]) => (
             <div key={dateLabel} className="space-y-3">
               <div>
-                <h2 className="text-white text-sm font-bold tracking-tight">{dateLabel}</h2>
-                <p className="text-[#8E8E93] text-[11px] font-medium mt-0.5">
+                <h2 className="text-[#8E8E93] text-[14px] font-normal tracking-tight">{dateLabel}</h2>
+                <p className="text-[#8E8E93] text-[12px] font-normal mt-0.5">
                   {stats.matches.length} matches • {stats.wins}W - {stats.losses}L • +{stats.xp} XP • +{stats.bp} BP
                 </p>
               </div>
