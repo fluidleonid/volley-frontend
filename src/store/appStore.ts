@@ -14,6 +14,9 @@ interface AppState {
   leaderboard: LeaderboardEntry[];
   isMatchDetailOpen: boolean;
   invitedPlayers: Player[];
+  inviteTeamA: Player[];
+  inviteTeamB: Player[];
+  isInviteHost: boolean;
   
   // Actions
   setRole: (role: UserRole) => void;
@@ -26,7 +29,7 @@ interface AppState {
   sitOut: () => void;
   stopTraining: () => void;
   continueToPlay: () => void;
-  sendInvite: (players: Player[]) => void;
+  sendInvite: (teamA: Player[], teamB: Player[]) => void;
   completeOnboarding: (asRole?: UserRole) => void;
   finishMatch: (scoreA: number, scoreB: number) => void;
   setMatchDetailOpen: (open: boolean) => void;
@@ -110,6 +113,7 @@ export const useAppStore = create<AppState>((set) => ({
   playerState: 'spectating', // Initial default state: 'spectating' (Unjoined / Start training mode)
   isHardmode: false,
   isMatchDetailOpen: false,
+  isInviteHost: false,
   
   currentUser: {
     id: 'p-me',
@@ -211,6 +215,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   stopTraining: () => set((state) => ({
     playerState: 'spectating',
+    isInviteHost: false,
     currentUser: { ...state.currentUser, status: 'spectating' },
     courts: initialCourts,
     todaysPlayers: [],
@@ -218,21 +223,26 @@ export const useAppStore = create<AppState>((set) => ({
   })),
 
   invitedPlayers: [],
+  inviteTeamA: [],
+  inviteTeamB: [],
 
   continueToPlay: () => set((state) => ({
     playerState: 'queued',
     currentUser: { ...state.currentUser, status: 'queued' }
   })),
 
-  sendInvite: (players: Player[]) => set((state) => {
-    // Invites are automatically accepted by all players!
-    // If player is currently playing in a game, keep state as 'playing' so active game banner is shown.
+  sendInvite: (teamA: Player[], teamB: Player[]) => set((state) => {
+    // Host creates a slot — goes to queued state so MatchingBanner shows radar animation
     const isCurrentlyPlaying = state.playerState === 'playing';
-    const nextState: PlayerState = isCurrentlyPlaying ? 'playing' : 'match_found';
+    const nextState: PlayerState = isCurrentlyPlaying ? 'playing' : 'queued';
+    const allInvited = [...teamA.filter(p => p.id !== state.currentUser.id), ...teamB];
 
     return {
-      invitedPlayers: players,
+      invitedPlayers: allInvited,
+      inviteTeamA: teamA,
+      inviteTeamB: teamB,
       playerState: nextState,
+      isInviteHost: !isCurrentlyPlaying,
       currentUser: { ...state.currentUser, status: isCurrentlyPlaying ? 'playing' : 'queued' },
     };
   }),

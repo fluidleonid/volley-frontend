@@ -1,8 +1,9 @@
 import React from 'react';
 import { useAppStore } from '../store/appStore';
-import { ChevronLeft, ChevronRight, Calendar, Receipt, LogOut } from 'lucide-react';
+import { ChevronRight, Calendar, Receipt, LogOut } from 'lucide-react';
 import { PlayerCard } from '../components/ui/PlayerCard';
 import { MenuRowItem } from '../components/ui/MenuRowItem';
+import { PageHeader } from '../components/layout/PageHeader';
 
 export const ProfileView: React.FC = () => {
   const { currentUser, setActiveTab, setFlowState } = useAppStore();
@@ -35,29 +36,20 @@ export const ProfileView: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 space-y-6 max-w-[480px] mx-auto select-none">
-      {/* 1. Sticky Header with Back Button (No border) */}
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
-        <div className="relative flex items-center justify-center">
-          <button
-            onClick={() => setActiveTab('home')}
-            className="absolute left-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
-            title="Back to Home"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          <h1 className="font-display text-lg font-bold text-white tracking-tight">
-            Profile
-          </h1>
-        </div>
+    <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none">
+      {/* 1. Sticky Header with PageHeader component */}
+      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
+        <PageHeader
+          title="Profile"
+          onBack={() => setActiveTab('home')}
+        />
       </div>
 
-      {/* 2. Hero Player Banner Card */}
+      {/* 2. Hero Player Banner Card — flush below header, no gap */}
       <PlayerCard avatarUrl={currentUser.avatarUrl} iconCount={4} />
 
       {/* 3. User Name & Rank Progress */}
-      <div className="space-y-3">
+      <div className="space-y-3 mt-6">
         <h2 className="font-display text-2xl font-bold text-white text-center tracking-tight">
           {currentUser.name}
         </h2>
@@ -76,9 +68,8 @@ export const ProfileView: React.FC = () => {
             {Array.from({ length: 10 }).map((_, idx) => (
               <span
                 key={idx}
-                className={`h-[4px] flex-1 rounded-full transition-colors duration-300 ${
-                  idx < 4 ? 'bg-white' : 'bg-[#2C2C2E]'
-                }`}
+                className={`h-[4px] flex-1 rounded-full transition-colors duration-300 ${idx < 4 ? 'bg-white' : 'bg-[#2C2C2E]'
+                  }`}
               />
             ))}
           </div>
@@ -86,7 +77,7 @@ export const ProfileView: React.FC = () => {
       </div>
 
       {/* 4. Quick Stats 3 Grid Cards */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3 mt-6">
         <div className="rounded-[20px] bg-[#1C1C1E] p-4 flex flex-col justify-between h-[90px]">
           <span className="font-display text-2xl font-extrabold text-white tracking-tight">
             {currentUser.gamesPlayed}
@@ -116,7 +107,7 @@ export const ProfileView: React.FC = () => {
       </div>
 
       {/* 5. Achievements Section */}
-      <div className="space-y-3 pt-2">
+      <div className="space-y-3 pt-2 mt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <h3 className="font-display text-lg font-bold text-white tracking-tight">
@@ -157,7 +148,7 @@ export const ProfileView: React.FC = () => {
       </div>
 
       {/* 6. Action Menu Links (4px gap between menu items) */}
-      <div className="space-y-[4px] pt-2">
+      <div className="space-y-[4px] pt-2 mt-6">
         <MenuRowItem icon={Calendar} label="Attendance" />
         <MenuRowItem icon={Receipt} label="Billing" />
         <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />

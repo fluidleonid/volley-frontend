@@ -6,6 +6,8 @@ import { SelectPlayerSheet } from '../components/ui/SelectPlayerSheet';
 import { Player } from '../types';
 import courtLg from '../assets/court-lg.svg';
 
+import { PageHeader } from '../components/layout/PageHeader';
+
 export interface InviteViewProps {
   onClose?: () => void;
 }
@@ -31,8 +33,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
   };
 
   const handleSendInvite = () => {
-    const allPicked = [...teamAPlayers.filter(p => p.id !== currentUser.id), ...teamBPlayers];
-    sendInvite(allPicked);
+    sendInvite(teamAPlayers, teamBPlayers);
     if (onClose) {
       onClose();
     } else {
@@ -88,11 +89,10 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
     return "Fill the court — pick 1 or 2 players";
   };
 
-  // Button is active when teams are balanced (1v1 or 2v2 or ready)
+  // Button is active only when teams are strictly balanced: 1v1 or 2v2
   const isReadyToInvite =
     (teamAPlayers.length === 1 && teamBPlayers.length === 1) ||
-    (teamAPlayers.length === 2 && teamBPlayers.length === 2) ||
-    (teamAPlayers.length === 2 && teamBPlayers.length === 1);
+    (teamAPlayers.length === 2 && teamBPlayers.length === 2);
 
   const selectedPlayerIdsInActivePicker =
     activePicker === 'teamA'
@@ -100,36 +100,20 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       : teamBPlayers.map((p) => p.id);
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden flex flex-col justify-between bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none">
-      {/* 1. Header with Back (<) and Close (X) buttons (Matches ProfileView top spacing: pt-[84px] pb-3) */}
-      <div className="shrink-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
-        <div className="relative flex items-center justify-between">
-          <button
-            onClick={handleBack}
-            className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
-            title="Back"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          <h1 className="font-display text-lg font-bold text-white tracking-tight">
-            Invite to play
-          </h1>
-
-          <button
-            onClick={handleBack}
-            className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer"
-            title="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+    <div className="h-screen max-h-screen overflow-hidden flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none">
+      {/* 1. Page Header (Single unified PageHeader component) */}
+      <div className="shrink-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
+        <PageHeader
+          title="Invite to play"
+          onBack={handleBack}
+          onClose={handleBack}
+        />
       </div>
 
-      {/* Main Content Wrapper (Fixed fit without scroll) */}
-      <div className="flex-1 flex flex-col justify-center space-y-4 pb-[110px] overflow-hidden">
+      {/* Main Content Wrapper (Court card sits IMMEDIATELY below top header) */}
+      <div className="flex-1 flex flex-col space-y-4 pb-[110px] overflow-hidden">
         {/* 2. Main Court Card Container (Height: 400px, Outer Radius: 40px, Padding: 20px, Border: 0) */}
-        <div className="relative w-full h-[380px] rounded-[40px] bg-[#1C1C1E] p-[20px] shadow-2xl border-0 overflow-hidden flex flex-col justify-between shrink-0">
+        <div className="relative w-full h-[400px] rounded-[40px] bg-[#1C1C1E] p-[20px] shadow-2xl border-0 overflow-hidden flex flex-col justify-between shrink-0">
           {/* Left Side Notch Cutout */}
           <img
             src={courtLg}
@@ -219,11 +203,10 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
         <button
           onClick={handleSendInvite}
           disabled={!isReadyToInvite}
-          className={`w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold transition-all ${
-            isReadyToInvite
-              ? 'shadow-lg shadow-[#68BD44]/20 hover:bg-[#5AA739] active:scale-95 cursor-pointer opacity-100'
-              : 'opacity-20 shadow-none cursor-not-allowed'
-          }`}
+          className={`w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold transition-all ${isReadyToInvite
+            ? 'shadow-lg shadow-[#68BD44]/20 hover:bg-[#5AA739] active:scale-95 cursor-pointer opacity-100'
+            : 'opacity-20 shadow-none cursor-not-allowed'
+            }`}
         >
           Invite
         </button>

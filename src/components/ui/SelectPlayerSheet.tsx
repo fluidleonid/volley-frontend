@@ -113,11 +113,10 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
               <div
                 key={player.id}
                 onClick={() => onTogglePlayer(player)}
-                className={`flex items-center justify-between p-3 rounded-[20px] transition-all cursor-pointer select-none ${
-                  isSelected
-                    ? 'bg-[#1C1C1E] border border-[#68BD44]/40'
-                    : 'bg-[#1C1C1E]/60 hover:bg-[#1C1C1E] border border-transparent'
-                }`}
+                className={`flex items-center justify-between p-3 rounded-[20px] transition-all cursor-pointer select-none ${isSelected
+                  ? 'bg-[#1C1C1E] border border-[#68BD44]/40'
+                  : 'bg-[#1C1C1E]/60 hover:bg-[#1C1C1E] border border-transparent'
+                  }`}
               >
                 {/* Left: Avatar & Name & Status Badge */}
                 <div className="flex items-center gap-3">
@@ -156,11 +155,10 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
                     e.stopPropagation();
                     onTogglePlayer(player);
                   }}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-95 ${
-                    isSelected
-                      ? 'bg-[#68BD44] text-[#050505] shadow-md shadow-[#68BD44]/20'
-                      : 'bg-[#2C2C2E] text-white hover:bg-[#3A3A3C]'
-                  }`}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-95 ${isSelected
+                    ? 'bg-[#68BD44] text-[#050505] shadow-md shadow-[#68BD44]/20'
+                    : 'bg-[#2C2C2E] text-white hover:bg-[#3A3A3C]'
+                    }`}
                 >
                   {isSelected ? (
                     <Check className="h-5 w-5 stroke-[3]" />
@@ -173,24 +171,30 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
           })}
         </div>
 
-        {/* Progressive Blur Layer */}
+        {/* Progressive Blur — fixed, max-w matches main content container, under button */}
         <div
-          className="absolute bottom-0 inset-x-0 h-44 z-20 pointer-events-none bg-gradient-to-t from-[#121212] via-[#121212]/95 to-transparent backdrop-blur-md rounded-b-[32px] -mx-4"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%)',
-            maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%)',
-          }}
-        />
+          className="fixed bottom-0 inset-x-0 h-[100px] z-[155] pointer-events-none"
+        >
+          <div
+            className="mx-auto max-w-[480px] h-full bg-gradient-to-t from-[#121212] via-[#121212]/85 to-transparent backdrop-blur-md"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+            }}
+          />
+        </div>
 
-        {/* Action Button positioned at EXACTLY 48px from bottom edge */}
-        <div className="absolute bottom-[48px] inset-x-0 z-30 pointer-events-none">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer pointer-events-auto"
-          >
-            Done
-          </button>
+        {/* Action Button — fixed, max-w matches main content container, above blur */}
+        <div className="fixed bottom-[48px] inset-x-0 z-[160] pointer-events-none">
+          <div className="mx-auto max-w-[480px] px-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full h-[52px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-base font-bold shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer pointer-events-auto"
+            >
+              Done
+            </button>
+          </div>
         </div>
       </div>
     </BottomSheet>

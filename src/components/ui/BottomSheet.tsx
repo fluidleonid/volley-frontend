@@ -141,12 +141,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             </div>
           </div>
 
-          {/* Header Row (pt-0, 20px bottom margin) */}
+          {/* Header Row (Fixed 44px height, matching page headers exactly) */}
           {title !== undefined && (
             <div
               onPointerDown={handlePointerDown}
               onTouchStart={handlePointerDown}
-              className="relative flex items-center justify-center pt-0 mb-[20px] cursor-grab active:cursor-grabbing select-none"
+              className="relative flex h-[44px] items-center justify-center pt-0 mb-[20px] cursor-grab active:cursor-grabbing select-none shrink-0"
             >
               {/* Back Button (Chevron Left) - Shown if nested / opened from another sheet */}
               {isNested && (
@@ -156,10 +156,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                     e.stopPropagation();
                     onClose();
                   }}
-                  className="absolute left-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white cursor-pointer active:scale-95"
+                  className="absolute left-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
                   title="Back to previous sheet"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-5 w-5" />
                 </button>
               )}
 
@@ -179,10 +179,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   e.stopPropagation();
                   handleCloseAll();
                 }}
-                className="absolute right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white cursor-pointer active:scale-95"
+                className="absolute right-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
                 title="Close all sheets"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
           )}
