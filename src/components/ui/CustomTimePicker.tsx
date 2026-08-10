@@ -19,8 +19,8 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
   initialTime = '12:00',
   title = 'Select time'
 }) => {
-  const [selectedHour, setSelectedHour] = useState(12);
-  const [selectedMinute, setSelectedMinute] = useState(0);
+  const [selectedHour, setSelectedHour] = useState<number | string>(12);
+  const [selectedMinute, setSelectedMinute] = useState<number | string>(0);
   const [isPM, setIsPM] = useState(false);
   
   const [activeTab, setActiveTab] = useState<'hour' | 'minute'>('hour');
@@ -46,28 +46,36 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    let finalHour = selectedHour;
+    let finalHour = Number(selectedHour);
+    if (isNaN(finalHour) || finalHour < 1) finalHour = 12;
+    if (finalHour > 12) finalHour = 12;
+
+    let finalMin = Number(selectedMinute);
+    if (isNaN(finalMin) || finalMin < 0) finalMin = 0;
+    if (finalMin > 59) finalMin = 59;
+
     if (isPM && finalHour < 12) finalHour += 12;
     if (!isPM && finalHour === 12) finalHour = 0;
     
     const hStr = String(finalHour).padStart(2, '0');
-    const mStr = String(selectedMinute).padStart(2, '0');
+    const mStr = String(finalMin).padStart(2, '0');
     onConfirm(`${hStr}:${mStr}`);
   };
 
   const renderClockFace = () => {
     const isHour = activeTab === 'hour';
     const items = isHour 
-      ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-      : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+      ? Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i))
+      : Array.from({ length: 12 }, (_, i) => i * 5);
 
-    const currentVal = isHour ? selectedHour : selectedMinute;
+    let activeValue = isHour ? Number(selectedHour) : Number(selectedMinute);
+    if (isNaN(activeValue)) activeValue = isHour ? 12 : 0;
     
     let angle = 0;
     if (isHour) {
-      angle = (selectedHour % 12) * 30;
+      angle = (activeValue % 12) * 30;
     } else {
-      angle = selectedMinute * 6;
+      angle = activeValue * 6;
     }
     
     return (
@@ -88,7 +96,7 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
         >
           {/* Knob */}
           <div className="w-10 h-10 rounded-full bg-[#68BD44] absolute -top-5 -left-[19px] flex items-center justify-center text-[#050505] font-bold text-base">
-            {currentVal === 0 && !isHour ? '00' : currentVal}
+            {activeValue === 0 && !isHour ? '00' : activeValue}
           </div>
         </div>
 
@@ -97,7 +105,7 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
           const theta = (i * 30) * (Math.PI / 180);
           const x = Math.sin(theta) * NUMBER_RADIUS;
           const y = -Math.cos(theta) * NUMBER_RADIUS;
-          const isSelected = currentVal === num;
+          const isSelected = activeValue === num;
 
           return (
             <button
@@ -153,18 +161,26 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
               {isKeyboardMode ? (
                 <input 
                   type="number" 
-                  value={selectedHour === 0 ? '' : selectedHour}
+                  value={selectedHour}
                   onChange={(e) => {
-                    let val = parseInt(e.target.value);
-                    if (isNaN(val)) val = 12;
+                    const val = e.target.value;
+                    if (val === '') {
+                      setSelectedHour('');
+                      return;
+                    }
+                    const num = parseInt(val);
+                    if (!isNaN(num)) setSelectedHour(num);
+                  }}
+                  onBlur={() => {
+                    let val = Number(selectedHour);
+                    if (isNaN(val) || val < 1) val = 12;
                     if (val > 12) val = 12;
-                    if (val < 1) val = 1;
                     setSelectedHour(val);
                   }}
                   className="w-full h-full bg-transparent text-center text-[40px] font-bold focus:outline-none appearance-none"
                 />
               ) : (
-                <span className="text-[40px] font-bold leading-none">{String(selectedHour).padStart(2, '0')}</span>
+                <span className="text-[40px] font-bold leading-none">{String(Number(selectedHour) || 12).padStart(2, '0')}</span>
               )}
             </div>
 
@@ -179,18 +195,26 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
               {isKeyboardMode ? (
                 <input 
                   type="number" 
-                  value={selectedMinute === 0 ? '00' : selectedMinute}
+                  value={selectedMinute}
                   onChange={(e) => {
-                    let val = parseInt(e.target.value);
-                    if (isNaN(val)) val = 0;
+                    const val = e.target.value;
+                    if (val === '') {
+                      setSelectedMinute('');
+                      return;
+                    }
+                    const num = parseInt(val);
+                    if (!isNaN(num)) setSelectedMinute(num);
+                  }}
+                  onBlur={() => {
+                    let val = Number(selectedMinute);
+                    if (isNaN(val) || val < 0) val = 0;
                     if (val > 59) val = 59;
-                    if (val < 0) val = 0;
                     setSelectedMinute(val);
                   }}
                   className="w-full h-full bg-transparent text-center text-[40px] font-bold focus:outline-none appearance-none"
                 />
               ) : (
-                <span className="text-[40px] font-bold leading-none">{String(selectedMinute).padStart(2, '0')}</span>
+                <span className="text-[40px] font-bold leading-none">{String(Number(selectedMinute) || 0).padStart(2, '0')}</span>
               )}
             </div>
           </div>
