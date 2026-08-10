@@ -72,102 +72,104 @@ export const HomeView: React.FC = () => {
         </Card>
       </div>
 
-      {/* 2. Dynamic Action Buttons Container (2nd type: Buttons with label under container, h=44px, icon color=#050505) */}
-      <div className="flex flex-col items-center">
-        {/* STATE 1: Spectating ("Start training" mode) */}
-        {playerState === 'spectating' && (
-          <div className="w-full text-center">
-            <button
-              onClick={startTraining}
-              className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
-            >
-              <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
-            </button>
-            <span className="mt-2 block font-sans text-sm font-medium text-[#8E8E93]">
-              Start training
-            </span>
-          </div>
-        )}
-
-        {/* STATE 2: Queued / Match Found / Active mode */}
-        {(playerState === 'queued' || playerState === 'match_found' || playerState === 'playing') && (
-          <div className="flex w-full items-center gap-2.5 text-center">
-            {/* Sit out button */}
-            <div className="flex flex-[0.9] flex-col items-center">
+      {/* 2. Dynamic Action Buttons Container (Only shown when a training session is active) */}
+      {isSessionActive && (
+        <div className="flex flex-col items-center">
+          {/* STATE 1: Spectating ("Start training" mode) */}
+          {playerState === 'spectating' && (
+            <div className="w-full text-center">
               <button
-                onClick={sitOut}
-                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
-              >
-                <Pause className="h-5 w-5 fill-white text-white" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Sit out
-              </span>
-            </div>
-
-            {/* Invite to play button */}
-            <div className="flex flex-[1.6] flex-col items-center">
-              <button
-                onClick={handleInvite}
-                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
-              >
-                <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Invite to play
-              </span>
-            </div>
-
-            {/* Hard mode button */}
-            <div className="flex flex-[0.9] flex-col items-center">
-              <button
-                onClick={toggleHardmode}
-                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
-                  isHardmode
-                    ? 'bg-[#68BD44]/20 text-[#68BD44]'
-                    : 'bg-[#1C1C1E] text-white hover:bg-[#242426]'
-                }`}
-              >
-                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#68BD44]' : 'text-white'}`} />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Hard mode
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* STATE 3: Resting mode ("Sit out" active) */}
-        {playerState === 'resting' && (
-          <div className="grid w-full grid-cols-2 gap-3 text-center">
-            {/* Stop button */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={stopTraining}
-                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
-              >
-                <Square className="h-5 w-5 fill-white text-white" />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Stop
-              </span>
-            </div>
-
-            {/* Continue to play button */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={continueToPlay}
-                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+                onClick={startTraining}
+                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-[0.98] hover:bg-[#5AA739]"
               >
                 <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
               </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Continue to play
+              <span className="mt-2 block font-sans text-sm font-medium text-[#8E8E93]">
+                Start training
               </span>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+
+          {/* STATE 2: Queued / Match Found / Active mode */}
+          {(playerState === 'queued' || playerState === 'match_found' || playerState === 'playing') && (
+            <div className="flex w-full items-center gap-2.5 text-center">
+              {/* Sit out button */}
+              <div className="flex flex-[0.9] flex-col items-center">
+                <button
+                  onClick={sitOut}
+                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
+                >
+                  <Pause className="h-5 w-5 fill-white text-white" />
+                </button>
+                <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                  Sit out
+                </span>
+              </div>
+
+              {/* Invite to play button */}
+              <div className="flex flex-[1.6] flex-col items-center">
+                <button
+                  onClick={handleInvite}
+                  className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+                >
+                  <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
+                </button>
+                <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                  Invite to play
+                </span>
+              </div>
+
+              {/* Hard mode button */}
+              <div className="flex flex-[0.9] flex-col items-center">
+                <button
+                  onClick={toggleHardmode}
+                  className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
+                    isHardmode
+                      ? 'bg-[#68BD44]/20 text-[#68BD44]'
+                      : 'bg-[#1C1C1E] text-white hover:bg-[#242426]'
+                  }`}
+                >
+                  <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#68BD44]' : 'text-white'}`} />
+                </button>
+                <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                  Hard mode
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* STATE 3: Resting mode ("Sit out" active) */}
+          {playerState === 'resting' && (
+            <div className="grid w-full grid-cols-2 gap-3 text-center">
+              {/* Stop button */}
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={stopTraining}
+                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
+                >
+                  <Square className="h-5 w-5 fill-white text-white" />
+                </button>
+                <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                  Stop
+                </span>
+              </div>
+
+              {/* Continue to play button */}
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={continueToPlay}
+                  className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+                >
+                  <Play className="h-5 w-5 fill-[#050505] text-[#050505] ml-0.5" />
+                </button>
+                <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                  Continue to play
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
       {!isSessionActive ? (
