@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { Card } from '../components/ui/card';
-import { Flame, Crown, Award } from 'lucide-react';
+import { User } from 'lucide-react';
 import bgImage from '../assets/leaderboard.svg';
 import place1Svg from '../assets/place1.svg';
 import place2Svg from '../assets/place2.svg';
 import place3Svg from '../assets/place3.svg';
+import bpIcon from '../assets/bp-icon.svg';
 import playerCardImg from '../assets/player-card.png';
 
+type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
+
 export const LeaderboardView: React.FC = () => {
-  const { leaderboard } = useAppStore();
-  const [tab, setTab] = useState<'total' | 'today' | 'empty'>('total');
+  const { leaderboard, currentUser } = useAppStore();
+  const [tab, setTab] = useState<TabType>('total');
 
   const getPlayerByRank = (rank: number) => leaderboard.find((l) => l.rank === rank);
   
@@ -20,150 +22,156 @@ export const LeaderboardView: React.FC = () => {
   
   const rest = leaderboard.filter((l) => l.rank > 3);
 
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'today', label: 'Today' },
+    { id: 'week', label: 'This week' },
+    { id: 'month', label: 'This month' },
+    { id: 'total', label: 'Total' },
+  ];
+
   return (
-    <div className="relative min-h-screen pb-32 select-none overflow-hidden">
+    <div className="relative min-h-screen pb-32 select-none overflow-hidden bg-[#121212]">
       {/* Background Graphic */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[500px] z-0 pointer-events-none opacity-60"
+        className="absolute top-0 left-0 right-0 h-[500px] z-0 pointer-events-none"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'top center',
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%)',
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)',
         }}
       />
       
-      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
-        <h1 className="text-2xl font-display font-black text-white text-center tracking-tight mb-6 uppercase italic">
-          Leaderboard
-        </h1>
-
-        {/* Segment Controller */}
-        <div className="flex rounded-[16px] bg-[#1C1C1E]/80 backdrop-blur-md p-1 border border-[#2C2C2E] mb-12 relative z-20">
-          <button
-            onClick={() => setTab('total')}
-            className={`flex-1 rounded-[12px] py-2.5 text-xs font-bold transition-all ${
-              tab === 'total' ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
-            }`}
-          >
-            All Time
-          </button>
-          <button
-            onClick={() => setTab('today')}
-            className={`flex-1 rounded-[12px] py-2.5 text-xs font-bold transition-all ${
-              tab === 'today' ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
-            }`}
-          >
-            Today
-          </button>
+      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[64px]">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-10">
+          <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
+          
+          <div className="flex items-center gap-1.5 bg-[#1E311A]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#78D850]/20 cursor-pointer transition-all active:scale-95" onClick={() => setTab(tab === 'empty' ? 'total' : 'empty')}>
+            <span className="text-[#78D850] font-bold text-sm tracking-tight">{currentUser?.bpToday || 867}</span>
+            <img src={bpIcon} alt="BP" className="w-5 h-5 text-[#78D850]" />
+          </div>
         </div>
 
-        {tab === 'empty' ? (
-          <Card className="flex flex-col items-center justify-center p-8 text-center bg-[#1C1C1E]/80 backdrop-blur-md border-[#2C2C2E]">
-            <Award className="h-12 w-12 text-[#8E8E93] mb-3" />
-            <h3 className="text-sm font-bold text-white">Leaderboard is empty</h3>
-            <p className="mt-1 text-xs text-[#8E8E93]">Play your first match today to claim the top spot!</p>
-          </Card>
-        ) : (
-          <>
-            {/* Podium Section */}
-            {p1 && (
-              <div className="flex items-end justify-center px-1 mb-8 gap-0.5">
-                {/* 2nd Place */}
-                {p2 ? (
-                  <div className="flex flex-col items-center justify-end flex-1 mb-[-2px]">
-                    <div className="flex flex-col items-center mb-2">
-                      <img src={p2.player.avatarUrl || playerCardImg} className="w-[52px] h-[52px] rounded-full object-cover border-[3px] border-[#1C1C1E] shadow-xl" alt={p2.player.name} />
-                      <span className="text-[11px] font-bold text-white mt-2 max-w-[76px] text-center truncate">{p2.player.name}</span>
-                      <span className="text-[10px] text-[#8E8E93] font-bold">{p2.xp} XP</span>
-                    </div>
-                    <div 
-                      className="relative flex justify-center items-start pt-2 w-[101px] h-[70px]" 
-                      style={{ backgroundImage: `url(${place2Svg})`, backgroundSize: '100% 100%' }}
-                    >
-                      <span className="text-2xl font-display font-black italic text-white/20">2</span>
-                    </div>
-                  </div>
-                ) : <div className="flex-1" />}
-
-                {/* 1st Place */}
-                <div className="flex flex-col items-center justify-end flex-1 z-10 mx-[-8px]">
-                  <div className="flex flex-col items-center mb-2 relative">
-                    <Crown className="absolute -top-6 h-6 w-6 text-[#78D850] fill-[#78D850] drop-shadow-[0_0_10px_rgba(120,216,80,0.5)] z-20" />
-                    <img src={p1.player.avatarUrl || playerCardImg} className="w-[64px] h-[64px] rounded-full object-cover border-[3px] border-[#78D850] shadow-[0_0_20px_rgba(120,216,80,0.3)] z-10" alt={p1.player.name} />
-                    <span className="text-[13px] font-black text-[#78D850] mt-2 max-w-[86px] text-center truncate">{p1.player.name}</span>
-                    <span className="text-[11px] text-white font-bold">{p1.xp} XP</span>
-                  </div>
-                  <div 
-                    className="relative flex justify-center items-start pt-3 w-[100px] h-[98px]" 
-                    style={{ backgroundImage: `url(${place1Svg})`, backgroundSize: '100% 100%' }}
-                  >
-                    <span className="text-3xl font-display font-black italic text-[#78D850]/20">1</span>
-                  </div>
+        {/* Podium Section */}
+        <div className="flex items-end justify-center px-1 mb-10 gap-0">
+          {/* 2nd Place */}
+          <div className="flex flex-col items-center justify-end flex-1">
+            <div className="flex flex-col items-center mb-1 relative">
+              {tab === 'empty' ? (
+                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
+                  <User className="h-6 w-6 text-[#121212]" />
                 </div>
-
-                {/* 3rd Place */}
-                {p3 ? (
-                  <div className="flex flex-col items-center justify-end flex-1 mb-[-2px]">
-                    <div className="flex flex-col items-center mb-2">
-                      <img src={p3.player.avatarUrl || playerCardImg} className="w-[52px] h-[52px] rounded-full object-cover border-[3px] border-[#1C1C1E] shadow-xl" alt={p3.player.name} />
-                      <span className="text-[11px] font-bold text-white mt-2 max-w-[76px] text-center truncate">{p3.player.name}</span>
-                      <span className="text-[10px] text-[#8E8E93] font-bold">{p3.xp} XP</span>
-                    </div>
-                    <div 
-                      className="relative flex justify-center items-start pt-1.5 w-[102px] h-[42px]" 
-                      style={{ backgroundImage: `url(${place3Svg})`, backgroundSize: '100% 100%' }}
-                    >
-                      <span className="text-xl font-display font-black italic text-white/20">3</span>
-                    </div>
-                  </div>
-                ) : <div className="flex-1" />}
+              ) : (
+                <img src={p2?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10" alt={p2?.player.name} />
+              )}
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">2</div>
+            </div>
+            {tab !== 'empty' && (
+              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p2?.player.name}</span>
+                <span className="text-[11px] text-[#8E8E93]">{p2?.xp} BP</span>
               </div>
             )}
+            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            <div 
+              className="relative w-full max-w-[101px] h-[70px]" 
+              style={{ backgroundImage: `url(${place2Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
+            />
+          </div>
 
-            {/* List for ranks 4+ */}
-            <div className="space-y-2 relative z-20">
-              {rest.map((entry) => (
-                <Card
-                  key={entry.player.id}
-                  className={`flex items-center justify-between p-3 transition-all ${
-                    entry.player.id === 'p-me'
-                      ? 'border-[#68BD44] bg-[#68BD44]/10 shadow-[0_0_15px_rgba(104,189,68,0.1)]'
-                      : 'bg-[#1C1C1E]/80 backdrop-blur-md border-[#2C2C2E]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center font-bold text-sm text-[#8E8E93]">
-                      #{entry.rank}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <img src={entry.player.avatarUrl || playerCardImg} className="w-8 h-8 rounded-full object-cover border border-[#2C2C2E]" alt={entry.player.name} />
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-white">{entry.player.name}</span>
-                          {entry.player.winStreak >= 4 && (
-                            <span className="flex items-center text-[10px] font-bold text-[#FF9500]">
-                              <Flame className="h-3 w-3" /> {entry.player.winStreak}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[10px] text-[#8E8E93]">
-                          Lv. {entry.player.level} • {entry.winRate}% win rate
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="block text-xs font-bold text-[#68BD44]">{entry.wins} wins</span>
-                    <span className="text-[10px] text-[#8E8E93]">{entry.xp} XP</span>
-                  </div>
-                </Card>
-              ))}
+          {/* 1st Place */}
+          <div className="flex flex-col items-center justify-end flex-1 z-10 mx-[-8px]">
+            <div className="flex flex-col items-center mb-1 relative">
+              {tab === 'empty' ? (
+                <div className="w-[68px] h-[68px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10 shadow-[0_0_20px_rgba(120,216,80,0.15)]">
+                  <User className="h-7 w-7 text-[#121212]" />
+                </div>
+              ) : (
+                <img src={p1?.player.avatarUrl || playerCardImg} className="w-[68px] h-[68px] rounded-full object-cover border-2 border-[#121212] z-10 shadow-[0_0_20px_rgba(120,216,80,0.2)]" alt={p1?.player.name} />
+              )}
+              <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#121212] z-20">1</div>
             </div>
-          </>
+            {tab !== 'empty' && (
+              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+                <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{p1?.player.name}</span>
+                <span className="text-[11px] text-[#8E8E93]">{p1?.xp} BP</span>
+              </div>
+            )}
+            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            <div 
+              className="relative w-full max-w-[100px] h-[98px]" 
+              style={{ backgroundImage: `url(${place1Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
+            />
+          </div>
+
+          {/* 3rd Place */}
+          <div className="flex flex-col items-center justify-end flex-1">
+            <div className="flex flex-col items-center mb-1 relative">
+              {tab === 'empty' ? (
+                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
+                  <User className="h-6 w-6 text-[#121212]" />
+                </div>
+              ) : (
+                <img src={p3?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10" alt={p3?.player.name} />
+              )}
+              <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">3</div>
+            </div>
+            {tab !== 'empty' && (
+              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p3?.player.name}</span>
+                <span className="text-[11px] text-[#8E8E93]">{p3?.xp} BP</span>
+              </div>
+            )}
+            {tab === 'empty' && <div className="h-[40px] mt-3" />}
+            <div 
+              className="relative w-full max-w-[102px] h-[42px]" 
+              style={{ backgroundImage: `url(${place3Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
+            />
+          </div>
+        </div>
+
+        {/* Segment Controller */}
+        <div className="flex rounded-full bg-[#1C1C1E] p-1 mb-8 relative z-20">
+          {tabs.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`flex-1 rounded-full py-2.5 text-xs font-bold transition-all ${
+                tab === t.id ? 'bg-[#2C2C2E] text-white shadow' : 'text-[#8E8E93] hover:text-white'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* List Content */}
+        {tab === 'empty' ? (
+          <div className="flex flex-col items-center justify-center mt-12 text-center">
+            <div className="w-16 h-16 rounded-full border-2 border-[#78D850] flex items-center justify-center mb-4">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 16H17M7 11H13M8 4H16C17.1046 4 18 4.89543 18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6C6 4.89543 6.89543 4 8 4Z" stroke="#78D850" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-white">No rankings yet</h3>
+            <p className="mt-1 text-sm text-[#8E8E93]">Players results will appear here</p>
+          </div>
+        ) : (
+          <div className="flex flex-col relative z-20">
+            {rest.map((entry) => (
+              <div key={entry.player.id} className="flex items-center justify-between py-3 border-b border-[#2C2C2E]/40 last:border-0">
+                <div className="flex items-center gap-4">
+                  <span className="text-white font-bold text-base w-6">{entry.rank}</span>
+                  <img src={entry.player.avatarUrl || playerCardImg} className="w-9 h-9 rounded-full object-cover bg-[#2C2C2E]" alt={entry.player.name} />
+                  <span className="text-white text-sm font-medium">{entry.player.name}</span>
+                </div>
+                <span className="text-[#D4D4D4] text-sm">{entry.xp}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
