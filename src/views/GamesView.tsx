@@ -1,82 +1,76 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useAppStore } from '../store/appStore';
-import { Card } from '../components/ui/card';
-import { Activity, Calendar, ChevronRight } from 'lucide-react';
+import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
+import { Trophy } from 'lucide-react';
+import { Match } from '../types';
 
 export const GamesView: React.FC = () => {
   const { recentMatches } = useAppStore();
-  const [selectedGame, setSelectedGame] = useState<string | null>(null);
+
+  const groupedByDate = useMemo(() => {
+    const groups: Record<string, {
+      matches: Match[];
+      wins: number;
+      losses: number;
+      xp: number;
+      bp: number;
+    }> = {};
+
+    recentMatches.forEach(match => {
+      // Parse date to Month D, YYYY
+      let dateLabel = match.date;
+      if (match.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        dateLabel = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(match.date));
+      }
+
+      if (!groups[dateLabel]) {
+        groups[dateLabel] = { matches: [], wins: 0, losses: 0, xp: 0, bp: 0 };
+      }
+      
+      groups[dateLabel].matches.push(match);
+      if (match.isWin) groups[dateLabel].wins++;
+      else groups[dateLabel].losses++;
+      
+      groups[dateLabel].xp += (match.xpGained || 0);
+      groups[dateLabel].bp += (match.bpGained || 0);
+    });
+
+    return groups;
+  }, [recentMatches]);
 
   return (
-    <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
-      {/* Sticky Header (No border) */}
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-white">My Games</h1>
-            <p className="text-xs text-[#8E8E93]">History of played sessions</p>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-[#68BD44] border border-[#2C2C2E]">
-            <Activity className="h-4 w-4" />
-            <span className="font-bold">48 total</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Matches List Grouped by Date */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-[#8E8E93]">
-          <Calendar className="h-3.5 w-3.5" />
-          <span>Today</span>
+    <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
+      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
+        {/* Header - Like Leaderboard but without BP badge */}
+        <div className="flex items-center mb-5 h-[44px]">
+          <h1 className="text-[28px] font-bold text-white tracking-tight">My Games</h1>
         </div>
 
-        {recentMatches.map((match) => (
-          <Card
-            key={match.id}
-            onClick={() => setSelectedGame(selectedGame === match.id ? null : match.id)}
-            className="cursor-pointer p-4 transition-all hover:border-[#68BD44]/50"
-          >
-            <div className="flex items-center justify-between">
+        {/* Grouped Matches */}
+        <div className="space-y-6">
+          {Object.entries(groupedByDate).map(([dateLabel, stats]) => (
+            <div key={dateLabel} className="space-y-3">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-white">{match.courtName}</span>
-                  {match.isHardmode && (
-                    <span className="rounded bg-[#FF9500]/20 px-1.5 py-0.5 text-[9px] font-bold text-[#FF9500]">
-                      🔥 Hardmode
-                    </span>
-                  )}
-                </div>
-                <div className="mt-1 text-xs text-[#8E8E93]">
-                  {match.teamA.map((t) => t.name).join(' & ')} vs {match.teamB.map((t) => t.name).join(' & ')}
-                </div>
+                <h2 className="text-white text-sm font-bold tracking-tight">{dateLabel}</h2>
+                <p className="text-[#8E8E93] text-[11px] font-medium mt-0.5">
+                  {stats.matches.length} matches • {stats.wins}W - {stats.losses}L • +{stats.xp} XP • +{stats.bp} BP
+                </p>
               </div>
-
-              <div className="text-right">
-                <div className={`text-base font-extrabold ${match.isWin ? 'text-[#68BD44]' : 'text-red-400'}`}>
-                  {match.scoreA} : {match.scoreB}
-                </div>
-                <div className="flex items-center justify-end gap-1 text-[10px] text-[#8E8E93]">
-                  <span>{match.time}</span>
-                  <ChevronRight className="h-3 w-3" />
-                </div>
+              <div className="bg-[#1C1C1E] rounded-[20px] px-4">
+                {stats.matches.map((match) => (
+                  <MatchHistoryCard key={match.id} match={match} />
+                ))}
               </div>
             </div>
-
-            {/* Game details modal/accordion */}
-            {selectedGame === match.id && (
-              <div className="mt-3 border-t border-[#2C2C2E] pt-3 text-xs space-y-1.5 animate-slide-up">
-                <div className="flex justify-between text-[#8E8E93]">
-                  <span>Match Status:</span>
-                  <span className="text-[#68BD44] font-bold">{match.isWin ? 'Victory 🎉 (+120 XP)' : 'Defeat (+40 XP)'}</span>
-                </div>
-                <div className="flex justify-between text-[#8E8E93]">
-                  <span>Duration:</span>
-                  <span className="text-white">18 min</span>
-                </div>
-              </div>
-            )}
-          </Card>
-        ))}
+          ))}
+          
+          {Object.keys(groupedByDate).length === 0 && (
+            <div className="text-center py-10">
+              <Trophy className="w-12 h-12 text-[#2C2C2E] mx-auto mb-3" />
+              <p className="text-[#8E8E93] text-sm font-medium">No games played yet</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
