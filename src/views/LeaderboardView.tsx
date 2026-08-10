@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { User } from 'lucide-react';
 import bgImage from '../assets/leaderboard.svg';
-import place1Svg from '../assets/place1.svg';
-import place2Svg from '../assets/place2.svg';
-import place3Svg from '../assets/place3.svg';
 import bpIcon from '../assets/bp-icon.svg';
 import playerCardImg from '../assets/player-card.png';
 
@@ -33,22 +30,10 @@ export const LeaderboardView: React.FC = () => {
 
   return (
     <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
-      {/* Background Graphic */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-[500px] z-0 pointer-events-none"
-        style={{
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'top center',
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)',
-        }}
-      />
-      
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[64px]">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-2">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
           
           <div className="flex items-center gap-1.5 bg-[#1E311A]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#78D850]/20">
@@ -58,34 +43,43 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* Podium Section */}
-        <div className="flex items-end justify-center px-1 mb-10 gap-0">
+        <div 
+          className="relative flex items-end justify-center mb-8 h-[226px] -mx-4 px-4 overflow-hidden"
+          style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: '100% auto',
+            backgroundPosition: 'bottom center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          {/* Bottom fade mask to blend with the #121212 background */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent pointer-events-none" />
+
           {/* 2nd Place */}
-          <div className="flex flex-col items-center justify-end flex-1">
+          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
-                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
+                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10 shadow-lg">
                   <User className="h-6 w-6 text-[#121212]" />
                 </div>
               ) : (
-                <img src={p2?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10" alt={p2?.player.name} />
+                <img src={p2?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10 shadow-lg" alt={p2?.player.name} />
               )}
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">2</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+              <div className="flex flex-col items-center mt-3 mb-3">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p2?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p2?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[40px] mt-3" />}
-            <div 
-              className="relative w-full max-w-[101px] h-[70px]" 
-              style={{ backgroundImage: `url(${place2Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
-            />
+            {isEmpty && <div className="h-[36px] mt-3 mb-3" />}
+            {/* CSS Pedestal */}
+            <div className="w-full h-[70px] bg-[#1C1C1E]/90 border-t border-r border-[#2C2C2E]/60 backdrop-blur-md" />
           </div>
 
           {/* 1st Place */}
-          <div className="flex flex-col items-center justify-end flex-1 z-10 mx-[-8px]">
+          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-20 mx-[-4px]">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
                 <div className="w-[68px] h-[68px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10 shadow-[0_0_20px_rgba(120,216,80,0.15)]">
@@ -97,41 +91,37 @@ export const LeaderboardView: React.FC = () => {
               <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#121212] z-20">1</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+              <div className="flex flex-col items-center mt-3 mb-3">
                 <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{p1?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p1?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[40px] mt-3" />}
-            <div 
-              className="relative w-full max-w-[100px] h-[98px]" 
-              style={{ backgroundImage: `url(${place1Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
-            />
+            {isEmpty && <div className="h-[38px] mt-3 mb-3" />}
+            {/* CSS Pedestal */}
+            <div className="w-full h-[98px] bg-[#2C2C2E]/90 border-t border-x border-[#3C3C3E]/60 backdrop-blur-md shadow-2xl" />
           </div>
 
           {/* 3rd Place */}
-          <div className="flex flex-col items-center justify-end flex-1">
+          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
-                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10">
+                <div className="w-[60px] h-[60px] rounded-full bg-[#1E311A] flex items-center justify-center border-2 border-[#121212] z-10 shadow-lg">
                   <User className="h-6 w-6 text-[#121212]" />
                 </div>
               ) : (
-                <img src={p3?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10" alt={p3?.player.name} />
+                <img src={p3?.player.avatarUrl || playerCardImg} className="w-[60px] h-[60px] rounded-full object-cover border-2 border-[#121212] z-10 shadow-lg" alt={p3?.player.name} />
               )}
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">3</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 h-[40px] justify-start">
+              <div className="flex flex-col items-center mt-3 mb-3">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p3?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p3?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[40px] mt-3" />}
-            <div 
-              className="relative w-full max-w-[102px] h-[42px]" 
-              style={{ backgroundImage: `url(${place3Svg})`, backgroundSize: '100% 100%', backgroundPosition: 'bottom' }}
-            />
+            {isEmpty && <div className="h-[36px] mt-3 mb-3" />}
+            {/* CSS Pedestal */}
+            <div className="w-full h-[46px] bg-[#1C1C1E]/90 border-t border-l border-[#2C2C2E]/60 backdrop-blur-md" />
           </div>
         </div>
 
