@@ -11,6 +11,7 @@ import { InviteView } from './InviteView';
 import { Player, Court } from '../types';
 import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
 
+import { BottomSheet } from '../components/ui/BottomSheet';
 import { ScheduleSessionView } from './ScheduleSessionView';
 
 export const HomeView: React.FC = () => {
@@ -36,6 +37,7 @@ export const HomeView: React.FC = () => {
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedGameCourt, setSelectedGameCourt] = useState<Court | null>(null);
 
@@ -232,8 +234,8 @@ export const HomeView: React.FC = () => {
 
               {role === 'coach' && (
                 <button
-                  onClick={toggleSession}
-                  className="font-sans text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors"
+                  onClick={() => setIsEndSessionConfirmOpen(true)}
+                  className="font-sans text-xs font-semibold text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
                 >
                   End Session
                 </button>
@@ -332,6 +334,37 @@ export const HomeView: React.FC = () => {
           <ScheduleSessionView onClose={() => setIsScheduleOpen(false)} />
         </div>
       )}
+
+      {/* End Session Confirmation Bottom Sheet */}
+      <BottomSheet
+        isOpen={isEndSessionConfirmOpen}
+        onClose={() => setIsEndSessionConfirmOpen(false)}
+        title="End Public Session"
+      >
+        <div className="space-y-4 pt-2 pb-4 text-center">
+          <p className="font-sans text-sm text-[#8E8E93] leading-relaxed">
+            Are you sure you want to end the current training session? All active court matchmaking and player check-ins will be closed.
+          </p>
+
+          <div className="flex items-center gap-3 pt-2">
+            <button
+              onClick={() => setIsEndSessionConfirmOpen(false)}
+              className="flex-1 h-12 rounded-full bg-[#2C2C2E] text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setIsEndSessionConfirmOpen(false);
+                toggleSession();
+              }}
+              className="flex-1 h-12 rounded-full bg-[#1C1C1E] text-white border border-[#2C2C2E] font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#242426] cursor-pointer"
+            >
+              Confirm End
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 };
