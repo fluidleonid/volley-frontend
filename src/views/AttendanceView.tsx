@@ -52,7 +52,7 @@ export const AttendanceView: React.FC = () => {
         <PageHeader
           title="Attendance"
           onBack={() => setActiveTab('profile')}
-          onClose={() => setActiveTab('profile')}
+          onClose={() => setActiveTab('home')}
         />
       </div>
 

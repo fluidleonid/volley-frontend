@@ -45,7 +45,7 @@ const mockBilling: MonthGroup[] = [
 ];
 
 export const BillingView: React.FC = () => {
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab, role } = useAppStore();
   const [selectedRecord, setSelectedRecord] = useState<BillingRecord | null>(null);
 
   return (
@@ -55,7 +55,7 @@ export const BillingView: React.FC = () => {
           <PageHeader
             title="Billing"
             onBack={() => setActiveTab('profile')}
-            onClose={() => setActiveTab('profile')}
+            onClose={() => setActiveTab('home')}
           />
         </div>
 
@@ -78,21 +78,35 @@ export const BillingView: React.FC = () => {
               <h3 className="text-[12px] text-[#8E8E93] font-medium mb-2">{group.month}</h3>
               <div className="flex flex-col">
                 {group.records.map((record, index) => (
-                  <div key={`${record.id}-${index}`} className="flex items-center py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
-                    <div className="w-[80px] text-left shrink-0 font-bold text-white text-[16px]">
+                  <div key={`${record.id}-${index}`} className="grid grid-cols-4 w-full items-center py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
+                    {/* Date */}
+                    <div className="col-span-1 text-left shrink-0 font-bold text-white text-[16px]">
                       {record.dateStr}
                     </div>
-                    <div className="flex-1 flex items-center">
-                      <span className="text-[#8E8E93] text-[15px]">{record.type}</span>
+                    {/* Type */}
+                    <div className="col-span-1 pl-[12px] text-[#8E8E93] text-[15px] truncate">
+                      {record.type}
                     </div>
-                    <div className="text-right flex items-center gap-3">
-                      <span className="text-[#8E8E93] text-[15px]">{record.amount}</span>
-                      
-                      {/* Badge / Button */}
+                    {/* Amount */}
+                    <div className="col-span-1 flex justify-end text-[#8E8E93] text-[15px] pr-2 truncate">
+                      {record.amount}
+                    </div>
+                    
+                    {/* Badge / Button */}
+                    <div className="col-span-1 flex justify-end">
                       {record.status === 'Paid' ? (
-                        <div className="bg-[#68BD44]/10 text-[#68BD44] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center">
-                          Paid
-                        </div>
+                        role === 'coach' ? (
+                          <button 
+                            onClick={() => setSelectedRecord(record)}
+                            className="bg-[#68BD44]/10 text-[#68BD44] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-transform"
+                          >
+                            Paid
+                          </button>
+                        ) : (
+                          <div className="bg-[#68BD44]/10 text-[#68BD44] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center">
+                            Paid
+                          </div>
+                        )
                       ) : (
                         <button 
                           onClick={() => setSelectedRecord(record)}
@@ -113,7 +127,7 @@ export const BillingView: React.FC = () => {
       <SettlePaymentSheet 
         isOpen={!!selectedRecord} 
         onClose={() => setSelectedRecord(null)} 
-        amount={selectedRecord?.amount || ''} 
+        record={selectedRecord} 
       />
     </>
   );
