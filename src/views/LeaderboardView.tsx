@@ -73,9 +73,9 @@ export const LeaderboardView: React.FC = () => {
         </div>
 
         {/* Podium Section */}
-        <div className="relative flex items-end justify-center mb-6 h-[226px] -mx-4 px-4 overflow-hidden">
+        <div className="relative flex items-end justify-center mb-6 h-[226px] overflow-hidden">
           {/* 2nd Place */}
-          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-10">
+          <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-lg">
@@ -97,7 +97,7 @@ export const LeaderboardView: React.FC = () => {
           </div>
 
           {/* 1st Place */}
-          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-20 mx-[-4px]">
+          <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-20">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
                 <div className="w-[68px] h-[68px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-[0_0_20px_rgba(120,216,80,0.15)]">
@@ -119,7 +119,7 @@ export const LeaderboardView: React.FC = () => {
           </div>
 
           {/* 3rd Place */}
-          <div className="relative flex flex-col items-center justify-end w-1/3 h-full z-10">
+          <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
               {isEmpty ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-[#2C2C2E] flex items-center justify-center z-10 shadow-lg">
