@@ -56,7 +56,7 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
     <>
       <div
         onClick={handleClick}
-        className="flex flex-row items-center justify-between py-2 border-b border-solid border-[#2C2C2E]/60 last:border-b-0 w-full h-[64px] min-h-[64px] max-h-[64px] cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.99]"
+        className="flex flex-row items-center justify-between py-3 border-b border-solid border-[#2C2C2E]/60 last:border-b-0 w-full cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.99]"
       >
         {/* 1. Status W/L Container (Exact Width: 100px, Full Height, Borderless Pill) */}
         <div className="w-[100px] shrink-0 self-stretch flex items-center justify-start">

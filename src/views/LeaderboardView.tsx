@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { User } from 'lucide-react';
+import { LeaderboardRowItem } from '../components/ui/LeaderboardRowItem';
 import bgImage from '../assets/leaderboard.png';
 import lightSvg from '../assets/light.svg';
 import place1Svg from '../assets/place1.svg';
@@ -182,22 +182,12 @@ export const LeaderboardView: React.FC = () => {
         ) : (
           <div className="flex flex-col relative z-20">
             {rest.map((entry) => (
-              <div key={entry.player.id} className="flex items-center px-4 py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
-                <div className="w-7 text-center mr-3 font-bold text-white text-[20px]">{entry.rank}</div>
-                <div className="flex-1 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-[#1C1C1E] mr-3 border border-[#2C2C2E] flex items-center justify-center overflow-hidden">
-                    {entry.player.avatarUrl ? (
-                      <img src={entry.player.avatarUrl} className="w-full h-full object-cover" alt={entry.player.name} />
-                    ) : (
-                      <User className="h-5 w-5 text-[#8E8E93]" />
-                    )}
-                  </div>
-                  <span className="text-white text-[16px] font-medium">{entry.player.name}</span>
-                </div>
-                <div className="text-right flex items-center gap-1.5">
-                  <span className="text-[#8E8E93] text-[16px]">{entry.xp} BP</span>
-                </div>
-              </div>
+              <LeaderboardRowItem
+                key={entry.player.id}
+                rank={entry.rank}
+                player={entry.player}
+                xp={entry.xp}
+              />
             ))}</div>
         )}
       </div>
