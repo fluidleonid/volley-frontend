@@ -109,7 +109,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   return (
     <SheetContext.Provider value={currentContextValue}>
       <div
-        className="fixed inset-0 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+        className="fixed inset-0 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 !mt-0"
         style={{ zIndex }}
       >
         {/* Backdrop overlay */}

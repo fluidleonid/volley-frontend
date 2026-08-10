@@ -323,14 +323,14 @@ export const HomeView: React.FC = () => {
 
       {/* Full Page Invite View Overlay (z-[100] hides tab bar completely) */}
       {isInviteOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200">
+        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200 !mt-0">
           <InviteView onClose={() => setIsInviteOpen(false)} />
         </div>
       )}
 
       {/* Full Page Schedule Session View Overlay */}
       {isScheduleOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200">
+        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200 !mt-0">
           <ScheduleSessionView onClose={() => setIsScheduleOpen(false)} />
         </div>
       )}
