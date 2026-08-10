@@ -10,6 +10,8 @@ import { LeaderboardView } from './views/LeaderboardView';
 import { GamesView } from './views/GamesView';
 import { ProfileView } from './views/ProfileView';
 import { CoachView } from './views/CoachView';
+import { AttendanceView } from './views/AttendanceView';
+import { BillingView } from './views/BillingView';
 import { Smartphone } from 'lucide-react';
 
 export function App() {
@@ -118,6 +120,10 @@ export function App() {
         return <ProfileView />;
       case 'coach':
         return <CoachView />;
+      case 'attendance':
+        return <AttendanceView />;
+      case 'billing':
+        return <BillingView />;
       default:
         return <HomeView />;
     }
@@ -133,8 +139,8 @@ export function App() {
         {renderTabContent()}
       </main>
 
-      {/* Progressive Blur Container & Floating Tabbar (Hidden on Profile page) */}
-      {activeTab !== 'profile' && (
+      {/* Progressive Blur Container & Floating Tabbar (Hidden on Profile, Attendance, Billing pages) */}
+      {activeTab !== 'profile' && activeTab !== 'attendance' && activeTab !== 'billing' && (
         <>
           <div
             className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-[#121212]/80 via-[#121212]/40 to-transparent backdrop-blur-md"

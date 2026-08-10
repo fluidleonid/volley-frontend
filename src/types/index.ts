@@ -2,7 +2,7 @@ export type UserRole = 'player' | 'coach';
 
 export type AppFlowState = 'splash' | 'onboarding' | 'app';
 
-export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach';
+export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing';
 
 export type PlayerState = 'spectating' | 'queued' | 'match_found' | 'resting' | 'playing';
 

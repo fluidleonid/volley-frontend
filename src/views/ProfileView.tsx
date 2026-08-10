@@ -149,8 +149,8 @@ export const ProfileView: React.FC = () => {
 
       {/* 6. Action Menu Links (4px gap between menu items) */}
       <div className="space-y-[4px] pt-2 mt-6">
-        <MenuRowItem icon={Calendar} label="Attendance" />
-        <MenuRowItem icon={Receipt} label="Billing" />
+        <MenuRowItem icon={Calendar} label="Attendance" onClick={() => setActiveTab('attendance')} />
+        <MenuRowItem icon={Receipt} label="Billing" onClick={() => setActiveTab('billing')} />
         <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />
       </div>
     </div>

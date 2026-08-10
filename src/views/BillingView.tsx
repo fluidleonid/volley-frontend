@@ -1,0 +1,120 @@
+import React, { useState } from 'react';
+import { useAppStore } from '../store/appStore';
+import { PageHeader } from '../components/layout/PageHeader';
+import { SettlePaymentSheet } from '../components/ui/SettlePaymentSheet';
+
+interface BillingRecord {
+  id: string;
+  dateStr: string;
+  type: string;
+  amount: string;
+  status: 'Paid' | 'Settle';
+}
+
+interface MonthGroup {
+  month: string;
+  records: BillingRecord[];
+}
+
+const mockBilling: MonthGroup[] = [
+  {
+    month: 'July, 2026',
+    records: [
+      { id: '1', dateStr: 'Jul 20', type: 'Card', amount: '4,000 ֏', status: 'Paid' },
+      { id: '2', dateStr: 'Jul 13', type: '-', amount: '10,000 ֏', status: 'Settle' },
+      { id: '3', dateStr: 'Jul 8', type: 'Card', amount: '4,000 ֏', status: 'Paid' },
+      { id: '4', dateStr: 'Jul 20', type: 'Card', amount: '4,000 ֏', status: 'Paid' },
+    ]
+  },
+  {
+    month: 'June, 2026',
+    records: [
+      { id: '5', dateStr: 'Jun 12', type: 'Cash', amount: '4,000 ֏', status: 'Paid' },
+      { id: '6', dateStr: 'Jun 8', type: 'Cash', amount: '4,000 ֏', status: 'Paid' },
+      { id: '7', dateStr: 'Jun 3', type: 'Cash', amount: '4,000 ֏', status: 'Paid' },
+      { id: '8', dateStr: 'Jun 1', type: 'Cash', amount: '4,000 ֏', status: 'Paid' },
+    ]
+  },
+  {
+    month: 'May, 2026',
+    records: [
+      { id: '9', dateStr: 'May 12', type: 'Card', amount: '21 matches ֏', status: 'Paid' },
+      { id: '10', dateStr: 'May 8', type: 'Public', amount: '12 matches ֏', status: 'Paid' },
+    ]
+  }
+];
+
+export const BillingView: React.FC = () => {
+  const { setActiveTab } = useAppStore();
+  const [selectedRecord, setSelectedRecord] = useState<BillingRecord | null>(null);
+
+  return (
+    <>
+      <div className="space-y-4 pb-24 max-w-[480px] mx-auto select-none px-4">
+        <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-5 -mx-4 px-4">
+          <PageHeader
+            title="Billing"
+            onBack={() => setActiveTab('profile')}
+            onClose={() => setActiveTab('profile')}
+          />
+        </div>
+
+        {/* Summary Cards */}
+        <div className="flex gap-3 mt-2">
+          <div className="flex-1 bg-[#1C1C1E] rounded-2xl p-4 border-none">
+            <div className="font-display text-[24px] font-bold text-white leading-tight">160K ֏</div>
+            <div className="text-sm text-[#8E8E93] mt-1">Total</div>
+          </div>
+          <div className="flex-1 bg-[#1C1C1E] rounded-2xl p-4 border-none">
+            <div className="font-display text-[24px] font-bold text-white leading-tight">16,000 ֏</div>
+            <div className="text-sm text-[#8E8E93] mt-1">This month</div>
+          </div>
+        </div>
+
+        {/* Grouped List */}
+        <div className="mt-6 space-y-6">
+          {mockBilling.map((group) => (
+            <div key={group.month}>
+              <h3 className="text-[12px] text-[#8E8E93] font-medium mb-2">{group.month}</h3>
+              <div className="flex flex-col">
+                {group.records.map((record, index) => (
+                  <div key={`${record.id}-${index}`} className="flex items-center py-3 border-b border-[#2C2C2E]/60 last:border-0 bg-transparent">
+                    <div className="w-[80px] text-left shrink-0 font-bold text-white text-[16px]">
+                      {record.dateStr}
+                    </div>
+                    <div className="flex-1 flex items-center">
+                      <span className="text-[#8E8E93] text-[15px]">{record.type}</span>
+                    </div>
+                    <div className="text-right flex items-center gap-3">
+                      <span className="text-[#8E8E93] text-[15px]">{record.amount}</span>
+                      
+                      {/* Badge / Button */}
+                      {record.status === 'Paid' ? (
+                        <div className="bg-[#68BD44]/10 text-[#68BD44] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center">
+                          Paid
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => setSelectedRecord(record)}
+                          className="bg-white text-black px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-transform"
+                        >
+                          Settle
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <SettlePaymentSheet 
+        isOpen={!!selectedRecord} 
+        onClose={() => setSelectedRecord(null)} 
+        amount={selectedRecord?.amount || ''} 
+      />
+    </>
+  );
+};
