@@ -56,7 +56,7 @@ export const GamesView: React.FC = () => {
                   {stats.matches.length} matches • {stats.wins}W - {stats.losses}L • +{stats.xp} XP • +{stats.bp} BP
                 </p>
               </div>
-              <div className="bg-[#1C1C1E] rounded-[20px] px-4">
+              <div className="flex flex-col">
                 {stats.matches.map((match) => (
                   <MatchHistoryCard key={match.id} match={match} />
                 ))}
