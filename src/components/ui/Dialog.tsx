@@ -65,7 +65,7 @@ export const Dialog: React.FC<DialogProps> = ({
         <div className="flex flex-col gap-3">
           <button
             onClick={primaryButtonOnClick}
-            className="w-full h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+            className="w-full h-[44px] rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
           >
             {primaryButtonText}
           </button>
@@ -73,7 +73,7 @@ export const Dialog: React.FC<DialogProps> = ({
           {(secondaryButtonText && secondaryButtonOnClick) && (
             <button
               onClick={secondaryButtonOnClick}
-              className="w-full h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+              className="w-full h-[44px] rounded-full bg-[#1C1C1E] flex items-center justify-center text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
             >
               {secondaryButtonText}
             </button>

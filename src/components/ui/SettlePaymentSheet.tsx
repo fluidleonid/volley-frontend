@@ -60,7 +60,7 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
             {isPaidAdmin ? (
               <button
                 onClick={onClose}
-                className="w-full h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                className="w-full h-[44px] rounded-full bg-[#1C1C1E] flex items-center justify-center text-[#FF453A] font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
               >
                 Mark as Unpaid
               </button>
@@ -68,14 +68,14 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
               <>
                 <button
                   onClick={onClose}
-                  className="flex-1 h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                  className="flex-1 h-[44px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
                 >
                   <CreditCard className="w-5 h-5 text-[#8E8E93]" />
                   Card
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 h-[60px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
+                  className="flex-1 h-[44px] rounded-full bg-[#1C1C1E] flex items-center justify-center gap-2 text-white font-semibold hover:bg-[#2C2C2E] active:scale-95 transition-all"
                 >
                   <Banknote className="w-5 h-5 text-[#8E8E93]" />
                   Cash
