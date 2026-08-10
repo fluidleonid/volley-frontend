@@ -34,7 +34,7 @@ export const LeaderboardView: React.FC = () => {
   return (
     <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
       {/* Background Graphic */}
-      <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center bg-[#0a0a0b] rounded-b-[20px]">
+      <div className="absolute top-0 inset-x-0 h-[374px] z-0 overflow-hidden pointer-events-none flex justify-center bg-[#0a0a0b] rounded-b-[20px]">
         <div
           className="w-[633px] shrink-0 h-full relative"
           style={{
@@ -58,10 +58,10 @@ export const LeaderboardView: React.FC = () => {
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-[5px] h-[44px]">
+        <div className="flex items-center justify-between mb-5 h-[44px]">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
 
-          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[28px] rounded-full">
+          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-1.5 h-[28px] rounded-full">
             <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
             <div
               className="w-[22px] h-[22px] bg-[#78D850] -translate-y-[2px]"
