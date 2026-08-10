@@ -106,7 +106,6 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
         <PageHeader
           title="Invite to play"
           onBack={handleBack}
-          onClose={handleBack}
         />
       </div>
 
