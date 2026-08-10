@@ -39,7 +39,7 @@ export const HomeView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-36 pt-3 px-4 max-w-[480px] mx-auto select-none">
+    <div className="space-y-6 pb-36 px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Statistics Section (Figma Node: 11420:16325, gap=8px, h=73px, radius=20px) */}
       <div className="grid grid-cols-3 gap-2">
         <Card className="flex flex-col justify-between p-2.5 bg-[#1C1C1E] rounded-[20px] h-[73px]">
