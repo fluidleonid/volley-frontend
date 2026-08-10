@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { User } from 'lucide-react';
-import bgImage from '../assets/leaderboard.svg';
+import bgImage from '../assets/leaderboard.png';
+import place1Svg from '../assets/place1.svg';
+import place2Svg from '../assets/place2.svg';
+import place3Svg from '../assets/place3.svg';
 import bpIcon from '../assets/bp-icon.svg';
 import playerCardImg from '../assets/player-card.png';
 
@@ -33,7 +36,7 @@ export const LeaderboardView: React.FC = () => {
       {/* Background Graphic */}
       <div className="absolute top-0 inset-x-0 h-[330px] z-0 overflow-hidden pointer-events-none flex justify-center">
         <div 
-          className="w-full max-w-[480px] h-full relative"
+          className="w-[633px] shrink-0 h-full relative"
           style={{
             backgroundImage: `url(${bgImage})`,
             backgroundSize: '100% auto',
@@ -85,14 +88,13 @@ export const LeaderboardView: React.FC = () => {
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">2</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-3">
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p2?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p2?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[36px] mt-3 mb-3" />}
-            {/* CSS Pedestal */}
-            <div className="w-full h-[70px] bg-[#1C1C1E]/90 border-t border-r border-[#2C2C2E]/60 backdrop-blur-md" />
+            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
+            <img src={place2Svg} className="w-full object-cover" alt="2nd place pedestal" />
           </div>
 
           {/* 1st Place */}
@@ -108,14 +110,13 @@ export const LeaderboardView: React.FC = () => {
               <div className="absolute -bottom-2.5 bg-[#78D850] text-[#121212] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#121212] z-20">1</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-3">
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
                 <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{p1?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p1?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[38px] mt-3 mb-3" />}
-            {/* CSS Pedestal */}
-            <div className="w-full h-[98px] bg-[#2C2C2E]/90 border-t border-x border-[#3C3C3E]/60 backdrop-blur-md shadow-2xl" />
+            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
+            <img src={place1Svg} className="w-full object-cover" alt="1st place pedestal" />
           </div>
 
           {/* 3rd Place */}
@@ -131,14 +132,13 @@ export const LeaderboardView: React.FC = () => {
               <div className="absolute -bottom-2 bg-[#78D850] text-[#121212] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-black border-2 border-[#121212] z-20">3</div>
             </div>
             {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-3">
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start">
                 <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p3?.player.name}</span>
                 <span className="text-[11px] text-[#8E8E93]">{p3?.xp} BP</span>
               </div>
             )}
-            {isEmpty && <div className="h-[36px] mt-3 mb-3" />}
-            {/* CSS Pedestal */}
-            <div className="w-full h-[46px] bg-[#1C1C1E]/90 border-t border-l border-[#2C2C2E]/60 backdrop-blur-md" />
+            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
+            <img src={place3Svg} className="w-full object-cover" alt="3rd place pedestal" />
           </div>
         </div>
 
