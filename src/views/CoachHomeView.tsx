@@ -31,6 +31,8 @@ const mockPrivateSessions: PrivateSession[] = [
   },
 ];
 
+import { ScheduleSessionView } from './ScheduleSessionView';
+
 export const CoachHomeView: React.FC = () => {
   const {
     role,
@@ -47,6 +49,7 @@ export const CoachHomeView: React.FC = () => {
   } = useAppStore();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
 
@@ -60,34 +63,34 @@ export const CoachHomeView: React.FC = () => {
     <div className="space-y-6 pb-28 pt-[84px] px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Session Status Banner for Coach */}
       {!isSessionActive ? (
-        <div className="relative overflow-hidden rounded-[24px] bg-[#1C1C1E] p-5 border border-[#2C2C2E]/60 shadow-xl flex flex-col justify-between h-[160px]">
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#68BD44]/10 blur-2xl pointer-events-none" />
-          <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none flex items-center justify-center text-white text-7xl font-bold">
+        <div className="relative overflow-hidden rounded-[40px] bg-[#1C1C1E] p-6 border border-[#2C2C2E]/60 shadow-2xl flex flex-col justify-between h-[400px]">
+          <div className="absolute right-0 top-1/3 -translate-y-1/2 w-64 h-64 rounded-full bg-[#68BD44]/10 blur-3xl pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-48 h-48 opacity-10 pointer-events-none flex items-center justify-center text-white text-9xl font-bold">
             🎾
           </div>
 
-          <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3 py-1 text-xs font-semibold text-[#8E8E93] mb-2">
+          <div className="space-y-3 pt-2">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2C2C2E] px-3.5 py-1 text-xs font-semibold text-[#8E8E93]">
               <span>Public Open Session</span>
             </div>
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            <h3 className="font-display text-2xl font-bold text-white tracking-tight leading-snug">
               No active training session
             </h3>
-            <p className="font-sans text-xs text-[#8E8E93] mt-1 max-w-[260px] leading-relaxed">
+            <p className="font-sans text-sm text-[#8E8E93] leading-relaxed max-w-[320px]">
               Start or schedule a training session to open court matchmaking and player check-ins.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 pt-2 z-10">
+          <div className="flex flex-col gap-2.5 pt-4 z-10 w-full">
             <button
               onClick={toggleSession}
-              className="flex-1 h-9 rounded-full bg-[#68BD44] text-[#050505] font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer"
+              className="w-full h-12 rounded-full bg-[#68BD44] text-[#050505] font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer shadow-lg shadow-[#68BD44]/20"
             >
               Start training
             </button>
             <button
-              onClick={toggleSession}
-              className="flex-1 h-9 rounded-full bg-[#2C2C2E] text-white font-sans text-xs font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer"
+              onClick={() => setIsScheduleOpen(true)}
+              className="w-full h-12 rounded-full bg-[#2C2C2E] text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#3A3A3C] cursor-pointer border border-[#3A3A3C]"
             >
               Schedule training
             </button>
@@ -303,6 +306,13 @@ export const CoachHomeView: React.FC = () => {
       {isInviteOpen && (
         <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200">
           <InviteView onClose={() => setIsInviteOpen(false)} />
+        </div>
+      )}
+
+      {/* Full Page Schedule Session View Overlay */}
+      {isScheduleOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#121212] animate-in fade-in slide-in-from-bottom duration-200">
+          <ScheduleSessionView onClose={() => setIsScheduleOpen(false)} />
         </div>
       )}
     </div>
