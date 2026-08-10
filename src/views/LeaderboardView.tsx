@@ -50,8 +50,6 @@ export const LeaderboardView: React.FC = () => {
             className="absolute bottom-[98px] left-1/2 -translate-x-1/2 blur-[16px]"
             alt=""
           />
-          {/* Bottom fade mask to blend with the #121212 background */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#121212] from-0% via-transparent to-transparent" />
         </div>
       </div>
 
