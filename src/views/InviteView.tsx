@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, X, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { Avatar } from '../components/ui/Avatar';
 import { SelectPlayerSheet } from '../components/ui/SelectPlayerSheet';
