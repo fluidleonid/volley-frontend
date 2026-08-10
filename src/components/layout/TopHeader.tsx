@@ -11,9 +11,8 @@ export const TopHeader: React.FC = () => {
       case 'spectating':
         return { label: 'Spectating', icon: Box, color: 'text-[#8E8E93]' };
       case 'queued':
-        return { label: 'Queued', icon: Sparkles, color: 'text-[#8E8E93]' };
       case 'match_found':
-        return { label: 'Match Found!', icon: Sparkles, color: 'text-[#8E8E93]' };
+        return { label: 'Queued', icon: Sparkles, color: 'text-[#8E8E93]' };
       case 'playing':
         return { label: 'Training', icon: Sparkles, color: 'text-[#8E8E93]' };
       case 'resting':
