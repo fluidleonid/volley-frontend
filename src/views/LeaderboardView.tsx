@@ -8,46 +8,49 @@ export const LeaderboardView: React.FC = () => {
   const [tab, setTab] = useState<'total' | 'today' | 'empty'>('total');
 
   return (
-    <div className="space-y-4 pb-24 pt-[84px] px-4">
-      {/* Top Banner Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#68BD44]/20 via-[#1C1C1E] to-[#1C1C1E] p-4 border border-[#68BD44]/30">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#68BD44] text-black font-extrabold shadow-lg shadow-[#68BD44]/30">
-            <Trophy className="h-7 w-7" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">Leaderboard</h1>
-            <p className="text-xs text-[#8E8E93]">Top club players by XP and win rate</p>
+    <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
+      {/* Sticky Header Section (No border) */}
+      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 space-y-3 -mx-4 px-4">
+        {/* Top Banner Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#68BD44]/20 via-[#1C1C1E] to-[#1C1C1E] p-4 border border-[#68BD44]/30">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#68BD44] text-black font-extrabold shadow-lg shadow-[#68BD44]/30">
+              <Trophy className="h-7 w-7" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white">Leaderboard</h1>
+              <p className="text-xs text-[#8E8E93]">Top club players by XP and win rate</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Segment Controller (Tabs: All Time / Today / Empty) */}
-      <div className="flex rounded-xl bg-[#1C1C1E] p-1 border border-[#2C2C2E]">
-        <button
-          onClick={() => setTab('total')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            tab === 'total' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          All Time
-        </button>
-        <button
-          onClick={() => setTab('today')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            tab === 'today' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          Today
-        </button>
-        <button
-          onClick={() => setTab('empty')}
-          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-            tab === 'empty' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
-          }`}
-        >
-          Empty State
-        </button>
+        {/* Segment Controller (Tabs: All Time / Today / Empty) */}
+        <div className="flex rounded-xl bg-[#1C1C1E] p-1 border border-[#2C2C2E]">
+          <button
+            onClick={() => setTab('total')}
+            className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
+              tab === 'total' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
+            }`}
+          >
+            All Time
+          </button>
+          <button
+            onClick={() => setTab('today')}
+            className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
+              tab === 'today' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
+            }`}
+          >
+            Today
+          </button>
+          <button
+            onClick={() => setTab('empty')}
+            className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
+              tab === 'empty' ? 'bg-[#68BD44] text-black shadow' : 'text-[#8E8E93] hover:text-white'
+            }`}
+          >
+            Empty State
+          </button>
+        </div>
       </div>
 
       {/* Leaderboard Content */}

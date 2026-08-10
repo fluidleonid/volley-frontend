@@ -13,6 +13,7 @@ interface AppState {
   recentMatches: Match[];
   leaderboard: LeaderboardEntry[];
   isMatchDetailOpen: boolean;
+  invitedPlayers: Player[];
   
   // Actions
   setRole: (role: UserRole) => void;
@@ -25,22 +26,23 @@ interface AppState {
   sitOut: () => void;
   stopTraining: () => void;
   continueToPlay: () => void;
+  sendInvite: (players: Player[]) => void;
   completeOnboarding: (asRole?: UserRole) => void;
   finishMatch: (scoreA: number, scoreB: number) => void;
   setMatchDetailOpen: (open: boolean) => void;
 }
 
 const initialCourts: Court[] = [
-  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
-  { id: 'court-2', name: '#2', courtNumber: 2, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
-  { id: 'court-3', name: '#3', courtNumber: 3, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
-  { id: 'court-4', name: '#4', courtNumber: 4, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
-  { id: 'court-5', name: '#5', courtNumber: 5, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-2', name: '#2', courtNumber: 2, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-3', name: '#3', courtNumber: 3, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-4', name: '#4', courtNumber: 4, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-5', name: '#5', courtNumber: 5, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
   { id: 'court-6', name: '#6', courtNumber: 6, statusText: 'Reserved', isActive: false, isAvailable: false, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
 ];
 
 const joinedCourts: Court[] = [
-  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matching...', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
+  { id: 'court-1', name: '#1', courtNumber: 1, statusText: 'Matchmaking', isActive: true, isAvailable: true, isHardmode: false, timerSeconds: 0, teamA: [], teamB: [], scoreA: 0, scoreB: 0 },
   {
     id: 'court-2',
     name: '#2',
@@ -215,10 +217,25 @@ export const useAppStore = create<AppState>((set) => ({
     recentMatches: []
   })),
 
+  invitedPlayers: [],
+
   continueToPlay: () => set((state) => ({
     playerState: 'queued',
     currentUser: { ...state.currentUser, status: 'queued' }
   })),
+
+  sendInvite: (players: Player[]) => set((state) => {
+    // Invites are automatically accepted by all players!
+    // If player is currently playing in a game, keep state as 'playing' so active game banner is shown.
+    const isCurrentlyPlaying = state.playerState === 'playing';
+    const nextState: PlayerState = isCurrentlyPlaying ? 'playing' : 'match_found';
+
+    return {
+      invitedPlayers: players,
+      playerState: nextState,
+      currentUser: { ...state.currentUser, status: isCurrentlyPlaying ? 'playing' : 'queued' },
+    };
+  }),
 
   completeOnboarding: (asRole = 'player') => set({
     role: asRole,
@@ -249,11 +266,14 @@ export const useAppStore = create<AppState>((set) => ({
       bpGained: isWin ? 1.5 : 0.5,
     };
 
+    // If there is an accepted invited game pending, immediately show the invited game banner ('match_found')!
+    const nextPlayerState: PlayerState = state.invitedPlayers.length > 0 ? 'match_found' : 'spectating';
+
     return {
-      playerState: 'spectating',
+      playerState: nextPlayerState,
       currentUser: {
         ...state.currentUser,
-        status: 'spectating',
+        status: nextPlayerState === 'match_found' ? 'queued' : 'spectating',
         gamesPlayed: state.currentUser.gamesPlayed + 1,
         wins: isWin ? state.currentUser.wins + 1 : state.currentUser.wins,
         xp: state.currentUser.xp + (isWin ? 65 : 20),

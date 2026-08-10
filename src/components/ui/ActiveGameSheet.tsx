@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { AvatarGroup } from './AvatarGroup';
-import { X } from 'lucide-react';
 import { FinishGameSheet } from './FinishGameSheet';
 import { PlayerDetailSheet } from './PlayerDetailSheet';
+import { BottomSheet } from './BottomSheet';
 import { Player } from '../../types';
 
 export interface ActiveGameSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onCloseAll?: () => void;
+  hasParent?: boolean;
 }
 
 export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
   isOpen,
   onClose,
+  onCloseAll,
+  hasParent,
 }) => {
-  const { currentUser } = useAppStore();
+  const { currentUser, role } = useAppStore();
   const [isFinishSheetOpen, setIsFinishSheetOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
@@ -76,103 +80,102 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
     },
   ];
 
-  // Check if current logged-in user is a participant in this game
+  // Coach can finish ANY game; regular players can ONLY finish games they participate in
   const isUserInGame = teamAPlayers.some((p) => p.id === currentUser.id) || teamBPlayers.some((p) => p.id === currentUser.id);
+  const canFinishGame = role === 'coach' || isUserInGame;
+
+  const handleCloseAllSheets = () => {
+    setSelectedPlayer(null);
+    setIsFinishSheetOpen(false);
+    if (onCloseAll) {
+      onCloseAll();
+    } else {
+      onClose();
+    }
+  };
 
   return (
     <>
-      <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-        {/* Backdrop Overlay */}
-        <div className="absolute inset-0" onClick={onClose} />
-
-        {/* Sheet Container (Node 11507:13578) */}
-        <div className="relative w-full max-w-md rounded-t-[32px] bg-[#121212] border-t border-[#2C2C2E]/60 p-6 pb-8 text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300">
-          {/* Top Handle Bar */}
-          <div className="w-9 h-[4px] rounded-full bg-[#3A3A3C] mx-auto mb-4" />
-
-          {/* Header */}
-          <div className="relative flex items-center justify-center mb-4">
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">
-              Match details
-            </h3>
-
-            <button
-              onClick={onClose}
-              className="absolute right-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#242426] text-[#8E8E93] transition-colors hover:bg-[#2C2C2E] hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Status Badge */}
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        onCloseAll={handleCloseAllSheets}
+        hasParent={hasParent}
+        title="Match details"
+        zIndex={100}
+      >
+        <div className="-mx-4 px-[60px]">
+          {/* Status Pill Badge */}
           <div className="flex justify-center my-3">
-            <div className="inline-flex items-center justify-center px-4 py-1 rounded-full bg-[#68BD44]/15 border border-[#68BD44]/30">
-              <span className="font-display text-xs font-bold text-[#68BD44]">
-                Playing • In Progress
+            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#1C1C1E]">
+              <span className="font-sans text-xs font-medium text-[#8E8E93]">
+                Playing
               </span>
             </div>
           </div>
 
-          {/* Teams & Current Scores */}
-          <div className="flex items-center justify-center gap-6 my-6">
-            {/* Team A */}
-            <div className="flex flex-col items-center gap-2">
-              <AvatarGroup players={teamAPlayers} size="lg" stacked={true} hasBorder={false} ringColor="ring-[#121212]" onSelectPlayer={(p) => setSelectedPlayer(p)} />
-              <span className="font-display text-3xl font-extrabold text-white tracking-tight leading-none">
-                18
-              </span>
-              <span className="text-[11px] font-semibold text-[#8E8E93]">Team A</span>
-            </div>
+          {/* Teams & Avatars (44px avatars, vs in center, NO Team A/B text) */}
+          <div className="flex items-center justify-between my-6">
+            <AvatarGroup
+              players={teamAPlayers}
+              size="lg"
+              stacked={true}
+              hasBorder={false}
+              ringColor="ring-[#121212]"
+              onSelectPlayer={(p) => setSelectedPlayer(p)}
+            />
 
-            <span className="font-display text-xl font-bold text-[#8E8E93] opacity-60 self-center -mt-6">
-              :
+            <span className="font-sans text-[20px] font-bold text-[#8E8E93]">
+              vs
             </span>
 
-            {/* Team B */}
-            <div className="flex flex-col items-center gap-2">
-              <AvatarGroup players={teamBPlayers} size="lg" stacked={true} hasBorder={false} ringColor="ring-[#121212]" onSelectPlayer={(p) => setSelectedPlayer(p)} />
-              <span className="font-display text-3xl font-extrabold text-white tracking-tight leading-none">
-                16
-              </span>
-              <span className="text-[11px] font-semibold text-[#8E8E93]">Team B</span>
+            <AvatarGroup
+              players={teamBPlayers}
+              size="lg"
+              stacked={true}
+              hasBorder={false}
+              ringColor="ring-[#121212]"
+              onSelectPlayer={(p) => setSelectedPlayer(p)}
+            />
+          </div>
+
+          {/* 3 Metrics Row (NO divider line) */}
+          <div className="my-6 grid grid-cols-3 gap-x-2 text-left">
+            <div>
+              <div className="font-sans text-xs text-[#8E8E93] font-medium">Date</div>
+              <div className="font-sans text-sm font-semibold text-white mt-1">Jul 1, 2026</div>
+            </div>
+            <div>
+              <div className="font-sans text-xs text-[#8E8E93] font-medium">Time</div>
+              <div className="font-sans text-sm font-semibold text-white mt-1">16m 40s</div>
+            </div>
+            <div>
+              <div className="font-sans text-xs text-[#8E8E93] font-medium">Court</div>
+              <div className="font-sans text-sm font-semibold text-white mt-1"># 1</div>
             </div>
           </div>
 
-          {/* Metrics Grid */}
-          <div className="mt-6 pt-4 border-t border-[#2C2C2E]/40 grid grid-cols-3 gap-y-4 gap-x-2 text-left mb-6">
-            <div>
-              <div className="font-display text-xs text-[#8E8E93] font-medium">Court</div>
-              <div className="font-display text-sm font-semibold text-white mt-0.5"># 2</div>
-            </div>
-            <div>
-              <div className="font-display text-xs text-[#8E8E93] font-medium">Time</div>
-              <div className="font-display text-sm font-semibold text-white mt-0.5">12m 11s</div>
-            </div>
-            <div>
-              <div className="font-display text-xs text-[#8E8E93] font-medium">Mode</div>
-              <div className="font-display text-sm font-semibold text-white mt-0.5">Default</div>
-            </div>
-          </div>
-
-          {/* Finish Button - Enabled ONLY for players in this game */}
+          {/* Finish Button */}
           <button
             onClick={() => setIsFinishSheetOpen(true)}
-            disabled={!isUserInGame}
-            className={`flex h-[44px] w-full items-center justify-center rounded-full text-sm font-bold shadow-lg transition-all ${
-              isUserInGame
+            disabled={!canFinishGame}
+            className={`flex h-[52px] w-full items-center justify-center rounded-full font-sans text-base font-bold shadow-lg transition-all mt-[24px] ${
+              canFinishGame
                 ? 'bg-[#68BD44] text-[#050505] shadow-[#68BD44]/20 hover:bg-[#5AA739] active:scale-95 cursor-pointer'
                 : 'bg-[#1C1C1E] text-[#8E8E93] border border-[#2C2C2E] opacity-50 cursor-not-allowed'
             }`}
           >
-            {isUserInGame ? 'Finish game' : 'Only players can finish'}
+            {canFinishGame ? 'Finish' : 'Only players can finish'}
           </button>
         </div>
-      </div>
+      </BottomSheet>
 
-      {/* Finish Game Score Entry Sheet Modal (Node 11545-10258) */}
+      {/* Finish Game Score Entry Sheet Modal */}
       <FinishGameSheet
         isOpen={isFinishSheetOpen}
         onClose={() => setIsFinishSheetOpen(false)}
+        onCloseAll={handleCloseAllSheets}
+        hasParent={true}
         onSuccess={() => {
           setIsFinishSheetOpen(false);
           onClose();
@@ -184,6 +187,8 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
         player={selectedPlayer}
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
+        onCloseAll={handleCloseAllSheets}
+        hasParent={true}
       />
     </>
   );

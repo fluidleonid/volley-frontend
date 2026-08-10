@@ -8,16 +8,18 @@ export const GamesView: React.FC = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4 pb-24 pt-[84px] px-4">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#2C2C2E] pb-3">
-        <div>
-          <h1 className="text-lg font-bold text-white">My Games</h1>
-          <p className="text-xs text-[#8E8E93]">History of played sessions</p>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-[#68BD44] border border-[#2C2C2E]">
-          <Activity className="h-4 w-4" />
-          <span className="font-bold">48 total</span>
+    <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
+      {/* Sticky Header (No border) */}
+      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-bold text-white">My Games</h1>
+            <p className="text-xs text-[#8E8E93]">History of played sessions</p>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-[#68BD44] border border-[#2C2C2E]">
+            <Activity className="h-4 w-4" />
+            <span className="font-bold">48 total</span>
+          </div>
         </div>
       </div>
 

@@ -19,17 +19,21 @@ export const MenuRowItem: React.FC<MenuRowItemProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between p-3.5 rounded-[16px] bg-[#1C1C1E] hover:bg-[#242426] transition-colors group text-left border-0 ${className}`}
+      className={`group relative flex w-full items-center justify-between py-3.5 text-left border-0 bg-transparent select-none cursor-pointer ${className}`}
     >
-      <div className="flex items-center gap-3">
+      {/* Full-bleed active background fill extending to BOTH left and right screen edges (-left-4 -right-4) */}
+      <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-[#1C1C1E] transition-colors duration-150 pointer-events-none" />
+
+      {/* Content aligned with page margins */}
+      <div className="relative z-10 flex items-center gap-3">
         <Icon className="h-5 w-5 text-white shrink-0" />
-        <span className="font-display text-base font-semibold text-white tracking-tight">
+        <span className="font-sans text-base font-semibold text-white tracking-tight">
           {label}
         </span>
       </div>
 
       {showChevron && (
-        <ChevronRight className="h-5 w-5 text-[#8E8E93] group-hover:text-white transition-colors shrink-0" />
+        <ChevronRight className="relative z-10 h-5 w-5 text-[#8E8E93] group-active:text-white transition-colors shrink-0" />
       )}
     </button>
   );

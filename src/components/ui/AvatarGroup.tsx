@@ -18,13 +18,13 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   className = '',
   stacked = true,
   ringColor = 'ring-[#1C1C1E]',
-  hasBorder = true,
+  hasBorder = false,
   onSelectPlayer,
 }) => {
   if (!players || players.length === 0) return null;
 
   return (
-    <div className={`flex items-center ${stacked ? '-space-x-1' : 'gap-1'} ${className}`}>
+    <div className={`flex items-center ${stacked ? '-space-x-2' : 'gap-1'} ${className}`}>
       {players.map((p, i) => (
         <Avatar
           key={p.id}
@@ -39,7 +39,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
               onSelectPlayer(p);
             }
           }}
-          className={stacked && ringColor ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : 'relative'}
+          className={stacked ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : 'relative'}
         />
       ))}
     </div>

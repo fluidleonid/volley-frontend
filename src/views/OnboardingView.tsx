@@ -87,7 +87,7 @@ export const OnboardingView: React.FC = () => {
   `;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start bg-[#121212] px-4 pt-[84px] pb-10 text-white w-full max-w-md mx-auto select-none">
+    <div className="flex min-h-screen flex-col items-center justify-start bg-[#121212] px-4 pt-[84px] pb-10 text-white w-full max-w-[480px] mx-auto select-none">
       {/* Group 1: Top Header & Brand Logo (Figma Node: 11411:13797, h=28px) */}
       <div className="flex flex-col items-center text-center w-full">
         <img

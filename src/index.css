@@ -54,20 +54,16 @@
   }
 }
 
-/* Custom Scrollbar for Telegram Mini App */
+/* Hide scrollbar globally for clean native app feel */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+
+* {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
 }
 
 @layer utilities {
@@ -76,6 +72,6 @@
     scrollbar-width: none; /* Firefox */
   }
   .scrollbar-none::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none !important; /* Chrome, Safari and Opera */
   }
 }

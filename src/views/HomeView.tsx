@@ -7,8 +7,9 @@ import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
 import { Avatar } from '../components/ui/Avatar';
 import { PlayerDetailSheet } from '../components/ui/PlayerDetailSheet';
 import { ActiveGameSheet } from '../components/ui/ActiveGameSheet';
+import { InviteView } from './InviteView';
 import { Player, Court } from '../types';
-import { Play, Plus, Pause, Square, Zap, Check, Users, History } from 'lucide-react';
+import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
   const {
@@ -29,18 +30,17 @@ export const HomeView: React.FC = () => {
     setMatchDetailOpen,
   } = useAppStore();
 
-  const [copied, setCopied] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedGameCourt, setSelectedGameCourt] = useState<Court | null>(null);
 
   const handleInvite = () => {
-    navigator.clipboard.writeText('https://t.me/VolleyBot/app?startapp=invite');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    sitOut(); // Exit the queue when pressing Invite
+    setIsInviteOpen(true);
   };
 
   return (
-    <div className="space-y-6 pb-36 pt-3 px-4 max-w-md mx-auto select-none">
+    <div className="space-y-6 pb-36 pt-3 px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Statistics Section (Figma Node: 11420:16325, gap=8px, h=73px, radius=20px) */}
       <div className="grid grid-cols-3 gap-2">
         <Card className="flex flex-col justify-between p-2.5 bg-[#1C1C1E] rounded-[20px] h-[73px]">
@@ -88,40 +88,40 @@ export const HomeView: React.FC = () => {
           </div>
         )}
 
-        {/* STATE 2: Queued / Match Found mode ("In queue" active, Node: 11420:16289) */}
-        {(playerState === 'queued' || playerState === 'match_found') && (
+        {/* STATE 2: Queued / Match Found / Active mode */}
+        {(playerState === 'queued' || playerState === 'match_found' || playerState === 'playing') && (
           <div className="flex w-full items-center gap-2.5 text-center">
-            {/* Hard mode button (w=90.5px, h=44px, radius=20px) */}
+            {/* Hard mode button */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
                 onClick={toggleHardmode}
-                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] transition-all active:scale-95 ${
+                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
                   isHardmode
-                    ? 'bg-[#FF9500]/20 text-[#FF9500] shadow-[0_0_15px_rgba(255,149,0,0.3)]'
-                    : 'text-white hover:bg-[#242426]'
+                    ? 'bg-[#68BD44]/20 text-[#68BD44]'
+                    : 'bg-[#1C1C1E] text-white hover:bg-[#242426]'
                 }`}
               >
-                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#FF9500] fill-[#FF9500]' : 'text-white'}`} />
+                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#68BD44]' : 'text-white'}`} />
               </button>
               <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                {isHardmode ? 'Hard mode ON' : 'Hard mode'}
+                Hard mode
               </span>
             </div>
 
-            {/* Invite to play button (w=160px, h=44px, radius=100px) */}
+            {/* Invite to play button */}
             <div className="flex flex-[1.6] flex-col items-center">
               <button
                 onClick={handleInvite}
                 className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
               >
-                {copied ? <Check className="h-5 w-5 stroke-[3] text-[#050505]" /> : <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />}
+                <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
               </button>
               <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                {copied ? 'Copied' : 'Invite to play'}
+                Invite to play
               </span>
             </div>
 
-            {/* Sit out button (w=90.5px, h=44px, radius=20px) */}
+            {/* Sit out button */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
                 onClick={sitOut}
@@ -261,6 +261,13 @@ export const HomeView: React.FC = () => {
           <EmptyState message="No games yet" icon={History} />
         )}
       </div>
+
+      {/* Full Page Invite View Overlay (z-[100] hides tab bar completely) */}
+      {isInviteOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#121212] overflow-y-auto animate-in fade-in slide-in-from-bottom duration-200">
+          <InviteView onClose={() => setIsInviteOpen(false)} />
+        </div>
+      )}
     </div>
   );
 };

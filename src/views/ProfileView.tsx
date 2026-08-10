@@ -35,20 +35,22 @@ export const ProfileView: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white pb-24 pt-[84px] px-4 space-y-6 max-w-md mx-auto">
-      {/* 1. Header with Back Button */}
-      <div className="relative flex items-center justify-center pt-2">
-        <button
-          onClick={() => setActiveTab('home')}
-          className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426]"
-          title="Back to Home"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
+    <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 space-y-6 max-w-[480px] mx-auto select-none">
+      {/* 1. Sticky Header with Back Button (No border) */}
+      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
+        <div className="relative flex items-center justify-center">
+          <button
+            onClick={() => setActiveTab('home')}
+            className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426]"
+            title="Back to Home"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
 
-        <h1 className="font-display text-lg font-bold text-white tracking-tight">
-          Profile
-        </h1>
+          <h1 className="font-display text-lg font-bold text-white tracking-tight">
+            Profile
+          </h1>
+        </div>
       </div>
 
       {/* 2. Hero Player Banner Card */}
@@ -154,8 +156,8 @@ export const ProfileView: React.FC = () => {
         </div>
       </div>
 
-      {/* 6. Action Menu Links */}
-      <div className="space-y-2.5 pt-2">
+      {/* 6. Action Menu Links (4px gap between menu items) */}
+      <div className="space-y-[4px] pt-2">
         <MenuRowItem icon={Calendar} label="Attendance" />
         <MenuRowItem icon={Receipt} label="Billing" />
         <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />

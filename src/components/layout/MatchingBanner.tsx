@@ -168,7 +168,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
   return (
     <div
       onClick={handleBannerClick}
-      className={`flex h-[52px] items-center justify-between rounded-[28px] bg-[#1C1C1E] p-2 pl-3.5 animate-slide-up transition-all duration-300 ${
+      className={`flex h-[56px] items-center justify-between rounded-[28px] bg-[#1C1C1E] p-2 pl-3.5 animate-slide-up transition-all duration-300 ${
         bannerStage === 'all_accepted' ? 'cursor-pointer hover:bg-[#242426]' : ''
       }`}
     >
@@ -207,10 +207,10 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
                         <img
                           src={p.avatar}
                           alt={p.name}
-                          className="h-5 w-5 rounded-full object-cover border-2 border-[#1C1C1E]"
+                          className="h-[22px] w-[22px] rounded-full object-cover border-2 border-[#1C1C1E]"
                         />
                       ) : (
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
                           ?
                         </div>
                       )}
@@ -228,10 +228,10 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
                         <img
                           src={p.avatar}
                           alt={p.name}
-                          className="h-5 w-5 rounded-full object-cover border-2 border-[#1C1C1E]"
+                          className="h-[22px] w-[22px] rounded-full object-cover border-2 border-[#1C1C1E]"
                         />
                       ) : (
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#2C2C2E] border-2 border-[#1C1C1E] text-[10px] font-bold text-[#8E8E93] animate-pulse">
                           ?
                         </div>
                       )}
@@ -242,21 +242,21 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
             </div>
           </div>
 
-          {/* Right Section: Circular Court Badge #2 (w=36px, h=36px) OR Accept button */}
+          {/* Right Section: Circular / Oval Court Badge #2 (w=40px, h=40px) OR Accept button (h=40px) */}
           <div className="flex items-center gap-2">
             {userAccepted || bannerStage === 'all_accepted' ? (
-              /* Circular Court Number Badge (36x36px) - NO Accepted text! */
-              <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-[#2C2C2E] border border-[#3A3A3C] font-display text-xs font-extrabold text-white animate-fade-in shrink-0">
+              /* Circular / Oval Court Number Badge (h=40px, min-w=40px, px=3) - Noto Sans (font-sans 16px body-base) */
+              <div className="flex h-[40px] min-w-[40px] px-3 items-center justify-center rounded-full bg-[#2C2C2E] font-sans text-[16px] font-bold text-white animate-fade-in shrink-0">
                 #2
               </div>
             ) : (
-              /* Accept Button (h=36px, w=90px) with 60fps Silky Smooth Radial Conic Gray Fill Animation */
+              /* Accept Button (h=40px, w=90px) with 60fps Silky Smooth Radial Conic Gray Fill Animation */
               <button
                 onClick={handleAccept}
                 style={{
                   background: `conic-gradient(from 0deg, #2C2C2E 0deg ${fillAngle}deg, #68BD44 ${fillAngle}deg 360deg)`,
                 }}
-                className="relative flex h-[36px] w-[90px] items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform active:scale-95 overflow-hidden"
+                className="relative flex h-[40px] w-[90px] items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10 font-extrabold text-[#050505]">
                   Accept

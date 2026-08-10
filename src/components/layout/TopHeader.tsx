@@ -29,7 +29,7 @@ export const TopHeader: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-2 text-white border-b border-transparent">
-      <div className="flex items-center justify-between max-w-md mx-auto w-full px-4">
+      <div className="flex items-center justify-between max-w-[480px] mx-auto w-full px-4">
         {/* Left: Avatar with Level Ring & Name & Status (Clickable to Profile View) */}
         <div
           onClick={() => setActiveTab('profile')}

@@ -4,8 +4,10 @@ import { CourtCard } from '../components/courts/CourtCard';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Avatar } from '../components/ui/Avatar';
 import { PlayerDetailSheet } from '../components/ui/PlayerDetailSheet';
-import { Player } from '../types';
-import { Play, Plus, Pause, Square, Zap, Check, Users, CalendarClock } from 'lucide-react';
+import { ActiveGameSheet } from '../components/ui/ActiveGameSheet';
+import { InviteView } from './InviteView';
+import { Player, Court } from '../types';
+import { Play, Plus, Pause, Square, Users, CalendarClock } from 'lucide-react';
 
 interface PrivateSession {
   id: string;
@@ -33,8 +35,6 @@ export const CoachHomeView: React.FC = () => {
   const {
     role,
     playerState,
-    isHardmode,
-    toggleHardmode,
     toggleCourtAvailability,
     startTraining,
     sitOut,
@@ -44,19 +44,19 @@ export const CoachHomeView: React.FC = () => {
     todaysPlayers,
   } = useAppStore();
 
-  const [copied, setCopied] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
 
   const handleInvite = () => {
-    navigator.clipboard.writeText('https://t.me/VolleyBot/app?startapp=invite');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    sitOut(); // Exit the queue when pressing Invite
+    setIsInviteOpen(true);
   };
 
   const activeCourtsCount = courts.filter((c) => c.isAvailable).length;
 
   return (
-    <div className="space-y-6 pb-36 pt-3 px-4 max-w-md mx-auto select-none">
+    <div className="space-y-6 pb-28 pt-[84px] px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Dynamic Action Buttons Container */}
       <div className="flex flex-col items-center">
         {/* STATE 1: Spectating ("Start training" mode) */}
@@ -74,38 +74,11 @@ export const CoachHomeView: React.FC = () => {
           </div>
         )}
 
-        {/* STATE 2: Queued mode */}
-        {playerState === 'queued' && (
-          <div className="flex w-full items-center gap-2.5 text-center">
-            <div className="flex flex-[0.9] flex-col items-center">
-              <button
-                onClick={toggleHardmode}
-                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] transition-all active:scale-95 ${
-                  isHardmode
-                    ? 'bg-[#FF9500]/20 text-[#FF9500] shadow-[0_0_15px_rgba(255,149,0,0.3)]'
-                    : 'text-white hover:bg-[#242426]'
-                }`}
-              >
-                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#FF9500] fill-[#FF9500]' : 'text-white'}`} />
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                {isHardmode ? 'Hard mode ON' : 'Hard mode'}
-              </span>
-            </div>
-
-            <div className="flex flex-[1.6] flex-col items-center">
-              <button
-                onClick={handleInvite}
-                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
-              >
-                {copied ? <Check className="h-5 w-5 stroke-[3] text-[#050505]" /> : <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />}
-              </button>
-              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                {copied ? 'Copied' : 'Invite to play'}
-              </span>
-            </div>
-
-            <div className="flex flex-[0.9] flex-col items-center">
+        {/* STATE 2: Queued / Match Found mode for Coach (Sit out on LEFT, Invite to play on RIGHT, EQUAL WIDTH) */}
+        {(playerState === 'queued' || playerState === 'match_found') && (
+          <div className="grid grid-cols-2 gap-2.5 w-full text-center">
+            {/* Sit out button (LEFT) */}
+            <div className="flex flex-col items-center">
               <button
                 onClick={sitOut}
                 className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
@@ -116,12 +89,26 @@ export const CoachHomeView: React.FC = () => {
                 Sit out
               </span>
             </div>
+
+            {/* Invite to play button (RIGHT) */}
+            <div className="flex flex-col items-center">
+              <button
+                onClick={handleInvite}
+                className="flex h-[44px] w-full items-center justify-center rounded-full bg-[#68BD44] text-[#050505] shadow-lg shadow-[#68BD44]/20 transition-all active:scale-95 hover:bg-[#5AA739]"
+              >
+                <Plus className="h-5 w-5 stroke-[3] text-[#050505]" />
+              </button>
+              <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
+                Invite to play
+              </span>
+            </div>
           </div>
         )}
 
         {/* STATE 3: Resting mode */}
         {playerState === 'resting' && (
           <div className="grid w-full grid-cols-2 gap-3 text-center">
+            {/* Stop button */}
             <div className="flex flex-col items-center">
               <button
                 onClick={stopTraining}
@@ -134,6 +121,7 @@ export const CoachHomeView: React.FC = () => {
               </span>
             </div>
 
+            {/* Continue to play button */}
             <div className="flex flex-col items-center">
               <button
                 onClick={continueToPlay}
@@ -165,6 +153,7 @@ export const CoachHomeView: React.FC = () => {
               court={court}
               showCoachToggle={role === 'coach'}
               onToggleAvailability={toggleCourtAvailability}
+              onSelectCourt={(c) => setSelectedCourt(c)}
             />
           ))}
         </div>
@@ -229,7 +218,7 @@ export const CoachHomeView: React.FC = () => {
             {mockPrivateSessions.map((session) => (
               <div
                 key={session.id}
-                className="flex items-center justify-between py-3 border-b border-[#2C2C2E]/60 last:border-b-0"
+                className="flex items-center justify-between py-3 border-b border-dashed border-[#2C2C2E]/60 last:border-b-0"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -253,12 +242,24 @@ export const CoachHomeView: React.FC = () => {
         )}
       </div>
 
+      {/* Active Game Sheet Modal for Coach */}
+      <ActiveGameSheet
+        isOpen={!!selectedCourt}
+        onClose={() => setSelectedCourt(null)}
+      />
+
       {/* Player Detail Sheet Modal (Admin View) */}
       <PlayerDetailSheet
         player={selectedPlayer}
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
       />
+      {/* Full Page Invite View Overlay (z-[100] hides tab bar completely) */}
+      {isInviteOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#121212] overflow-y-auto animate-in fade-in slide-in-from-bottom duration-200">
+          <InviteView onClose={() => setIsInviteOpen(false)} />
+        </div>
+      )}
     </div>
   );
 };

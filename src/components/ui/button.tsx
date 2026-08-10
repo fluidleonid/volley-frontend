@@ -16,7 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    'flex items-center justify-center rounded-full font-display font-bold tracking-tight transition-all active:scale-[0.98] select-none disabled:opacity-50 disabled:pointer-events-none';
+    'flex items-center justify-center rounded-full font-sans font-bold tracking-tight transition-all active:scale-[0.98] select-none disabled:opacity-50 disabled:pointer-events-none';
 
   const sizes = {
     default: 'h-[44px] text-[16px] px-6',

@@ -17,7 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Noto Sans"', 'sans-serif'],
+        sans: ['"Noto Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['"Noto Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         display: ['"Bricolage Grotesque"', 'sans-serif'],
         heading: ['"Bricolage Grotesque"', 'sans-serif'],
       },

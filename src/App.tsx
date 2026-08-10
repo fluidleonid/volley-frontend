@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppStore } from './store/appStore';
 import { TopHeader } from './components/layout/TopHeader';
 import { BottomNav } from './components/layout/BottomNav';
@@ -10,16 +10,27 @@ import { LeaderboardView } from './views/LeaderboardView';
 import { GamesView } from './views/GamesView';
 import { ProfileView } from './views/ProfileView';
 import { CoachView } from './views/CoachView';
+import { Smartphone } from 'lucide-react';
 
 export function App() {
   const { flowState, role, activeTab } = useAppStore();
+  const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
-    // Initialize Telegram WebApp SDK & Trigger Fullscreen Mode
+    // Initialize Telegram WebApp SDK & Trigger Fullscreen / Orientation Lock
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tg = (window as any).Telegram?.WebApp;
     if (tg) {
       tg.ready();
+
+      // Request Orientation Lock (Portrait Only in Telegram Mini App)
+      if (typeof tg.lockOrientation === 'function') {
+        try {
+          tg.lockOrientation();
+        } catch (e) {
+          console.log('lockOrientation error:', e);
+        }
+      }
 
       // Request Fullscreen Mode (Telegram Mini App Bot API 8.0+)
       if (typeof tg.requestFullscreen === 'function') {
@@ -45,19 +56,52 @@ export function App() {
         tg.setBackgroundColor('#121212');
       }
     }
+
+    // Check device orientation to block landscape on mobile screen sizes
+    const checkOrientation = () => {
+      const isMobileDevice = window.innerWidth <= 1024;
+      const isHorizontal = window.innerWidth > window.innerHeight;
+      setIsLandscape(isMobileDevice && isHorizontal);
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
   }, []);
 
-  // 1. Flow State: Splash Screen
+  // 1. Landscape Orientation Lock Screen Overlay for Mobile & Telegram
+  if (isLandscape) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#121212] p-6 text-center text-white select-none">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1C1C1E] mb-4 text-[#68BD44] animate-bounce">
+          <Smartphone className="h-8 w-8 rotate-90" />
+        </div>
+        <h2 className="font-display text-xl font-bold tracking-tight text-white mb-2">
+          Portrait Mode Required
+        </h2>
+        <p className="text-sm text-[#8E8E93] max-w-xs leading-relaxed">
+          Please rotate your device back to portrait orientation to continue using the Volley app.
+        </p>
+      </div>
+    );
+  }
+
+  // 2. Flow State: Splash Screen
   if (flowState === 'splash') {
     return <SplashScreen />;
   }
 
-  // 2. Flow State: Onboarding Screen
+  // 3. Flow State: Onboarding Screen
   if (flowState === 'onboarding') {
     return <OnboardingView />;
   }
 
-  // 3. Flow State: Main App Navigation View
+  // 4. Flow State: Main App Navigation View
   const renderTabContent = () => {
     if (role === 'coach' && activeTab === 'home') {
       return <CoachHomeView />;
@@ -84,13 +128,25 @@ export function App() {
       {/* Top Header Navigation (Only shown on Main / Home page) */}
       {activeTab === 'home' && <TopHeader />}
 
-      {/* Main Page View Content */}
-      <main className="mx-auto max-w-md">
+      {/* Main Page View Content (Max width 480px) */}
+      <main className="mx-auto max-w-[480px]">
         {renderTabContent()}
       </main>
 
-      {/* Floating Bottom Capsule Tabbar */}
-      <BottomNav />
+      {/* Progressive Blur Container & Floating Tabbar (Hidden on Profile page) */}
+      {activeTab !== 'profile' && (
+        <>
+          <div
+            className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-[#121212] via-[#121212]/85 to-transparent backdrop-blur-md"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+            }}
+          />
+
+          <BottomNav />
+        </>
+      )}
     </div>
   );
 }
