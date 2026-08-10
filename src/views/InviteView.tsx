@@ -100,9 +100,9 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       : teamBPlayers.map((p) => p.id);
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white pb-28 px-4 space-y-6 max-w-[480px] mx-auto select-none">
-      {/* 1. Header with Back (<) and Close (X) buttons */}
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
+    <div className="h-screen max-h-screen overflow-hidden flex flex-col justify-between bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none">
+      {/* 1. Header with Back (<) and Close (X) buttons (Matches ProfileView top spacing: pt-[84px] pb-3) */}
+      <div className="shrink-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
         <div className="relative flex items-center justify-between">
           <button
             onClick={handleBack}
@@ -126,89 +126,92 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 2. Main Court Card Container (Height: 400px, Outer Radius: 40px, Padding: 20px, Border: 0) */}
-      <div className="relative w-full h-[400px] rounded-[40px] bg-[#1C1C1E] p-[20px] shadow-2xl border-0 overflow-hidden flex flex-col justify-between">
-        {/* Left Side Notch Cutout */}
-        <img
-          src={courtLg}
-          alt=""
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-[12px] h-[44px] pointer-events-none z-20"
-        />
+      {/* Main Content Wrapper (Fixed fit without scroll) */}
+      <div className="flex-1 flex flex-col justify-center space-y-4 pb-[110px] overflow-hidden">
+        {/* 2. Main Court Card Container (Height: 400px, Outer Radius: 40px, Padding: 20px, Border: 0) */}
+        <div className="relative w-full h-[380px] rounded-[40px] bg-[#1C1C1E] p-[20px] shadow-2xl border-0 overflow-hidden flex flex-col justify-between shrink-0">
+          {/* Left Side Notch Cutout */}
+          <img
+            src={courtLg}
+            alt=""
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-[12px] h-[44px] pointer-events-none z-20"
+          />
 
-        {/* Right Side Notch Cutout (Rotated 180 deg) */}
-        <img
-          src={courtLg}
-          alt=""
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-[12px] h-[44px] pointer-events-none z-20 rotate-180"
-        />
+          {/* Right Side Notch Cutout (Rotated 180 deg) */}
+          <img
+            src={courtLg}
+            alt=""
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-[12px] h-[44px] pointer-events-none z-20 rotate-180"
+          />
 
-        {/* Full-bleed Edge-to-Edge Dashed Line (runs edge-to-edge under notch shapes) */}
-        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 border-b border-dashed border-[#2C2C2E]/60 pointer-events-none z-10" />
+          {/* Full-bleed Edge-to-Edge Dashed Line (runs edge-to-edge under notch shapes) */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 border-b border-dashed border-[#2C2C2E]/60 pointer-events-none z-10" />
 
-        {/* TOP BOX: Team A Section (Entire box area is clickable for intuitive UX) */}
-        <div
-          onClick={() => setActivePicker('teamA')}
-          className="relative w-full h-[170px] rounded-[20px] bg-[#242426] hover:bg-[#2A2A2C] transition-all active:scale-[0.99] flex items-center justify-center cursor-pointer select-none"
-        >
-          <div className="flex items-center -space-x-2">
-            {teamAPlayers.map((player, idx) => (
-              <Avatar
-                key={player.id}
-                src={player.avatarUrl}
-                alt={player.name}
-                initials={player.name[0]}
-                size="lg"
-                hasBorder={false}
-                className={`relative ring-2 ring-[#242426] z-[${10 - idx}]`}
-              />
-            ))}
+          {/* TOP BOX: Team A Section (Entire box area is clickable for intuitive UX) */}
+          <div
+            onClick={() => setActivePicker('teamA')}
+            className="relative w-full h-[160px] rounded-[20px] bg-[#242426] hover:bg-[#2A2A2C] transition-all active:scale-[0.99] flex items-center justify-center cursor-pointer select-none"
+          >
+            <div className="flex items-center -space-x-2">
+              {teamAPlayers.map((player, idx) => (
+                <Avatar
+                  key={player.id}
+                  src={player.avatarUrl}
+                  alt={player.name}
+                  initials={player.name[0]}
+                  size="lg"
+                  hasBorder={false}
+                  className={`relative ring-2 ring-[#242426] z-[${10 - idx}]`}
+                />
+              ))}
 
-            {teamAPlayers.length < 2 && (
-              <div
-                className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-[#242426] bg-[#2C2C2E] text-white transition-all"
-                title="Add teammate"
-              >
-                <Plus className="h-5 w-5 stroke-[2.5]" />
-              </div>
-            )}
+              {teamAPlayers.length < 2 && (
+                <div
+                  className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-[#242426] bg-[#2C2C2E] text-white transition-all"
+                  title="Add teammate"
+                >
+                  <Plus className="h-5 w-5 stroke-[2.5]" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* BOTTOM BOX: Team B Section (Entire box area is clickable for intuitive UX) */}
+          <div
+            onClick={() => setActivePicker('teamB')}
+            className="relative w-full h-[160px] rounded-[20px] bg-[#242426] hover:bg-[#2A2A2C] transition-all active:scale-[0.99] flex items-center justify-center cursor-pointer select-none"
+          >
+            <div className="flex items-center -space-x-2">
+              {teamBPlayers.map((player, idx) => (
+                <Avatar
+                  key={player.id}
+                  src={player.avatarUrl}
+                  alt={player.name}
+                  initials={player.name[0]}
+                  size="lg"
+                  hasBorder={false}
+                  className={`relative ring-2 ring-[#242426] z-[${10 - idx}]`}
+                />
+              ))}
+
+              {teamBPlayers.length < 2 && (
+                <div
+                  className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-[#242426] bg-[#2C2C2E] text-white transition-all"
+                  title="Add opponent"
+                >
+                  <Plus className="h-5 w-5 stroke-[2.5]" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* BOTTOM BOX: Team B Section (Entire box area is clickable for intuitive UX) */}
-        <div
-          onClick={() => setActivePicker('teamB')}
-          className="relative w-full h-[170px] rounded-[20px] bg-[#242426] hover:bg-[#2A2A2C] transition-all active:scale-[0.99] flex items-center justify-center cursor-pointer select-none"
-        >
-          <div className="flex items-center -space-x-2">
-            {teamBPlayers.map((player, idx) => (
-              <Avatar
-                key={player.id}
-                src={player.avatarUrl}
-                alt={player.name}
-                initials={player.name[0]}
-                size="lg"
-                hasBorder={false}
-                className={`relative ring-2 ring-[#242426] z-[${10 - idx}]`}
-              />
-            ))}
-
-            {teamBPlayers.length < 2 && (
-              <div
-                className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-[#242426] bg-[#2C2C2E] text-white transition-all"
-                title="Add opponent"
-              >
-                <Plus className="h-5 w-5 stroke-[2.5]" />
-              </div>
-            )}
-          </div>
+        {/* 3. Subtitle Description (Dynamic State Helper Text) */}
+        <div className="text-center shrink-0">
+          <p className="font-sans text-sm text-[#8E8E93] transition-colors duration-200">
+            {getHelperSubtitle()}
+          </p>
         </div>
-      </div>
-
-      {/* 3. Subtitle Description (Dynamic State Helper Text) */}
-      <div className="text-center pt-2">
-        <p className="font-sans text-sm text-[#8E8E93] transition-colors duration-200">
-          {getHelperSubtitle()}
-        </p>
       </div>
 
       {/* 4. Bottom Action Button (fixed at exactly 48px from bottom of screen) */}

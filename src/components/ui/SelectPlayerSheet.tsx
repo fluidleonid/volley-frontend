@@ -102,7 +102,7 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
       zIndex={150}
       topOffset={84}
     >
-      <div className="relative flex flex-col h-full overflow-hidden pt-1">
+      <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden pt-1">
         {/* Scrollable Player List with bottom padding for blur button */}
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none">
           {mockCandidates.map((player) => {
