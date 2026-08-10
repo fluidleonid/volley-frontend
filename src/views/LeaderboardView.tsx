@@ -58,13 +58,13 @@ export const LeaderboardView: React.FC = () => {
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-2 h-[44px]">
+        <div className="flex items-center justify-between mb-[5px] h-[44px]">
           <h1 className="text-[28px] font-bold text-white tracking-tight">Leaderboard</h1>
           
-          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-2.5 h-6 rounded-full">
-            <span className="text-[#78D850] font-bold text-xs tracking-tight">{currentUser?.bpToday || 867}</span>
+          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-3 h-[32px] rounded-full">
+            <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
             <div 
-              className="w-3.5 h-3.5 bg-[#78D850]"
+              className="w-[22px] h-[22px] bg-[#78D850]"
               style={{
                 maskImage: `url(${bpIcon})`,
                 WebkitMaskImage: `url(${bpIcon})`,
