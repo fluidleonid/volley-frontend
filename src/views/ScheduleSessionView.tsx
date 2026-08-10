@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { PageHeader } from '../components/layout/PageHeader';
 import { BottomSheet } from '../components/ui/BottomSheet';
+import { CustomTimePicker } from '../components/ui/CustomTimePicker';
+import { CustomDatePicker } from '../components/ui/CustomDatePicker';
 import { Plus, Trash2, Calendar, Clock } from 'lucide-react';
 
 export interface ScheduleSessionViewProps {
@@ -42,14 +44,14 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
   // Time Picker Sheet State
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [targetDayId, setTargetDayId] = useState<string | null>(null);
-  const [selectedHour, setSelectedHour] = useState('12');
-  const [selectedMinute, setSelectedMinute] = useState('00');
 
   // Special Date Picker Sheet State
   const todayStr = new Date().toISOString().split('T')[0];
   const [isSpecialPickerOpen, setIsSpecialPickerOpen] = useState(false);
   const [specialDateVal, setSpecialDateVal] = useState(todayStr);
   const [specialTimeVal, setSpecialTimeVal] = useState('');
+  const [isCustomDateOpen, setIsCustomDateOpen] = useState(false);
+  const [isCustomTimeOpen, setIsCustomTimeOpen] = useState(false);
 
   const getFormattedDate = (dateStr: string) => {
     if (!dateStr) return 'Pick a date';
@@ -90,9 +92,8 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
     setIsTimePickerOpen(true);
   };
 
-  const handleAddTimeSlot = () => {
+  const handleAddTimeSlot = (timeStr: string) => {
     if (!targetDayId) return;
-    const timeStr = `${selectedHour}:${selectedMinute}`;
     setDays((prev) =>
       prev.map((d) => {
         if (d.id === targetDayId) {
@@ -118,8 +119,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
     setSpecialDates((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const hoursList = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
-  const minutesList = ['00', '15', '30', '45'];
+
 
   return (
     <div className="h-full min-h-screen flex flex-col bg-[#121212] text-white px-4 max-w-[480px] mx-auto select-none pb-24">
@@ -259,63 +259,12 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         </div>
       </div>
 
-      {/* Time Picker Sheet Modal */}
-      <BottomSheet
+      {/* Time Picker Modal for Regular Slots */}
+      <CustomTimePicker
         isOpen={isTimePickerOpen}
         onClose={() => setIsTimePickerOpen(false)}
-        title="Select slot time"
-      >
-        <div className="space-y-6 pt-2 pb-4">
-          <div className="flex items-center justify-center gap-4">
-            {/* Hours Picker */}
-            <div className="flex flex-col flex-1">
-              <span className="text-xs font-semibold text-[#8E8E93] mb-2 text-center">Hour</span>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
-                  <Clock className="h-5 w-5" />
-                </div>
-                <select
-                  value={selectedHour}
-                  onChange={(e) => setSelectedHour(e.target.value)}
-                  className="w-full h-[44px] appearance-none rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
-                >
-                  {hoursList.map((h) => (
-                    <option key={h} value={h}>{h}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <span className="text-2xl font-bold text-[#8E8E93] pt-6">:</span>
-
-            {/* Minutes Picker */}
-            <div className="flex flex-col flex-1">
-              <span className="text-xs font-semibold text-[#8E8E93] mb-2 text-center">Minute</span>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8E93]">
-                  <Clock className="h-5 w-5" />
-                </div>
-                <select
-                  value={selectedMinute}
-                  onChange={(e) => setSelectedMinute(e.target.value)}
-                  className="w-full h-[44px] appearance-none rounded-full bg-[#1C1C1E] pl-10 pr-4 text-left font-sans text-sm font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
-                >
-                  {minutesList.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleAddTimeSlot}
-            className="w-full h-[48px] rounded-full bg-[#68BD44] text-[#050505] font-sans text-sm font-bold transition-all active:scale-95 hover:bg-[#5AA739] cursor-pointer"
-          >
-            Confirm time slot
-          </button>
-        </div>
-      </BottomSheet>
+        onConfirm={handleAddTimeSlot}
+      />
 
       {/* Special Date Picker Sheet Modal */}
       <BottomSheet
@@ -326,33 +275,27 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-4 pt-2 pb-4">
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Date</label>
-            <div className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 overflow-hidden">
+            <div 
+              onClick={() => setIsCustomDateOpen(true)}
+              className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 cursor-pointer"
+            >
               <Calendar className="h-5 w-5 text-[#8E8E93] mr-3" />
               <span className={`font-sans text-sm font-semibold ${specialDateVal ? 'text-white' : 'text-[#8E8E93]'}`}>
                 {getFormattedDate(specialDateVal)}
               </span>
-              <input
-                type="date"
-                value={specialDateVal}
-                onChange={(e) => setSpecialDateVal(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
             </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#8E8E93]">Start Time</label>
-            <div className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 overflow-hidden">
+            <div 
+              onClick={() => setIsCustomTimeOpen(true)}
+              className="relative w-full h-[48px] rounded-full bg-[#1C1C1E] border border-transparent focus-within:border-[#68BD44] transition-all flex items-center px-4 cursor-pointer"
+            >
               <Clock className="h-5 w-5 text-[#8E8E93] mr-3" />
               <span className={`font-sans text-sm font-semibold ${specialTimeVal ? 'text-white' : 'text-[#8E8E93]'}`}>
                 {getFormattedTime(specialTimeVal)}
               </span>
-              <input
-                type="time"
-                value={specialTimeVal}
-                onChange={(e) => setSpecialTimeVal(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
             </div>
           </div>
 
@@ -364,6 +307,27 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
           </button>
         </div>
       </BottomSheet>
+
+      {/* Custom Picker Modals for Special Dates */}
+      <CustomDatePicker
+        isOpen={isCustomDateOpen}
+        onClose={() => setIsCustomDateOpen(false)}
+        initialDate={specialDateVal}
+        onConfirm={(val) => {
+          setSpecialDateVal(val);
+          setIsCustomDateOpen(false);
+        }}
+      />
+
+      <CustomTimePicker
+        isOpen={isCustomTimeOpen}
+        onClose={() => setIsCustomTimeOpen(false)}
+        initialTime={specialTimeVal || '12:00'}
+        onConfirm={(val) => {
+          setSpecialTimeVal(val);
+          setIsCustomTimeOpen(false);
+        }}
+      />
     </div>
   );
 };
