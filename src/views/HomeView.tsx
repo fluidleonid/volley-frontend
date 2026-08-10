@@ -90,20 +90,16 @@ export const HomeView: React.FC = () => {
         {/* STATE 2: Queued / Match Found / Active mode */}
         {(playerState === 'queued' || playerState === 'match_found' || playerState === 'playing') && (
           <div className="flex w-full items-center gap-2.5 text-center">
-            {/* Hard mode button */}
+            {/* Sit out button */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
-                onClick={toggleHardmode}
-                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
-                  isHardmode
-                    ? 'bg-[#68BD44]/20 text-[#68BD44]'
-                    : 'bg-[#1C1C1E] text-white hover:bg-[#242426]'
-                }`}
+                onClick={sitOut}
+                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
               >
-                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#68BD44]' : 'text-white'}`} />
+                <Pause className="h-5 w-5 fill-white text-white" />
               </button>
               <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Hard mode
+                Sit out
               </span>
             </div>
 
@@ -120,16 +116,20 @@ export const HomeView: React.FC = () => {
               </span>
             </div>
 
-            {/* Sit out button */}
+            {/* Hard mode button */}
             <div className="flex flex-[0.9] flex-col items-center">
               <button
-                onClick={sitOut}
-                className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-[#1C1C1E] text-white transition-all active:scale-95 hover:bg-[#242426]"
+                onClick={toggleHardmode}
+                className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
+                  isHardmode
+                    ? 'bg-[#68BD44]/20 text-[#68BD44]'
+                    : 'bg-[#1C1C1E] text-white hover:bg-[#242426]'
+                }`}
               >
-                <Pause className="h-5 w-5 fill-white text-white" />
+                <Zap className={`h-5 w-5 ${isHardmode ? 'text-[#68BD44]' : 'text-white'}`} />
               </button>
               <span className="mt-2 font-sans text-sm font-medium text-[#8E8E93]">
-                Sit out
+                Hard mode
               </span>
             </div>
           </div>
