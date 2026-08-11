@@ -3,6 +3,7 @@ import { useAppStore } from '../../store/appStore';
 import { AvatarGroup } from './AvatarGroup';
 import { BottomSheet } from './BottomSheet';
 import { Player } from '../../types';
+import { MOCK_PLAYERS } from '../../data/mockPlayers';
 
 export interface FinishGameSheetProps {
   isOpen: boolean;
@@ -42,46 +43,10 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
       bpToday: currentUser.bpToday,
       winStreak: currentUser.winStreak,
     },
-    {
-      id: 'p2',
-      name: 'Sarah M.',
-      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
-      level: 15,
-      xp: 4200,
-      status: 'queued',
-      gamesPlayed: 80,
-      wins: 55,
-      bpToday: 2.4,
-      winStreak: 6,
-    },
+    MOCK_PLAYERS[0],
   ];
 
-  const defaultTeamB: Player[] = teamB || [
-    {
-      id: 'p3',
-      name: 'Marcus K.',
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-      level: 11,
-      xp: 2300,
-      status: 'queued',
-      gamesPlayed: 40,
-      wins: 22,
-      bpToday: 1.2,
-      winStreak: 2,
-    },
-    {
-      id: 'p4',
-      name: 'Elena T.',
-      avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80',
-      level: 14,
-      xp: 3900,
-      status: 'queued',
-      gamesPlayed: 75,
-      wins: 48,
-      bpToday: 3.1,
-      winStreak: 3,
-    },
-  ];
+  const defaultTeamB: Player[] = teamB || [MOCK_PLAYERS[1], MOCK_PLAYERS[2]];
 
   const handleSave = () => {
     const numA = parseInt(scoreA, 10) || 0;

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Player } from '../../types';
 import { useAppStore } from '../../store/appStore';
-import { ChevronRight, Receipt, CalendarClock, Dumbbell, Box } from 'lucide-react';
+import { Receipt, CalendarClock, Dumbbell, Box } from 'lucide-react';
 import { MenuRowItem } from './MenuRowItem';
 import { PlayerCard } from './PlayerCard';
+import { XpBar } from './XpBar';
 import { BottomSheet } from './BottomSheet';
 
 export interface PlayerDetailSheetProps {
@@ -30,7 +31,6 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
 
   const xpValue = player.xp || 9302;
   const xpTotal = 10000;
-  const filledFrames = Math.min(10, Math.max(1, Math.floor((xpValue % 10000) / 1000) || 4));
 
   return (
     <BottomSheet
@@ -65,29 +65,8 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         </div>
       </div>
 
-      {/* Pro Rank & XP Tracker */}
-      <div className="space-y-2 my-5">
-        <div className="flex items-center justify-between font-display">
-          <div className="flex items-center gap-1 text-base font-bold text-white cursor-pointer hover:text-[#68BD44]">
-            <span>Pro</span>
-            <ChevronRight className="h-4 w-4 text-[#8E8E93]" />
-          </div>
-
-          <span className="text-xs text-[#8E8E93]">
-            <strong className="text-white">{xpValue}</strong>/{xpTotal}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          {Array.from({ length: 10 }).map((_, idx) => (
-            <span
-              key={idx}
-              className={`h-[4px] flex-1 rounded-full transition-colors duration-300 ${
-                idx < filledFrames ? 'bg-white' : 'bg-[#2C2C2E]'
-              }`}
-            />
-          ))}
-        </div>
+      <div className="my-5">
+        <XpBar current={xpValue} max={xpTotal} label="Pro" />
       </div>
 
       {/* Admin Only Row Items & Buttons */}
