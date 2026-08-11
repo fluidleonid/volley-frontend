@@ -1,39 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { ChevronRight, Calendar, Receipt, LogOut } from 'lucide-react';
 import { PlayerCard } from '../components/ui/PlayerCard';
 import { MenuRowItem } from '../components/ui/MenuRowItem';
 import { PageHeader } from '../components/layout/PageHeader';
+import { AchievementCard, AchievementData } from '../components/ui/AchievementCard';
+import { AchievementDetailsSheet } from '../components/ui/AchievementDetailsSheet';
+import bloodImg from '../assets/blood.png';
+import ach2Img from '../assets/ach2.png';
+import ach3Img from '../assets/ach3.png';
+import ach4Img from '../assets/ach4.png';
+import ach5Img from '../assets/ach5.png';
+
+// Dummy data for top 5 earned
+const topAchievements: AchievementData[] = [
+  {
+    id: 'ach-1',
+    title: 'Fresh Blood',
+    desc: 'Attended your very first training session',
+    rarity: 'Common',
+    icon: bloodImg,
+    isEarned: true,
+    earnedDate: 'July 3, 2026',
+    glowColor: 'rgba(255, 59, 48, 0.5)',
+  },
+  {
+    id: 'ach-3',
+    title: 'Welcome to Hell',
+    desc: 'Won your first Hard Mode match',
+    rarity: 'Uncommon',
+    icon: ach3Img,
+    isEarned: true,
+    earnedDate: 'July 10, 2026',
+    glowColor: 'rgba(255, 69, 58, 0.6)',
+  },
+  {
+    id: 'ach-4',
+    title: '25 Hard Mode Wins',
+    desc: 'Won 25 Hard Mode matches',
+    rarity: 'Uncommon',
+    icon: ach4Img,
+    isEarned: true,
+    earnedDate: 'August 1, 2026',
+    glowColor: 'rgba(255, 159, 10, 0.5)',
+  },
+  {
+    id: 'ach-6',
+    title: 'Team Player',
+    desc: 'Play 50 matches with friends',
+    rarity: 'Common',
+    icon: ach5Img, // Just re-using ach5Img here
+    isEarned: true,
+    earnedDate: 'August 5, 2026',
+    glowColor: 'rgba(48, 209, 88, 0.5)',
+  },
+];
 
 export const ProfileView: React.FC = () => {
   const { currentUser, setActiveTab, setFlowState } = useAppStore();
-
-  const achievements = [
-    {
-      id: 'ach-1',
-      title: 'Fresh Blood',
-      desc: 'Attended your ver...',
-      rarity: 'Common',
-      badgeColor: 'bg-[#242426] text-[#8E8E93]',
-      icon: '💧',
-    },
-    {
-      id: 'ach-2',
-      title: 'Marathon Man',
-      desc: 'Played 15+ match...',
-      rarity: 'Rare',
-      badgeColor: 'bg-[#007AFF]/20 text-[#007AFF]',
-      icon: '👟',
-    },
-    {
-      id: 'ach-3',
-      title: 'Welcome to Hell',
-      desc: 'Won your first Har...',
-      rarity: 'Uncommon',
-      badgeColor: 'bg-[#30D158]/20 text-[#30D158]',
-      icon: '👹',
-    },
-  ];
+  const [selectedAchievement, setSelectedAchievement] = useState<AchievementData | null>(null);
 
   return (
     <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none">
@@ -108,7 +133,10 @@ export const ProfileView: React.FC = () => {
 
       {/* 5. Achievements Section */}
       <div className="space-y-3 pt-2 mt-6">
-        <div className="flex items-center justify-between">
+        <div 
+          className="flex items-center justify-between cursor-pointer"
+          onClick={() => setActiveTab('achievements')}
+        >
           <div className="flex items-center gap-1.5">
             <h3 className="font-display text-lg font-bold text-white tracking-tight">
               Achievements
@@ -121,27 +149,13 @@ export const ProfileView: React.FC = () => {
           </button>
         </div>
 
-        {/* Achievements Cards Horizontal Row */}
         <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-          {achievements.map((ach) => (
-            <div
-              key={ach.id}
-              className="w-[125px] min-w-[125px] h-[155px] rounded-[20px] bg-[#1C1C1E] p-3.5 flex flex-col items-center justify-between text-center shrink-0 border border-[#2C2C2E]/40"
-            >
-              <div className="text-3xl my-auto">{ach.icon}</div>
-              <div className="w-full space-y-1">
-                <div className="font-display text-xs font-bold text-white truncate">
-                  {ach.title}
-                </div>
-                <div className="text-[10px] text-[#8E8E93] truncate">
-                  {ach.desc}
-                </div>
-                <div className="pt-1">
-                  <span className={`inline-block text-[9px] font-semibold px-2 py-0.5 rounded-full ${ach.badgeColor}`}>
-                    {ach.rarity}
-                  </span>
-                </div>
-              </div>
+          {topAchievements.map((ach) => (
+            <div key={ach.id} className="shrink-0" style={{ width: 'calc((min(100vw, 480px) - 56px) / 3)' }}>
+              <AchievementCard 
+                achievement={ach} 
+                onClick={setSelectedAchievement} 
+              />
             </div>
           ))}
         </div>
@@ -153,6 +167,12 @@ export const ProfileView: React.FC = () => {
         <MenuRowItem icon={Receipt} label="Billing" onClick={() => setActiveTab('billing')} />
         <MenuRowItem icon={LogOut} label="Log out" showChevron={false} onClick={() => setFlowState('splash')} />
       </div>
+
+      <AchievementDetailsSheet
+        isOpen={!!selectedAchievement}
+        onClose={() => setSelectedAchievement(null)}
+        achievement={selectedAchievement}
+      />
     </div>
   );
 };

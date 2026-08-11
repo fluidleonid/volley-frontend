@@ -128,7 +128,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             transition: isDragging ? 'none' : 'transform 0.2s ease-out',
             ...(topOffset ? { height: `calc(100vh - ${topOffset}px)`, maxHeight: `calc(100vh - ${topOffset}px)` } : {}),
           }}
-          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-[#121212] border-t border-[#2C2C2E]/60 px-4 pt-6 ${topOffset ? 'pb-0 flex flex-col overflow-hidden' : 'pb-8'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
+          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-[#121212] border-t border-[#2C2C2E]/60 px-4 pt-6 overflow-hidden ${topOffset ? 'pb-0 flex flex-col' : 'pb-8'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
         >
           {/* Top Handle Pill Bar at exactly 8px from top (4px height, pixel-perfect centered, 6px top/bottom padding) */}
           <div className="absolute top-[8px] inset-x-0 flex justify-center items-center z-20 pointer-events-none">
@@ -147,7 +147,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             <div
               onPointerDown={handlePointerDown}
               onTouchStart={handlePointerDown}
-              className="relative flex h-[44px] items-center justify-center pt-0 mb-[20px] cursor-grab active:cursor-grabbing select-none shrink-0"
+              className="relative z-20 flex h-[44px] items-center justify-center pt-0 mb-[20px] cursor-grab active:cursor-grabbing select-none shrink-0"
             >
               {/* Back Button (Chevron Left) - Shown if nested / opened from another sheet */}
               {isNested && (

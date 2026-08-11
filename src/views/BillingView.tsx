@@ -38,8 +38,8 @@ const mockBilling: MonthGroup[] = [
   {
     month: 'May, 2026',
     records: [
-      { id: '9', dateStr: 'May 12', type: 'Card', amount: '21 matches ֏', status: 'Paid' },
-      { id: '10', dateStr: 'May 8', type: 'Public', amount: '12 matches ֏', status: 'Paid' },
+      { id: '9', dateStr: 'May 12', type: 'Card', amount: '4,000 ֏', status: 'Paid' },
+      { id: '10', dateStr: 'May 8', type: 'Public', amount: '4,000 ֏', status: 'Paid' },
     ]
   }
 ];
@@ -91,12 +91,12 @@ export const BillingView: React.FC = () => {
                     <div className="col-span-1 flex justify-end text-[#8E8E93] text-[15px] pr-2 truncate">
                       {record.amount}
                     </div>
-                    
+
                     {/* Badge / Button */}
                     <div className="col-span-1 flex justify-end">
                       {record.status === 'Paid' ? (
                         role === 'coach' ? (
-                          <button 
+                          <button
                             onClick={() => setSelectedRecord(record)}
                             className="bg-[#68BD44]/10 text-[#68BD44] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-transform"
                           >
@@ -108,7 +108,7 @@ export const BillingView: React.FC = () => {
                           </div>
                         )
                       ) : (
-                        <button 
+                        <button
                           onClick={() => setSelectedRecord(record)}
                           className="bg-[#1C1C1E] text-white hover:bg-[#242426] px-3 py-1 rounded-full text-[13px] font-bold w-[72px] text-center active:scale-95 transition-all"
                         >
@@ -123,11 +123,11 @@ export const BillingView: React.FC = () => {
           ))}
         </div>
       </div>
-      
-      <SettlePaymentSheet 
-        isOpen={!!selectedRecord} 
-        onClose={() => setSelectedRecord(null)} 
-        record={selectedRecord} 
+
+      <SettlePaymentSheet
+        isOpen={!!selectedRecord}
+        onClose={() => setSelectedRecord(null)}
+        record={selectedRecord}
       />
     </>
   );
