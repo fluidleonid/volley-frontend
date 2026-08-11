@@ -9,6 +9,8 @@ import { Dialog } from '../components/ui/Dialog';
 import { InviteView } from './InviteView';
 import { Player, Court } from '../types';
 import { Play, Plus, Pause, Square, Users, CalendarClock } from 'lucide-react';
+import { PrivateSessionFlow } from '../components/ui/PrivateSessionFlow';
+import { PublicAttendanceFlow } from '../components/ui/PublicAttendanceFlow';
 
 interface PrivateSession {
   id: string;
@@ -54,6 +56,9 @@ export const CoachHomeView: React.FC = () => {
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
+
+  const [isPrivateFlowOpen, setIsPrivateFlowOpen] = useState(false);
+  const [isPublicFlowOpen, setIsPublicFlowOpen] = useState(false);
 
   const handleInvite = () => {
     setIsInviteOpen(true);
@@ -217,7 +222,10 @@ export const CoachHomeView: React.FC = () => {
                 </span>
               </div>
 
-              <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
+              <button 
+                onClick={() => setIsPublicFlowOpen(true)}
+                className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity"
+              >
                 <Plus className="h-4 w-4 stroke-[3]" /> Add
               </button>
             </div>
@@ -258,7 +266,10 @@ export const CoachHomeView: React.FC = () => {
             </span>
           </div>
 
-          <button className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity">
+          <button 
+            onClick={() => setIsPrivateFlowOpen(true)}
+            className="flex items-center gap-1 text-sm font-bold text-[#68BD44] hover:opacity-80 transition-opacity"
+          >
             <Plus className="h-4 w-4 stroke-[3]" /> Add
           </button>
         </div>
@@ -332,6 +343,28 @@ export const CoachHomeView: React.FC = () => {
         }}
         secondaryButtonText="Cancel"
         secondaryButtonOnClick={() => setIsEndSessionConfirmOpen(false)}
+      />
+
+      <PrivateSessionFlow 
+        isOpen={isPrivateFlowOpen}
+        onClose={() => setIsPrivateFlowOpen(false)}
+        onSchedule={(data) => {
+          console.log('Scheduled private session', data);
+        }}
+      />
+
+      <PublicAttendanceFlow 
+        isOpen={isPublicFlowOpen}
+        onClose={() => setIsPublicFlowOpen(false)}
+        onAddPlayers={(players) => {
+          console.log('Added players to public session', players);
+        }}
+        onAddGuest={(data) => {
+          console.log('Added guest to public session', data);
+        }}
+        onCreatePlayer={(data) => {
+          console.log('Created player in public session', data);
+        }}
       />
     </div>
   );
