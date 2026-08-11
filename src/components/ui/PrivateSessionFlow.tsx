@@ -120,7 +120,7 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
         mode="single"
         title="Private session"
         subtitle="Select player for a session"
-        selectedPlayerId={selectedPlayer && 'id' in selectedPlayer ? selectedPlayer.id : undefined}
+        selectedPlayerIds={selectedPlayer && 'id' in selectedPlayer ? [selectedPlayer.id] : []}
         onSelectPlayer={(p) => {
           setSelectedPlayer(p);
           setIsSelectPlayerOpen(false);

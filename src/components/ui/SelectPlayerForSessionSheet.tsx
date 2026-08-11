@@ -33,24 +33,28 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
   onCreateNewPlayer,
 }) => {
   const { leaderboard } = useAppStore(); // Assuming leaderboard has all players
+  
+  // Extract Player objects from leaderboard entries
+  const allPlayers = useMemo(() => leaderboard.map(entry => entry.player), [leaderboard]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [localSelectedIds, setLocalSelectedIds] = useState<string[]>(selectedPlayerIds);
 
   // Filter players by search query
   const filteredPlayers = useMemo(() => {
-    if (!searchQuery) return leaderboard;
-    return leaderboard.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [leaderboard, searchQuery]);
+    if (!searchQuery) return allPlayers;
+    return allPlayers.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [allPlayers, searchQuery]);
 
   const handleSelect = () => {
     if (mode === 'single') {
       if (localSelectedIds.length > 0 && onSelectPlayer) {
-        const player = leaderboard.find(p => p.id === localSelectedIds[0]);
+        const player = allPlayers.find(p => p.id === localSelectedIds[0]);
         if (player) onSelectPlayer(player);
       }
     } else {
       if (onSelectPlayers) {
-        const players = leaderboard.filter(p => localSelectedIds.includes(p.id));
+        const players = allPlayers.filter(p => localSelectedIds.includes(p.id));
         onSelectPlayers(players);
       }
     }
