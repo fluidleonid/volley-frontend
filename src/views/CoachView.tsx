@@ -1,12 +1,16 @@
 import React from 'react';
 import { Card } from '../components/ui/card';
 import { Shield, Users, UserPlus, Calendar, DollarSign } from 'lucide-react';
+import { useScroll } from '../hooks/useScroll';
 
 export const CoachView: React.FC = () => {
+  const scrolled = useScroll();
   return (
     <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
       {/* Sticky Header Banner (No border) */}
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-3 -mx-4 px-4">
+      <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-3 transition-all duration-300 ${
+        scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-[#121212]'
+      }`}>
         <div className="rounded-2xl border border-[#68BD44]/40 bg-[#68BD44]/10 p-4 text-[#68BD44]">
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-[#68BD44]" />

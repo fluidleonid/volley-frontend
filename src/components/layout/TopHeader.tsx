@@ -2,9 +2,11 @@ import React from 'react';
 import { useAppStore } from '../../store/appStore';
 import { Shield, User, Coffee, Sparkles, Box } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
+import { useScroll } from '../../hooks/useScroll';
 
 export const TopHeader: React.FC = () => {
   const { role, setRole, currentUser, playerState, setActiveTab } = useAppStore();
+  const scrolled = useScroll();
 
   const getStatusDisplay = () => {
     switch (playerState) {
@@ -29,7 +31,9 @@ export const TopHeader: React.FC = () => {
   const filledFramesCount = Math.min(10, Math.max(1, Math.floor((currentUser.xp % 1000) / 100) || 7));
 
   return (
-    <header className="sticky top-0 z-40 bg-[#121212] pt-[84px] pb-5 text-white border-b border-transparent">
+    <header className={`sticky top-0 z-40 transition-all duration-300 pt-[84px] pb-5 text-white ${
+      scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-[#121212]'
+    }`}>
       <div className="flex items-center justify-between max-w-[480px] mx-auto w-full px-4">
         {/* Left: Avatar with Level Ring & Name & Status (Clickable to Profile View) */}
         <div

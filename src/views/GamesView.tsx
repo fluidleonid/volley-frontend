@@ -3,9 +3,11 @@ import { useAppStore } from '../store/appStore';
 import { MatchHistoryCard } from '../components/ui/MatchHistoryCard';
 import { Trophy } from 'lucide-react';
 import { Match } from '../types';
+import { useScroll } from '../hooks/useScroll';
 
 export const GamesView: React.FC = () => {
   const { recentMatches } = useAppStore();
+  const scrolled = useScroll();
 
   const groupedByDate = useMemo(() => {
     const groups: Record<string, {
@@ -40,9 +42,14 @@ export const GamesView: React.FC = () => {
 
   return (
     <div className="pb-32 select-none bg-[#121212]">
-      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
-        <div className="flex items-center mb-5 h-[44px]">
-          <h1 className="text-[30px] font-bold text-white tracking-tight">My Games</h1>
+      <div className="relative z-10 px-4 max-w-[480px] mx-auto">
+        {/* Sticky Header */}
+        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
+          scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-transparent'
+        }`}>
+          <div className="flex items-center h-[44px]">
+            <h1 className="text-[30px] font-bold text-white tracking-tight">My Games</h1>
+          </div>
         </div>
 
         {/* Grouped Matches */}

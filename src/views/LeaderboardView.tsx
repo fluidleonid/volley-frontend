@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { LeaderboardRowItem } from '../components/ui/LeaderboardRowItem';
 import bgImage from '../assets/leaderboard.png';
@@ -7,21 +7,14 @@ import place1Svg from '../assets/place1.svg';
 import place2Svg from '../assets/place2.svg';
 import place3Svg from '../assets/place3.svg';
 import bpIcon from '../assets/bp-icon.svg';
+import { useScroll } from '../hooks/useScroll';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 
 export const LeaderboardView: React.FC = () => {
   const { leaderboard, currentUser } = useAppStore();
   const [tab, setTab] = useState<TabType>('total');
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const scrolled = useScroll();
 
   const getPlayerByRank = (rank: number) => leaderboard.find((l) => l.rank === rank);
 
@@ -66,7 +59,7 @@ export const LeaderboardView: React.FC = () => {
 
         {/* Sticky Header */}
         <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
-          scrolled ? 'bg-[#121212]/80 backdrop-blur-md border-b border-[#2C2C2E]/50' : 'bg-transparent border-b border-transparent'
+          scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-transparent'
         }`}>
           <div className="flex items-center justify-between h-[44px]">
             <h1 className="text-[30px] font-bold text-white tracking-tight">Leaderboard</h1>
