@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ChevronLeft } from 'lucide-react';
+import { PageHeader } from '../layout/PageHeader';
 
 export interface SheetContextType {
   depth: number;
@@ -142,50 +142,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             </div>
           </div>
 
-          {/* Header Row (Fixed 44px height, matching page headers exactly) */}
           {title !== undefined && (
-            <div
-              onPointerDown={handlePointerDown}
-              onTouchStart={handlePointerDown}
-              className="relative z-20 flex h-[44px] items-center justify-center pt-0 mb-[20px] cursor-grab active:cursor-grabbing select-none shrink-0"
-            >
-              {/* Back Button (Chevron Left) - Shown if nested / opened from another sheet */}
-              {isNested && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                  }}
-                  className="absolute left-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
-                  title="Back to previous sheet"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-              )}
-
-              {/* Sheet Title */}
-              {typeof title === 'string' ? (
-                <h3 className="font-display text-lg font-bold text-white tracking-tight">
-                  {title}
-                </h3>
-              ) : (
-                title
-              )}
-
-              {/* Close Button ('X') - Closes ALL sheets */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCloseAll();
-                }}
-                className="absolute right-0 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] cursor-pointer active:scale-95"
-                title="Close all sheets"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+            <PageHeader
+              title={title}
+              onBack={isNested ? onClose : undefined}
+              onClose={handleCloseAll}
+              forceClose={true}
+              titleAs="h3"
+              onDragHandle={handlePointerDown}
+              className="mb-[20px] z-20 shrink-0"
+            />
           )}
 
           {children}

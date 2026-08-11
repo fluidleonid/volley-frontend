@@ -7,24 +7,31 @@ export interface PageHeaderProps {
   onBack?: () => void;
   onClose?: () => void;
   className?: string;
+  titleAs?: 'h1' | 'h2' | 'h3';
+  forceClose?: boolean;
+  onDragHandle?: (e: React.PointerEvent | React.TouchEvent) => void;
 }
 
-/**
- * Universal PageHeader Component
- * Single reusable header component for pages, sub-views, and bottom sheets.
- * Features 44px height header row, 44px round action buttons, and centered title/subtitle.
- */
 export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   onBack,
   onClose,
   className = '',
+  titleAs: Tag = 'h1',
+  forceClose = false,
+  onDragHandle,
 }) => {
+  const showLeft = !!onBack;
+  const showRight = !!onClose || forceClose;
+
   return (
-    <div className={`relative flex h-[44px] items-center justify-between select-none ${className}`}>
-      {/* Left Action Button (Back Chevron) */}
-      {onBack ? (
+    <div
+      className={`relative flex h-[44px] items-center justify-between select-none ${onDragHandle ? 'cursor-grab active:cursor-grabbing' : ''} ${className}`}
+      onPointerDown={onDragHandle}
+      onTouchStart={onDragHandle}
+    >
+      {showLeft ? (
         <button
           type="button"
           onClick={onBack}
@@ -37,13 +44,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         <div className="w-[44px] h-[44px]" />
       )}
 
-      {/* Center Title / Subtitle */}
-      {title && (
+      {title !== undefined && title !== '' && (
         <div className="absolute inset-x-12 flex flex-col items-center justify-center pointer-events-none">
           {typeof title === 'string' ? (
-            <h1 className="font-display text-lg font-bold text-white tracking-tight text-center truncate">
+            <Tag className="font-display text-lg font-bold text-white tracking-tight text-center truncate">
               {title}
-            </h1>
+            </Tag>
           ) : (
             title
           )}
@@ -55,11 +61,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
       )}
 
-      {/* Right Action Button (Close X) */}
-      {onClose ? (
+      {showRight ? (
         <button
           type="button"
-          onClick={onClose}
+          onClick={(e) => { e.stopPropagation(); onClose?.(); }}
           className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1C1C1E] text-white transition-colors hover:bg-[#242426] active:scale-95 cursor-pointer z-10"
           title="Close"
         >
