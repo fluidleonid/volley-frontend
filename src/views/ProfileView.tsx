@@ -7,7 +7,6 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { AchievementCard, AchievementData } from '../components/ui/AchievementCard';
 import { AchievementDetailsSheet } from '../components/ui/AchievementDetailsSheet';
 import bloodImg from '../assets/blood.png';
-import ach2Img from '../assets/ach2.png';
 import ach3Img from '../assets/ach3.png';
 import ach4Img from '../assets/ach4.png';
 import ach5Img from '../assets/ach5.png';
