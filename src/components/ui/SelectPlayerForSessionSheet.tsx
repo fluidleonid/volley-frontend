@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BottomSheet } from './BottomSheet';
 import { Avatar } from './Avatar';
 import { Button } from './button';
+import { Input } from './Input';
 import { Player } from '../../types';
 import { useAppStore } from '../../store/appStore';
 import { Search, Plus, UserPlus } from 'lucide-react';
@@ -81,18 +82,13 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
       <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden pt-1">
         {/* Search Input */}
         <div className="px-4 pb-4 shrink-0">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-[#8E8E93]" />
-            </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search player"
-              className="w-full h-[44px] bg-[#1C1C1E] border border-transparent rounded-full pl-12 pr-4 text-sm text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-[#68BD44]/50 transition-colors"
-            />
-          </div>
+          <Input
+            variant="search"
+            icon={<Search className="h-5 w-5" />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search player"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none px-4">

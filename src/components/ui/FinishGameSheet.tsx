@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { AvatarGroup } from './AvatarGroup';
 import { BottomSheet } from './BottomSheet';
+import { Input } from './Input';
 import { Player } from '../../types';
 import { MOCK_PLAYERS } from '../../data/mockPlayers';
 
@@ -82,14 +83,14 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
             </div>
 
             {/* Score Input Box (Width 84px, No +/- buttons) */}
-            <input
+            <Input
+              variant="score"
               type="number"
               min="0"
               max="99"
               value={scoreA}
               onChange={(e) => setScoreA(e.target.value)}
               onFocus={(e) => e.target.select()}
-              className="h-[44px] w-[84px] rounded-full bg-[#1C1C1E] text-center font-display text-lg font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
             />
           </div>
 
@@ -112,14 +113,14 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
             </div>
 
             {/* Score Input Box (Width 84px, No +/- buttons) */}
-            <input
+            <Input
+              variant="score"
               type="number"
               min="0"
               max="99"
               value={scoreB}
               onChange={(e) => setScoreB(e.target.value)}
               onFocus={(e) => e.target.select()}
-              className="h-[44px] w-[84px] rounded-full bg-[#1C1C1E] text-center font-display text-lg font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#68BD44] transition-all"
             />
           </div>
         </div>

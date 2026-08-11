@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './button';
+import { Input } from './Input';
 
 interface CreateNewPlayerSheetProps {
   isOpen: boolean;
@@ -46,36 +47,25 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
     <BottomSheet isOpen={isOpen} onClose={onClose} title={titleNode} zIndex={170} topOffset={120}>
       <form onSubmit={handleSubmit} className="p-4 space-y-6 pt-2">
         <div className="space-y-4">
-          <div className="relative">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Player name*"
-              className="w-full h-[52px] bg-[#1C1C1E] border border-transparent rounded-[20px] px-4 text-base text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-[#68BD44]/50 transition-colors"
-              autoFocus
-            />
-          </div>
+          <Input
+            label="Player name*"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
 
-          <div className="relative">
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Phone"
-              className="w-full h-[52px] bg-[#1C1C1E] border border-transparent rounded-[20px] px-4 text-base text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-[#68BD44]/50 transition-colors"
-            />
-          </div>
+          <Input
+            type="tel"
+            label="Phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
 
-          <div className="relative">
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="@username"
-              className="w-full h-[52px] bg-[#1C1C1E] border border-transparent rounded-[20px] px-4 text-base text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-[#68BD44]/50 transition-colors"
-            />
-          </div>
+          <Input
+            label="@username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
           {/* Level Selector */}
           <div className="flex gap-2 justify-between">

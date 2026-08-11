@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './button';
+import { Input } from './Input';
 import { Box } from 'lucide-react';
 
 interface AddGuestPlayerSheetProps {
@@ -49,19 +50,13 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
     <BottomSheet isOpen={isOpen} onClose={onClose} title={titleNode} zIndex={170} topOffset={120}>
       <form onSubmit={handleSubmit} className="p-4 space-y-6 pt-2">
         <div className="space-y-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Box className="h-5 w-5 text-[#8E8E93]" />
-            </div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Guest name*"
-              className="w-full h-[52px] bg-[#1C1C1E] border border-transparent rounded-[20px] pl-12 pr-4 text-base text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-[#68BD44]/50 transition-colors"
-              autoFocus
-            />
-          </div>
+          <Input
+            label="Guest name*"
+            icon={<Box className="h-5 w-5" />}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
 
           {requireLevel && (
             <div className="flex gap-2 justify-between mt-2">
