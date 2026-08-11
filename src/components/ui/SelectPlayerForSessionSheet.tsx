@@ -5,7 +5,7 @@ import { Button } from './button';
 import { Input } from './Input';
 import { Player } from '../../types';
 import { useAppStore } from '../../store/appStore';
-import { Search, Plus, UserPlus } from 'lucide-react';
+import { Search, Plus, UserPlus, Check } from 'lucide-react';
 
 interface SelectPlayerForSessionSheetProps {
   isOpen: boolean;
@@ -97,48 +97,72 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none px-4">
           {/* Special Actions */}
-          <div className="space-y-4 pb-4 border-b border-[#2C2C2E]/60 mb-4">
+          <div className="space-y-1 pb-4 border-b border-[#2C2C2E]/60 mb-4">
             <button
               onClick={onCreateNewPlayer}
-              className="flex items-center gap-4 w-full text-left"
+              className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
             >
-              <Plus className="h-5 w-5 text-white" />
-              <span className="text-sm font-medium text-white">Create & schedule new player</span>
+              <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-[#1C1C1E] transition-colors duration-150 pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-[#1C1C1E] shrink-0">
+                <Plus className="h-5 w-5 text-white" />
+              </div>
+              <span className="relative z-10 text-base font-semibold text-white tracking-tight">Create & schedule new player</span>
             </button>
             <button
               onClick={onAddGuest}
-              className="flex items-center gap-4 w-full text-left"
+              className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
             >
-              <UserPlus className="h-5 w-5 text-white" />
-              <span className="text-sm font-medium text-white">Schedule with guest player</span>
+              <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-[#1C1C1E] transition-colors duration-150 pointer-events-none" />
+              <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-[#1C1C1E] shrink-0">
+                <UserPlus className="h-5 w-5 text-white" />
+              </div>
+              <span className="relative z-10 text-base font-semibold text-white tracking-tight">Schedule with guest player</span>
             </button>
           </div>
 
           {/* Player List */}
-          <div className="space-y-4">
+          <div className="space-y-2">
             {filteredPlayers.map((player) => {
               const isSelected = localSelectedIds.includes(player.id);
               return (
                 <div
                   key={player.id}
                   onClick={() => togglePlayer(player.id)}
-                  className="flex items-center gap-4 cursor-pointer"
+                  className={`flex items-center justify-between p-3 rounded-[20px] transition-all cursor-pointer select-none ${isSelected
+                    ? 'bg-[#1C1C1E] border border-[#68BD44]/40'
+                    : 'bg-[#1C1C1E]/60 hover:bg-[#1C1C1E] border border-transparent'
+                    }`}
                 >
-                  <div className={`flex items-center justify-center w-5 h-5 rounded-md border-2 ${isSelected ? 'border-[#68BD44] bg-[#68BD44]' : 'border-[#2C2C2E]'}`}>
-                    {isSelected && (
-                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 4L3.5 6.5L9 1" stroke="#050505" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    )}
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      src={player.avatarUrl}
+                      alt={player.name}
+                      initials={player.name[0]}
+                      size="lg"
+                      hasBorder={false}
+                    />
+                    <h4 className="font-sans text-base font-semibold text-white tracking-tight">
+                      {player.name}
+                    </h4>
                   </div>
-                  <Avatar
-                    src={player.avatarUrl}
-                    alt={player.name}
-                    initials={player.name[0]}
-                    size="sm"
-                    hasBorder={false}
-                  />
-                  <span className="text-sm font-medium text-white">{player.name}</span>
+                  
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePlayer(player.id);
+                    }}
+                    className={`flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-95 shrink-0 ${isSelected
+                      ? 'bg-[#68BD44] text-[#050505] shadow-md shadow-[#68BD44]/20'
+                      : 'bg-[#2C2C2E] text-white hover:bg-[#3A3A3C]'
+                      }`}
+                  >
+                    {isSelected ? (
+                      <Check className="h-5 w-5 stroke-[3]" />
+                    ) : (
+                      <Plus className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
               );
             })}

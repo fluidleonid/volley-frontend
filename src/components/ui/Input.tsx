@@ -44,13 +44,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             placeholder={label ? " " : props.placeholder}
-            className={`peer w-full h-full bg-transparent text-white font-medium text-base tracking-tight focus:outline-none ${label ? 'pt-4 pb-1' : ''} ${className}`}
+            className={`peer w-full h-full bg-transparent text-white font-medium text-base tracking-tight focus:outline-none ${label ? 'pt-5 pb-1' : ''} ${className}`}
             {...props}
           />
           {label && (
-            <label className="absolute left-4 top-[14px] -translate-y-0 text-[11px] text-[#8E8E93] font-medium transition-all duration-200 pointer-events-none
+            <label className="absolute left-4 top-[10px] -translate-y-0 text-[11px] text-[#8E8E93] font-medium transition-all duration-200 pointer-events-none
               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base
-              peer-focus:top-[14px] peer-focus:-translate-y-0 peer-focus:text-[11px]"
+              peer-focus:top-[10px] peer-focus:-translate-y-0 peer-focus:text-[11px]"
             >
               {label}
             </label>
