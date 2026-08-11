@@ -14,7 +14,7 @@ export const AchievementsView: React.FC = () => {
   const [selected, setSelected] = useState<AchievementData | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none mx-auto">
+    <div className="bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none mx-auto">
       <StickyPageHeader title="Achievements" onBack={() => setActiveTab('profile')} />
 
       <div className="flex items-center gap-2 mb-4 mt-2">

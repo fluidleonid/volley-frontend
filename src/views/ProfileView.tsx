@@ -20,7 +20,7 @@ export const ProfileView: React.FC = () => {
   const earnedCount = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).length;
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none">
+    <div className="bg-[#121212] text-white pb-24 px-4 max-w-[480px] select-none">
       <StickyPageHeader title="Profile" onBack={() => setActiveTab('home')} />
 
       <PlayerCard avatarUrl={currentUser.avatarUrl} iconCount={4} />

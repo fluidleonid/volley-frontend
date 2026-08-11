@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { LeaderboardRowItem } from '../components/ui/LeaderboardRowItem';
 import bgImage from '../assets/leaderboard.png';
@@ -13,6 +13,15 @@ type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 export const LeaderboardView: React.FC = () => {
   const { leaderboard, currentUser } = useAppStore();
   const [tab, setTab] = useState<TabType>('total');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const getPlayerByRank = (rank: number) => leaderboard.find((l) => l.rank === rank);
 
@@ -32,7 +41,7 @@ export const LeaderboardView: React.FC = () => {
   const isEmpty = tab === 'today';
 
   return (
-    <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
+    <div className="relative pb-32 select-none bg-[#121212]">
       {/* Background Graphic */}
       <div className="absolute top-0 inset-x-0 h-[374px] z-0 overflow-hidden pointer-events-none flex justify-center bg-[#0a0a0b] rounded-b-[20px]">
         <div
@@ -53,27 +62,31 @@ export const LeaderboardView: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
+      <div className="relative z-10 px-4 max-w-[480px] mx-auto">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5 h-[44px]">
-          <h1 className="text-[30px] font-bold text-white tracking-tight">Leaderboard</h1>
+        {/* Sticky Header */}
+        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
+          scrolled ? 'bg-[#121212]/80 backdrop-blur-md border-b border-[#2C2C2E]/50' : 'bg-transparent border-b border-transparent'
+        }`}>
+          <div className="flex items-center justify-between h-[44px]">
+            <h1 className="text-[30px] font-bold text-white tracking-tight">Leaderboard</h1>
 
-          <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-1.5 h-[28px] rounded-full">
-            <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
-            <div
-              className="w-[22px] h-[22px] bg-[#78D850] -translate-y-[2px]"
-              style={{
-                maskImage: `url(${bpIcon})`,
-                WebkitMaskImage: `url(${bpIcon})`,
-                maskSize: 'contain',
-                WebkitMaskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                WebkitMaskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                WebkitMaskPosition: 'center'
-              }}
-            />
+            <div className="flex items-center justify-center gap-1 bg-[#1C2817]/80 backdrop-blur-md px-1.5 h-[28px] rounded-full">
+              <span className="text-[#78D850] font-bold text-[14px] tracking-tight">{currentUser?.bpToday || 867}</span>
+              <div
+                className="w-[22px] h-[22px] bg-[#78D850] -translate-y-[2px]"
+                style={{
+                  maskImage: `url(${bpIcon})`,
+                  WebkitMaskImage: `url(${bpIcon})`,
+                  maskSize: 'contain',
+                  WebkitMaskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskPosition: 'center'
+                }}
+              />
+            </div>
           </div>
         </div>
 

@@ -39,9 +39,8 @@ export const GamesView: React.FC = () => {
   }, [recentMatches]);
 
   return (
-    <div className="relative min-h-screen pb-32 select-none bg-[#121212]">
+    <div className="pb-32 select-none bg-[#121212]">
       <div className="relative z-10 px-4 max-w-[480px] mx-auto pt-[84px]">
-        {/* Header - Like Leaderboard but without BP badge */}
         <div className="flex items-center mb-5 h-[44px]">
           <h1 className="text-[30px] font-bold text-white tracking-tight">My Games</h1>
         </div>

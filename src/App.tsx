@@ -20,6 +20,10 @@ export function App() {
   const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeTab]);
+
+  useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tg = (window as any).Telegram?.WebApp;
     if (tg) {
@@ -116,7 +120,7 @@ export function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#121212] text-white selection:bg-[#68BD44] selection:text-black">
+    <div className="relative bg-[#121212] text-white selection:bg-[#68BD44] selection:text-black">
       {activeTab === 'home' && <TopHeader />}
 
       <main className="mx-auto max-w-[480px]">
