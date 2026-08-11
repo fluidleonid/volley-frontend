@@ -9,7 +9,7 @@ export const CoachView: React.FC = () => {
     <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
       {/* Sticky Header Banner (No border) */}
       <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-3 transition-all duration-300 ${
-        scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-[#121212]'
+        scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-transparent'
       }`}>
         <div className="rounded-2xl border border-[#68BD44]/40 bg-[#68BD44]/10 p-4 text-[#68BD44]">
           <div className="flex items-center gap-3">

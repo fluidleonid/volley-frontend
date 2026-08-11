@@ -32,7 +32,7 @@ export const TopHeader: React.FC = () => {
 
   return (
     <header className={`sticky top-0 z-40 transition-all duration-300 pt-[84px] pb-5 text-white ${
-      scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-[#121212]'
+      scrolled ? 'bg-[#121212]/80 backdrop-blur-md' : 'bg-transparent'
     }`}>
       <div className="flex items-center justify-between max-w-[480px] mx-auto w-full px-4">
         {/* Left: Avatar with Level Ring & Name & Status (Clickable to Profile View) */}
