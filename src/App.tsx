@@ -20,47 +20,30 @@ export function App() {
   const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
-    // Initialize Telegram WebApp SDK & Trigger Fullscreen / Orientation Lock
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tg = (window as any).Telegram?.WebApp;
     if (tg) {
       tg.ready();
 
-      // Request Orientation Lock (Portrait Only in Telegram Mini App)
       if (typeof tg.lockOrientation === 'function') {
-        try {
-          tg.lockOrientation();
-        } catch (e) {
-          console.log('lockOrientation error:', e);
-        }
+        try { tg.lockOrientation(); } catch (e) { console.warn('lockOrientation:', e); }
       }
 
-      // Request Fullscreen Mode (Telegram Mini App Bot API 8.0+)
       if (typeof tg.requestFullscreen === 'function') {
         try {
           tg.requestFullscreen();
-        } catch (e) {
-          console.log('requestFullscreen not supported or deferred:', e);
-          tg.expand();
+        } catch {
+          tg.expand?.();
         }
-      } else if (typeof tg.expand === 'function') {
-        tg.expand();
+      } else {
+        tg.expand?.();
       }
 
-      // Disable vertical swipe down gesture to prevent accidental closing
-      if (typeof tg.disableVerticalSwipes === 'function') {
-        tg.disableVerticalSwipes();
-      }
-
-      if (typeof tg.setHeaderColor === 'function') {
-        tg.setHeaderColor('#121212');
-      }
-      if (typeof tg.setBackgroundColor === 'function') {
-        tg.setBackgroundColor('#121212');
-      }
+      tg.disableVerticalSwipes?.();
+      tg.setHeaderColor?.('#121212');
+      tg.setBackgroundColor?.('#121212');
     }
 
-    // Check device orientation to block landscape on mobile screen sizes
     const checkOrientation = () => {
       const isMobileDevice = window.innerWidth <= 1024;
       const isHorizontal = window.innerWidth > window.innerHeight;
@@ -134,15 +117,12 @@ export function App() {
 
   return (
     <div className="relative min-h-screen bg-[#121212] text-white selection:bg-[#68BD44] selection:text-black">
-      {/* Top Header Navigation (Only shown on Main / Home page) */}
       {activeTab === 'home' && <TopHeader />}
 
-      {/* Main Page View Content (Max width 480px) */}
       <main className="mx-auto max-w-[480px]">
         {renderTabContent()}
       </main>
 
-      {/* Progressive Blur Container & Floating Tabbar (Hidden on subpages) */}
       {activeTab !== 'profile' && activeTab !== 'attendance' && activeTab !== 'billing' && activeTab !== 'achievements' && (
         <>
           <div
@@ -152,7 +132,6 @@ export function App() {
               maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
             }}
           />
-
           <BottomNav />
         </>
       )}

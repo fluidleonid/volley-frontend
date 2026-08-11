@@ -26,7 +26,7 @@ export interface Court {
   courtNumber: number;
   statusText?: 'Matchmaking' | 'Matching...' | 'Matchmaking...' | 'In Progress' | 'Reserved...' | 'Reserved';
   isActive: boolean;
-  isAvailable: boolean; // Admin/Coach toggle state
+  isAvailable: boolean;
   isHardmode: boolean;
   timerSeconds: number;
   teamA: Player[];
@@ -57,3 +57,5 @@ export interface LeaderboardEntry {
   winRate: number;
   xp: number;
 }
+
+export type { AchievementRarity, AchievementData } from './achievement';

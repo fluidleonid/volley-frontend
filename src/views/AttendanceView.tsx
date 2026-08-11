@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppStore } from '../store/appStore';
-import { PageHeader } from '../components/layout/PageHeader';
+import { StickyPageHeader } from '../components/layout/StickyPageHeader';
 
 interface AttendanceRecord {
   id: string;
@@ -48,15 +48,12 @@ export const AttendanceView: React.FC = () => {
 
   return (
     <div className="space-y-4 pb-24 max-w-[480px] mx-auto select-none px-4">
-      <div className="sticky top-0 z-40 bg-[#121212] pt-[84px] -mx-4 px-4">
-        <PageHeader
-          title="Attendance"
-          onBack={() => setActiveTab('profile')}
-          onClose={() => setActiveTab('home')}
-        />
-      </div>
+      <StickyPageHeader
+        title="Attendance"
+        onBack={() => setActiveTab('profile')}
+        onClose={() => setActiveTab('home')}
+      />
 
-      {/* Summary Cards */}
       <div className="flex gap-3">
         <div className="flex-1 bg-[#1C1C1E] rounded-2xl p-4 border-none">
           <div className="font-display text-[24px] font-bold text-white leading-tight">40</div>
@@ -68,7 +65,6 @@ export const AttendanceView: React.FC = () => {
         </div>
       </div>
 
-      {/* Grouped List */}
       <div className="mt-6 space-y-6">
         {mockAttendance.map((group) => (
           <div key={group.month}>
