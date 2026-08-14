@@ -35,7 +35,7 @@ export const AchievementDetailsSheet: React.FC<AchievementDetailsSheetProps> = (
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title="">
-      <div className="relative flex flex-col items-center text-center px-4 pt-8 pb-12 w-full -mt-[68px]">
+      <div className="relative flex flex-col items-center text-center px-8 pt-8 pb-12 w-[calc(100%+32px)] -mx-4 -mt-[68px]">
         <div className="absolute pointer-events-none" style={blurStyle('left')} />
         <div className="absolute pointer-events-none" style={blurStyle('right')} />
 

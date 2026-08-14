@@ -165,7 +165,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             />
           )}
 
-          <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden w-full">
+          <div className="relative flex-1 min-h-0 flex flex-col w-full">
             {isScrollable ? (
               <div className={`flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-none ${footer ? 'pb-36' : 'pb-8'}`}>
                 {children}
