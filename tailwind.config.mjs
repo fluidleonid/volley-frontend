@@ -63,6 +63,12 @@ export default {
           surfaceElevated: "#242426",
           border: "#2C2C2E",
           hardmode: "#FF9500",
+        },
+        level: {
+          beginner: "var(--level-beginner)",
+          amateur: "var(--level-amateur)",
+          advanced: "var(--level-advanced)",
+          pro: "var(--level-pro)",
         }
       },
       borderRadius: {
