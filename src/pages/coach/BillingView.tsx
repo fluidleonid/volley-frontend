@@ -5,18 +5,11 @@ import { SettlePaymentSheet } from '../../features/payment/SettlePaymentSheet';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { CustomDateRangePicker, DateRange } from '../../shared/ui/CustomDateRangePicker';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
-import { Avatar } from '../../shared/ui/Avatar';
-import { Header } from '../../widgets/layout/Header';
-import { useScroll } from '../../shared/hooks/useScroll';
-import { ChevronLeft, CalendarClock, Check, Play, Settings, Coins } from 'lucide-react';
-import { getPlayer } from '../../shared/api/mock/mockPlayers';
-import { Player } from '../../shared/types/index';
-import { EmptyState } from '../../shared/ui/EmptyState';
-import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
-interface BillingViewProps {
-  onClose: () => void;
-}
+import { useScroll } from '../../shared/hooks/useScroll';
+import { ChevronLeft } from 'lucide-react';
+import { Avatar } from '../../shared/ui/Avatar';
+import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
 // -------------------------------------------------------------
 // PLAYER MOCK DATA (Original)

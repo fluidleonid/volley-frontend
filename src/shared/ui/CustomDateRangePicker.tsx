@@ -180,7 +180,6 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
                 
                 const isStart = st === t;
                 const isEnd = et === t;
-                const isSelected = isStart || isEnd || (st && et && t > st && t < et);
                 
                 // For rounded corners on range
                 const isRangeStart = isStart && endDate;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
-import { ChevronRight, Calendar, Receipt, LogOut, Banknote, Trash2 } from 'lucide-react';
+import { ChevronRight, Calendar, Receipt, Banknote, Trash2 } from 'lucide-react';
 import { AchievementData } from '../../shared/types/achievement';
 import { PlayerCard } from '../../entities/player/ui/PlayerCard';
 import { MenuRowItem } from '../../entities/menu/ui/MenuRowItem';
@@ -12,7 +12,6 @@ import { Header } from '../../widgets/layout/Header';
 import { MOCK_ACHIEVEMENTS } from '../../shared/api/mock/achievements';
 import { getPlayerTierInfo } from '../../shared/lib/tier';
 import { TrainingCostsView } from '../coach/TrainingCostsView';
-import { ScheduleSessionView } from '../coach/ScheduleSessionView';
 import { PrivateSessionsScheduleView } from '../coach/PrivateSessionsScheduleView';
 import { CoachPublicGamesView } from '../coach/CoachPublicGamesView';
 import { CalendarDays, CalendarClock, Activity } from 'lucide-react';

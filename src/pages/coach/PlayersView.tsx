@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useAppStore } from '../../app/store/appStore';
-import { Header } from '../../widgets/layout/Header';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 import { Player } from '../../shared/types/index';

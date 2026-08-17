@@ -94,7 +94,7 @@ export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onCl
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
         onConfirm={setDateRange}
-        currentRange={dateRange}
+        initialRange={dateRange}
       />
     </div>
   );

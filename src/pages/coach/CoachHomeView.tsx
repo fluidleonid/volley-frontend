@@ -35,7 +35,6 @@ const mockPrivateSessions: PrivateSession[] = [
   },
 ];
 
-import { ScheduleSessionView } from './ScheduleSessionView';
 
 export const CoachHomeView: React.FC = () => {
   const {

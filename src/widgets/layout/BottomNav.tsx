@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../app/store/appStore';
 import { NavigationTab } from '../../shared/types/index';
-import { Home, Trophy, Menu, ShieldCheck, UsersRound, Coins } from 'lucide-react';
+import { Home, Trophy, Menu, UsersRound, Coins } from 'lucide-react';
 import { MatchingBanner } from './MatchingBanner';
 
 interface NavItem {

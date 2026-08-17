@@ -159,7 +159,6 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         mode="single"
         hideAddButtons
         onSelectPlayer={() => setIsLinkAccountOpen(false)}
-        hasParent
       />
 
       <SessionDetailsSheet

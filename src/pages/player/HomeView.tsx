@@ -12,7 +12,6 @@ import { Player, Court } from '../../shared/types/index';
 import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
 
 import { Dialog } from '../../shared/ui/Dialog';
-import { ScheduleSessionView } from '../coach/ScheduleSessionView';
 import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
 
 export const HomeView: React.FC = () => {
