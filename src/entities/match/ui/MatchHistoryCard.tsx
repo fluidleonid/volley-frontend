@@ -15,7 +15,9 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const isWin = match.isWin;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (onClick) {
       onClick();
     } else {
