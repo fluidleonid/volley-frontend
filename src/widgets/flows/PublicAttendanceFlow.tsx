@@ -9,7 +9,7 @@ interface PublicAttendanceFlowProps {
   onClose: () => void;
   onAddPlayers: (players: Player[]) => void;
   onAddGuest: (data: { name: string; level?: string }) => void;
-  onCreatePlayer: (data: { name: string; phone: string; username: string; level: string }) => void;
+  onCreatePlayer: (data: { name: string; phone: string; level: string }) => void;
 }
 
 export const PublicAttendanceFlow: React.FC<PublicAttendanceFlowProps> = ({ 

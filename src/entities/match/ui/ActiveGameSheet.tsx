@@ -6,6 +6,7 @@ import { PlayerDetailSheet } from '../../player/ui/PlayerDetailSheet';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { Player } from '../../../shared/types/index';
 import { MOCK_PLAYERS } from '../../../shared/api/mock/mockPlayers';
+import { Badge } from '../../../shared/ui/badge';
 
 export interface ActiveGameSheetProps {
   isOpen: boolean;
@@ -70,11 +71,7 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
         <div className="-mx-4 px-[60px]">
           {/* Status Pill Badge */}
           <div className="flex justify-center my-3">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-card">
-              <span className="font-sans text-xs font-medium text-muted-foreground">
-                Playing
-              </span>
-            </div>
+            <Badge variant="neutral" size="lg">Playing</Badge>
           </div>
 
           {/* Teams & Avatars (44px avatars, vs in center, NO Team A/B text) */}

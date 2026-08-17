@@ -1,7 +1,11 @@
 import React from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { Badge } from '../../shared/ui/badge';
 import { CreditCard, Banknote } from 'lucide-react';
 import { useAppStore } from '../../app/store/appStore';
+
+import { Avatar } from '../../shared/ui/Avatar';
+import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 
 interface SettlePaymentSheetProps {
   isOpen: boolean;
@@ -9,6 +13,7 @@ interface SettlePaymentSheetProps {
   record: {
     amount: string;
     status: string;
+    playerId?: string;
   } | null;
 }
 
@@ -19,6 +24,7 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
 }) => {
   const { role } = useAppStore();
   const isPaidAdmin = role === 'coach' && record?.status === 'Paid';
+  const player = record?.playerId ? MOCK_PLAYERS.find(p => p.id === record.playerId) : null;
 
   return (
     <BottomSheet 
@@ -31,12 +37,19 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
         <div className="flex-1 px-[60px] pb-6 overflow-y-auto pt-2">
           {/* Badge & Amount */}
           <div className="flex flex-col items-center justify-center mt-2 mb-8">
-            <div className={`text-sm font-semibold px-4 py-1.5 rounded-full mb-6 ${isPaidAdmin ? 'bg-primary/10 text-primary' : 'bg-card text-muted-foreground'}`}>
+            <Badge size="lg" variant={isPaidAdmin ? 'default' : 'neutral'} className="mb-6">
               {isPaidAdmin ? 'Paid' : 'Unpaid'}
-            </div>
-            <div className="text-[28px] font-display font-bold text-white">
+            </Badge>
+            <div className="text-[28px] font-display font-bold text-white mb-3">
               {record?.amount}
             </div>
+            
+            {role === 'coach' && player && (
+              <div className="flex items-center gap-2">
+                <Avatar src={player.avatarUrl} alt={player.name} initials={player.name[0]} size="sm" hasBorder={false} />
+                <span className="font-bold text-white text-[16px]">{player.name}</span>
+              </div>
+            )}
           </div>
 
           {/* Details Row */}

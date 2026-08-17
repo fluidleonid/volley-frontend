@@ -2,7 +2,7 @@ export type UserRole = 'player' | 'coach';
 
 export type AppFlowState = 'splash' | 'onboarding' | 'app';
 
-export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements';
+export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements' | 'players' | 'public_schedule';
 
 export type PlayerState = 'spectating' | 'queued' | 'match_found' | 'resting' | 'playing';
 
@@ -14,6 +14,7 @@ export interface Player {
   xp: number;
   status: PlayerState;
   isHardmode?: boolean;
+  hasTelegram?: boolean;
   gamesPlayed: number;
   wins: number;
   bpToday: number;

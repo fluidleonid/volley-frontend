@@ -17,7 +17,7 @@ export interface SkillLevelOption {
   glowColor: string;
 }
 
-const skillLevels: SkillLevelOption[] = [
+export const skillLevels: SkillLevelOption[] = [
   {
     id: 'beginner',
     title: 'Beginner',

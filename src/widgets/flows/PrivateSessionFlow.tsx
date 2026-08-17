@@ -14,10 +14,12 @@ interface PrivateSessionFlowProps {
   isOpen: boolean;
   onClose: () => void;
   onSchedule: (data: { player: Player | { name: string, level?: string }; date: string; time: string }) => void;
+  initialPlayer?: Player | null;
+  readOnlyPlayer?: boolean;
 }
 
-export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, onClose, onSchedule }) => {
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | { name: string, level?: string } | null>(null);
+export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, onClose, onSchedule, initialPlayer, readOnlyPlayer }) => {
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | { name: string, level?: string } | null>(initialPlayer || null);
   const [date, setDate] = useState<string>('Today');
   const [time, setTime] = useState<string>('10:00');
 
@@ -41,10 +43,10 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
   const titleNode = (
     <div className="text-center space-y-0.5">
       <h3 className="font-display text-lg font-bold text-white tracking-tight">
-        Private session
+        {readOnlyPlayer ? 'Reschedule session' : 'Private session'}
       </h3>
       <p className="font-sans text-xs text-muted-foreground font-normal">
-        Select player and schedule a session
+        {readOnlyPlayer ? 'Select a new date and time' : 'Select player and schedule a session'}
       </p>
     </div>
   );
@@ -53,42 +55,44 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
     <>
       <BottomSheet isOpen={isOpen} onClose={onClose} title={titleNode} zIndex={150}>
         <div className="space-y-4 pt-2">
-          {/* Select Player */}
-          <button
-            onClick={() => setIsSelectPlayerOpen(true)}
-            className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
-          >
-            <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
-              {selectedPlayer ? (
-                'id' in selectedPlayer ? (
-                  <Avatar
-                    src={selectedPlayer.avatarUrl}
-                    alt={selectedPlayer.name}
-                    initials={selectedPlayer.name.charAt(0).toUpperCase()}
-                    size="xs"
-                    hasBorder={false}
-                  />
+          {/* Select Player (Hidden in reschedule mode) */}
+          {!readOnlyPlayer && (
+            <button
+              onClick={() => setIsSelectPlayerOpen(true)}
+              className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
+            >
+              <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
+                {selectedPlayer ? (
+                  'id' in selectedPlayer ? (
+                    <Avatar
+                      src={selectedPlayer.avatarUrl}
+                      alt={selectedPlayer.name}
+                      initials={selectedPlayer.name.charAt(0).toUpperCase()}
+                      size="xs"
+                      hasBorder={false}
+                    />
+                  ) : (
+                    <HatGlasses className="h-5 w-5" />
+                  )
                 ) : (
-                  <HatGlasses className="h-5 w-5" />
-                )
-              ) : (
-                <IdCardLanyard className="h-5 w-5" />
-              )}
-            </div>
-            <div className="relative flex-1 h-full flex flex-col justify-center">
-              {selectedPlayer ? (
-                <div className="pt-4 pb-1 h-full flex flex-col justify-center">
-                  <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">Player</span>
-                  <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
-                    {'id' in selectedPlayer ? selectedPlayer.name : selectedPlayer.name}
-                  </span>
-                </div>
-              ) : (
-                <span className="pl-2 pr-4 text-base text-muted-foreground font-medium tracking-tight block">Select player</span>
-              )}
-            </div>
-            <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
-          </button>
+                  <IdCardLanyard className="h-5 w-5" />
+                )}
+              </div>
+              <div className="relative flex-1 h-full flex flex-col justify-center">
+                {selectedPlayer ? (
+                  <div className="pt-4 pb-1 h-full flex flex-col justify-center">
+                    <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">Player</span>
+                    <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
+                      {'id' in selectedPlayer ? selectedPlayer.name : selectedPlayer.name}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="pl-2 pr-4 text-base text-muted-foreground font-medium tracking-tight block">Select player</span>
+                )}
+              </div>
+              <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
+            </button>
+          )}
 
           {/* Date Picker */}
           <button
@@ -123,10 +127,10 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
               onClick={handleSchedule}
               fullWidth
               size="xl"
-              disabled={!selectedPlayer}
+              disabled={!readOnlyPlayer && !selectedPlayer}
               className="shadow-lg shadow-primary/20"
             >
-              Schedule session
+              {readOnlyPlayer ? 'Save' : 'Schedule session'}
             </Button>
           </div>
         </div>

@@ -16,8 +16,9 @@ interface SelectPlayerForSessionSheetProps {
   selectedPlayerIds?: string[];
   onSelectPlayer?: (player: Player) => void;
   onSelectPlayers?: (players: Player[]) => void;
-  onAddGuest: () => void;
-  onCreateNewPlayer: () => void;
+  onAddGuest?: () => void;
+  onCreateNewPlayer?: () => void;
+  hideAddButtons?: boolean;
 }
 
 export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetProps> = ({
@@ -31,6 +32,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
   onSelectPlayers,
   onAddGuest,
   onCreateNewPlayer,
+  hideAddButtons = false,
 }) => {
   const { leaderboard } = useAppStore(); // Assuming leaderboard has all players
   
@@ -97,7 +99,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
     <BottomSheet isOpen={isOpen} onClose={onClose} title={titleNode} zIndex={160} topOffset={84} footer={footerButton}>
       <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden pt-1">
         {/* Search Input */}
-        <div className="px-4 pb-4 shrink-0">
+        <div className="pb-4 shrink-0">
           <Input
             variant="search"
             icon={<Search className="h-5 w-5" />}
@@ -107,30 +109,32 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none px-4">
+        <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none -mx-4 px-4">
           {/* Special Actions */}
-          <div className="space-y-1 pb-4 border-b border-border/60 mb-4">
-            <button
-              onClick={onCreateNewPlayer}
-              className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
-            >
-              <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-card transition-colors duration-150 pointer-events-none" />
-              <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
-                <Plus className="h-5 w-5 text-primary" />
-              </div>
-              <span className="relative z-10 text-base font-semibold text-white tracking-tight">Create & schedule new player</span>
-            </button>
-            <button
-              onClick={onAddGuest}
-              className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
-            >
-              <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-card transition-colors duration-150 pointer-events-none" />
-              <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
-                <HatGlasses className="h-5 w-5 text-primary" />
-              </div>
-              <span className="relative z-10 text-base font-semibold text-white tracking-tight">Schedule with guest player</span>
-            </button>
-          </div>
+          {!hideAddButtons && (
+            <div className="space-y-1 pb-4 border-b border-border/60 mb-4">
+              <button
+                onClick={onCreateNewPlayer}
+                className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
+              >
+                <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-card transition-colors duration-150 pointer-events-none" />
+                <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
+                  <Plus className="h-5 w-5 text-primary" />
+                </div>
+                <span className="relative z-10 text-base font-semibold text-white tracking-tight">Create & schedule new player</span>
+              </button>
+              <button
+                onClick={onAddGuest}
+                className="group relative flex w-full items-center gap-3 py-3.5 text-left border-0 bg-transparent select-none cursor-pointer"
+              >
+                <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-card transition-colors duration-150 pointer-events-none" />
+                <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
+                  <HatGlasses className="h-5 w-5 text-primary" />
+                </div>
+                <span className="relative z-10 text-base font-semibold text-white tracking-tight">Schedule with guest player</span>
+              </button>
+            </div>
+          )}
 
           {/* Player List */}
           <div className="space-y-2">

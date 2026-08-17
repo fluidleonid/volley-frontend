@@ -72,6 +72,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     inviteTeamA,
     inviteTeamB,
     invitedPlayers,
+    role,
   } = useAppStore();
 
   const [dotCount, setDotCount] = useState(1);
@@ -166,7 +167,15 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     }
   }, [userAccepted, bannerStage, acceptedCount]);
 
+  const hasInviteTeams = inviteTeamA.length > 0 || inviteTeamB.length > 0;
+  const isInvited = invitedPlayers.length > 0 || hasInviteTeams;
+
   if (playerState !== 'queued' && playerState !== 'match_found' && playerState !== 'playing') {
+    return null;
+  }
+
+  // Coach only sees the matching banner if they were invited or created an invite
+  if (role === 'coach' && !isInvited) {
     return null;
   }
 
@@ -186,8 +195,6 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
   };
 
   const fillAngle = Math.min(360, Math.max(0, progress * 360));
-
-  const hasInviteTeams = inviteTeamA.length > 0 || inviteTeamB.length > 0;
   const mockTeamA: Player[] = [
     { id: 'p1', name: 'You', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80', level: 12, xp: 9000, status: 'playing', gamesPlayed: 10, wins: 5, bpToday: 1, winStreak: 2 },
     { id: 'p2', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'playing', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6 },

@@ -2,6 +2,8 @@ import React from 'react';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { AchievementData } from '../../../shared/types/achievement';
 import { isIconUrl, rarityBadgeClass, rarityGlow } from '../../../shared/lib/achievement-utils';
+import { Badge } from '../../../shared/ui/badge';
+import { cn } from '../../../shared/lib/utils';
 
 interface AchievementDetailsSheetProps {
   isOpen: boolean;
@@ -79,10 +81,10 @@ export const AchievementDetailsSheet: React.FC<AchievementDetailsSheetProps> = (
             )}
           </div>
 
-          <div>
-            <span className={`inline-block text-sm font-bold px-4 py-1.5 rounded-full ${badgeClass}`}>
+          <div className="mt-1 flex justify-center">
+            <Badge size="lg" className={cn("text-sm", badgeClass)}>
               {achievement.rarity}
-            </span>
+            </Badge>
           </div>
         </div>
       </div>

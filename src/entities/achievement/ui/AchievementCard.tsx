@@ -1,6 +1,8 @@
 import React from 'react';
 import { AchievementData } from '../../../shared/types/achievement';
 import { isIconUrl, rarityBadgeClass, rarityGlow } from '../../../shared/lib/achievement-utils';
+import { Badge } from '../../../shared/ui/badge';
+import { cn } from '../../../shared/lib/utils';
 
 interface AchievementCardProps {
   achievement: AchievementData;
@@ -64,9 +66,9 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, o
           )}
 
           <div className="mt-[6px]">
-            <span className={`inline-block text-[9px] font-semibold px-2 py-0.5 rounded-full ${badgeClass}`}>
+            <Badge size="sm" className={cn("text-[9px] h-[16px] px-2", badgeClass)}>
               {achievement.rarity}
-            </span>
+            </Badge>
           </div>
         </div>
       </div>

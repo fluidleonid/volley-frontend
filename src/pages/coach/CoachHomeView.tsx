@@ -11,7 +11,8 @@ import { Player, Court } from '../../shared/types/index';
 import { Play, Plus, Pause, Square, Users, CalendarClock } from 'lucide-react';
 import { PrivateSessionFlow } from '../../widgets/flows/PrivateSessionFlow';
 import { PublicAttendanceFlow } from '../../widgets/flows/PublicAttendanceFlow';
-
+import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
+import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
 interface PrivateSession {
   id: string;
   name: string;
@@ -49,16 +50,19 @@ export const CoachHomeView: React.FC = () => {
     todaysPlayers,
     isSessionActive,
     toggleSession,
+    setActiveTab,
   } = useAppStore();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
 
   const [isPrivateFlowOpen, setIsPrivateFlowOpen] = useState(false);
+  const [isRescheduleFlowOpen, setIsRescheduleFlowOpen] = useState(false);
+  const [reschedulePlayer, setReschedulePlayer] = useState<PrivateSession | null>(null);
   const [isPublicFlowOpen, setIsPublicFlowOpen] = useState(false);
+  const [selectedPrivateSession, setSelectedPrivateSession] = useState<PrivateSession | null>(null);
 
   const handleInvite = () => {
     setIsInviteOpen(true);
@@ -70,39 +74,20 @@ export const CoachHomeView: React.FC = () => {
     <div className="space-y-6 pb-28 px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Session Status Banner for Coach */}
       {!isSessionActive ? (
-        <div className="relative overflow-hidden rounded-[40px] bg-card p-6 border border-border/60 shadow-2xl flex flex-col justify-between h-[400px]">
-          <div className="absolute right-0 top-1/3 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-          <div className="absolute -right-6 -bottom-6 w-48 h-48 opacity-10 pointer-events-none flex items-center justify-center text-white text-9xl font-bold">
-            🎾
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3.5 py-1 text-xs font-semibold text-muted-foreground">
-              <span>Public Open Session</span>
-            </div>
-            <h3 className="font-display text-2xl font-bold text-white tracking-tight leading-snug">
-              No active training session
-            </h3>
-            <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[320px]">
-              Start or schedule a training session to open court matchmaking and player check-ins.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2.5 pt-4 z-10 w-full">
-            <button
-              onClick={toggleSession}
-              className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
-            >
-              Start training
-            </button>
-            <button
-              onClick={() => setIsScheduleOpen(true)}
-              className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
-            >
-              Schedule training
-            </button>
-          </div>
-        </div>
+        <ClosedSessionBanner>
+          <button
+            onClick={toggleSession}
+            className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
+          >
+            Start training
+          </button>
+          <button
+            onClick={() => setActiveTab('public_schedule')}
+            className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
+          >
+            Schedule training
+          </button>
+        </ClosedSessionBanner>
       ) : (
         <>
           {/* Dynamic Action Buttons Container */}
@@ -279,7 +264,8 @@ export const CoachHomeView: React.FC = () => {
             {mockPrivateSessions.map((session) => (
               <div
                 key={session.id}
-                className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0"
+                onClick={() => setSelectedPrivateSession(session)}
+                className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -314,6 +300,52 @@ export const CoachHomeView: React.FC = () => {
         player={selectedPlayer}
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
+        hasParent={!!selectedPrivateSession}
+      />
+
+      {/* Session Details Sheet Modal */}
+      <SessionDetailsSheet
+        isOpen={!!selectedPrivateSession}
+        onClose={() => setSelectedPrivateSession(null)}
+        player={selectedPrivateSession ? {
+          id: selectedPrivateSession.id,
+          name: selectedPrivateSession.name,
+          avatarUrl: selectedPrivateSession.avatarUrl,
+          level: 10,
+          xp: 0,
+          status: 'spectating',
+          gamesPlayed: 0,
+          wins: 0,
+          bpToday: 0,
+          winStreak: 0,
+          hasTelegram: true,
+        } : null}
+        sessionTime={selectedPrivateSession?.time}
+        onReschedule={() => {
+          setReschedulePlayer(selectedPrivateSession);
+          setSelectedPrivateSession(null);
+          setIsRescheduleFlowOpen(true);
+        }}
+        onCancel={() => {
+          setSelectedPrivateSession(null);
+        }}
+        onAvatarClick={() => {
+          if (selectedPrivateSession) {
+            setSelectedPlayer({
+              id: selectedPrivateSession.id,
+              name: selectedPrivateSession.name,
+              avatarUrl: selectedPrivateSession.avatarUrl,
+              level: 10,
+              xp: 0,
+              status: 'spectating',
+              gamesPlayed: 0,
+              wins: 0,
+              bpToday: 0,
+              winStreak: 0,
+              hasTelegram: true,
+            });
+          }
+        }}
       />
 
       {/* Full Page Invite View Overlay */}
@@ -324,12 +356,6 @@ export const CoachHomeView: React.FC = () => {
       )}
 
       {/* Full Page Schedule Session View Overlay */}
-      {isScheduleOpen && (
-        <div className="fixed inset-0 z-[100] bg-background animate-in fade-in slide-in-from-bottom duration-200 !mt-0">
-          <ScheduleSessionView onClose={() => setIsScheduleOpen(false)} />
-        </div>
-      )}
-
       {/* End Session Confirmation Dialog */}
       <Dialog
         isOpen={isEndSessionConfirmOpen}
@@ -350,6 +376,31 @@ export const CoachHomeView: React.FC = () => {
         onClose={() => setIsPrivateFlowOpen(false)}
         onSchedule={(data) => {
           console.log('Scheduled private session', data);
+        }}
+      />
+
+      <PrivateSessionFlow 
+        isOpen={isRescheduleFlowOpen}
+        onClose={() => {
+          setIsRescheduleFlowOpen(false);
+          setReschedulePlayer(null);
+        }}
+        initialPlayer={reschedulePlayer ? {
+          id: reschedulePlayer.id,
+          name: reschedulePlayer.name,
+          avatarUrl: reschedulePlayer.avatarUrl,
+          level: 10,
+          xp: 0,
+          status: 'spectating',
+          gamesPlayed: 0,
+          wins: 0,
+          bpToday: 0,
+          winStreak: 0,
+          hasTelegram: true,
+        } : null}
+        readOnlyPlayer={true}
+        onSchedule={(data) => {
+          console.log('Rescheduled private session', data);
         }}
       />
 

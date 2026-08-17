@@ -6,7 +6,7 @@ import { Input } from '../../shared/ui/Input';
 interface CreateNewPlayerSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreatePlayer: (data: { name: string; phone: string; username: string; level: string }) => void;
+  onCreatePlayer: (data: { name: string; phone: string; level: string }) => void;
   hasParent?: boolean;
 }
 
@@ -20,16 +20,15 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [username, setUsername] = useState('');
+
   const [level, setLevel] = useState('Beginner');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onCreatePlayer({ name: name.trim(), phone: phone.trim(), username: username.trim(), level });
+      onCreatePlayer({ name: name.trim(), phone: phone.trim(), level });
       setName('');
       setPhone('');
-      setUsername('');
       setLevel('Beginner');
     }
   };
@@ -65,12 +64,7 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
             onChange={(e) => setPhone(e.target.value)}
           />
 
-          <Input
-            label="@username"
-            placeholder="Enter username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+
 
           {/* Level Selector */}
           <div className="flex gap-2 justify-between">

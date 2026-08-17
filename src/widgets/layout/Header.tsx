@@ -20,6 +20,8 @@ export interface HeaderProps {
   
   // For backwards compatibility with StickyPageHeader's styling
   stickyClassName?: string;
+  rightContent?: React.ReactNode;
+  forceScrolled?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,8 +36,11 @@ export const Header: React.FC<HeaderProps> = ({
   onDragHandle,
   className = '',
   stickyClassName = '',
+  rightContent,
+  forceScrolled,
 }) => {
-  const scrolled = useScroll();
+  const windowScrolled = useScroll();
+  const scrolled = forceScrolled ?? windowScrolled;
   const { role, setRole, currentUser, playerState, setActiveTab } = useAppStore();
 
   const getStatusDisplay = () => {
@@ -153,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onBack}
-            className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-card text-white transition-colors hover:bg-brand-surfaceElevated active:scale-95 cursor-pointer z-10"
+            className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-card text-white transition-colors hover:bg-brand-surfaceElevated active:scale-95 cursor-pointer z-10 pointer-events-auto"
             title="Back"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -179,7 +184,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         )}
 
-        {showRight ? (
+        {rightContent ? (
+          <div className="z-10">{rightContent}</div>
+        ) : showRight ? (
           <button
             type="button"
             onClick={(e) => {

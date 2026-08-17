@@ -4,6 +4,7 @@ import { MatchHistoryCard } from '../../entities/match/ui/MatchHistoryCard';
 import { Trophy } from 'lucide-react';
 import { Match } from '../../shared/types/index';
 import { useScroll } from '../../shared/hooks/useScroll';
+import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
 export const GamesView: React.FC = () => {
   const { recentMatches } = useAppStore();
@@ -56,12 +57,10 @@ export const GamesView: React.FC = () => {
         <div className="space-y-6">
           {Object.entries(groupedByDate).map(([dateLabel, stats]) => (
             <div key={dateLabel} className="space-y-3">
-              <div>
-                <h2 className="text-muted-foreground text-[14px] font-normal tracking-tight">{dateLabel}</h2>
-                <p className="text-muted-foreground text-[12px] font-normal mt-0.5">
-                  {stats.matches.length} matches • {stats.wins}W - {stats.losses}L • +{stats.xp} XP • +{stats.bp} BP
-                </p>
-              </div>
+              <ListGroupHeader
+                title={dateLabel}
+                subtitle={`${stats.matches.length} matches • ${stats.wins}W - ${stats.losses}L • +${stats.xp} XP • +${stats.bp} BP`}
+              />
               <div className="flex flex-col">
                 {stats.matches.map((match) => (
                   <MatchHistoryCard key={match.id} match={match} />

@@ -199,7 +199,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       </div>
 
       {/* 4. Bottom Action Button (fixed at exactly 48px from bottom of screen) */}
-      <div className="fixed bottom-0 inset-x-0 pb-[48px] px-4 max-w-[480px] mx-auto z-20 bg-background">
+      <div className="fixed bottom-0 inset-x-0 pb-[48px] pt-4 px-4 max-w-[480px] mx-auto z-20 bg-background/80 backdrop-blur-md">
         <button
           onClick={handleSendInvite}
           disabled={!isReadyToInvite}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../app/store/appStore';
 import { NavigationTab } from '../../shared/types/index';
-import { Home, Trophy, Menu, ShieldCheck } from 'lucide-react';
+import { Home, Trophy, Menu, ShieldCheck, UsersRound, Coins } from 'lucide-react';
 import { MatchingBanner } from './MatchingBanner';
 
 interface NavItem {
@@ -13,11 +13,15 @@ interface NavItem {
 export const BottomNav: React.FC = () => {
   const { activeTab, setActiveTab, role } = useAppStore();
 
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = role === 'coach' ? [
     { id: 'home', label: 'Home', icon: Home },
-    { id: 'leaderboard', label: 'Leader board', icon: Trophy },
+    { id: 'players', label: 'Players', icon: UsersRound },
+    { id: 'billing', label: 'Cashflow', icon: Coins },
+    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
+  ] : [
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     { id: 'games', label: 'My games', icon: Menu },
-    ...(role === 'coach' ? [{ id: 'coach' as NavigationTab, label: 'Coach', icon: ShieldCheck }] : []),
   ];
 
   return (

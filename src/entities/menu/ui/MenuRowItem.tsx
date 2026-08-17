@@ -7,6 +7,7 @@ export interface MenuRowItemProps {
   onClick?: () => void;
   showChevron?: boolean;
   className?: string;
+  rightElement?: React.ReactNode;
 }
 
 export const MenuRowItem: React.FC<MenuRowItemProps> = ({
@@ -15,11 +16,12 @@ export const MenuRowItem: React.FC<MenuRowItemProps> = ({
   onClick,
   showChevron = true,
   className = '',
+  rightElement,
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`group relative flex w-full items-center justify-between py-3.5 text-left border-0 bg-transparent select-none cursor-pointer ${className}`}
+      className={`group relative flex w-full h-[52px] items-center justify-between text-left border-0 bg-transparent select-none cursor-pointer ${className}`}
     >
       {/* Full-bleed active background fill extending to BOTH left and right screen edges (-left-4 -right-4) */}
       <span className="absolute inset-y-0 -left-4 -right-4 bg-transparent group-active:bg-card transition-colors duration-150 pointer-events-none" />
@@ -32,9 +34,12 @@ export const MenuRowItem: React.FC<MenuRowItemProps> = ({
         </span>
       </div>
 
-      {showChevron && (
-        <ChevronRight className="relative z-10 h-5 w-5 text-muted-foreground group-active:text-white transition-colors shrink-0" />
-      )}
+      <div className="relative z-10 flex items-center gap-2">
+        {rightElement}
+        {showChevron && (
+          <ChevronRight className="h-5 w-5 text-muted-foreground group-active:text-white transition-colors shrink-0" />
+        )}
+      </div>
     </button>
   );
 };

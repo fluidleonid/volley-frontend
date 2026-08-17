@@ -1,10 +1,13 @@
 import React from 'react';
 
+import { ChevronRight } from 'lucide-react';
+
 interface XpBarProps {
   current: number;
   max: number;
   segments?: number;
   label: string;
+  onLabelClick?: () => void;
 }
 
 export const XpBar: React.FC<XpBarProps> = ({
@@ -12,13 +15,21 @@ export const XpBar: React.FC<XpBarProps> = ({
   max,
   segments = 10,
   label,
+  onLabelClick,
 }) => {
   const filledSegments = Math.round((current / max) * segments);
 
   return (
     <div className="space-y-1.5 pt-1">
       <div className="flex items-center justify-between font-display">
-        <span className="text-base font-bold text-white">{label}</span>
+        <button 
+          onClick={onLabelClick} 
+          className={`flex items-center gap-1 text-base font-bold text-white ${onLabelClick ? 'cursor-pointer hover:opacity-80 active:scale-95 transition-all' : ''}`}
+          disabled={!onLabelClick}
+        >
+          {label}
+          {onLabelClick && <ChevronRight className="h-4 w-4" />}
+        </button>
         <span className="text-xs text-muted-foreground">
           <strong className="text-white">{current.toLocaleString()}</strong>/{max.toLocaleString()}
         </span>

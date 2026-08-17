@@ -13,6 +13,7 @@ import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
 
 import { Dialog } from '../../shared/ui/Dialog';
 import { ScheduleSessionView } from '../coach/ScheduleSessionView';
+import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
 
 export const HomeView: React.FC = () => {
   const {
@@ -33,10 +34,10 @@ export const HomeView: React.FC = () => {
     setMatchDetailOpen,
     isSessionActive,
     toggleSession,
+    setActiveTab,
   } = useAppStore();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedGameCourt, setSelectedGameCourt] = useState<Court | null>(null);
@@ -87,7 +88,7 @@ export const HomeView: React.FC = () => {
                 onClick={startTraining}
                 className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-[0.98] hover:bg-primary/90"
               >
-                <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
+                <Play className="h-5 w-5 fill-current ml-0.5" />
               </button>
               <span className="mt-2 block font-sans text-sm font-medium text-muted-foreground">
                 Start training
@@ -104,7 +105,7 @@ export const HomeView: React.FC = () => {
                   onClick={sitOut}
                   className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
                 >
-                  <Pause className="h-5 w-5 fill-white text-white" />
+                  <Pause className="h-5 w-5 fill-current" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
                   Sit out
@@ -117,7 +118,7 @@ export const HomeView: React.FC = () => {
                   onClick={handleInvite}
                   className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
                 >
-                  <Plus className="h-5 w-5 stroke-[3] text-primary-foreground" />
+                  <Plus className="h-5 w-5 stroke-[3]" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
                   Invite to play
@@ -128,13 +129,12 @@ export const HomeView: React.FC = () => {
               <div className="flex flex-[0.9] flex-col items-center">
                 <button
                   onClick={toggleHardmode}
-                  className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
-                    isHardmode
+                  className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${isHardmode
                       ? 'bg-primary/20 text-primary'
                       : 'bg-card text-white hover:bg-brand-surfaceElevated'
-                  }`}
+                    }`}
                 >
-                  <Zap className={`h-5 w-5 ${isHardmode ? 'text-primary' : 'text-white'}`} />
+                  <Zap className="h-5 w-5" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
                   Hard mode
@@ -152,7 +152,7 @@ export const HomeView: React.FC = () => {
                   onClick={stopTraining}
                   className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
                 >
-                  <Square className="h-5 w-5 fill-white text-white" />
+                  <Square className="h-5 w-5 fill-current" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
                   Stop
@@ -165,7 +165,7 @@ export const HomeView: React.FC = () => {
                   onClick={continueToPlay}
                   className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
                 >
-                  <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
+                  <Play className="h-5 w-5 fill-current ml-0.5" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
                   Continue to play
@@ -178,32 +178,23 @@ export const HomeView: React.FC = () => {
 
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
       {!isSessionActive ? (
-        <div className="space-y-4">
-          {/* Banner Card with h-[400px] matching requested height */}
-          <div className="relative overflow-hidden rounded-[40px] bg-card p-6 border border-border/60 shadow-2xl flex flex-col justify-between h-[400px]">
-            {/* Banner Decorative Background Placeholder Graphic */}
-            <div className="absolute right-0 top-1/3 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-            <div className="absolute -right-6 -bottom-6 w-48 h-48 opacity-10 pointer-events-none flex items-center justify-center text-white text-9xl font-bold">
-              🎾
-            </div>
-
-            <div className="space-y-3 pt-2">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3.5 py-1 text-xs font-semibold text-muted-foreground">
-                <span>Public Open Session</span>
-              </div>
-              <h3 className="font-display text-2xl font-bold text-white tracking-tight leading-snug">
-                No active training session
-              </h3>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[320px]">
-                {role === 'coach'
-                  ? 'Start or schedule a training session to open court matchmaking and player check-ins.'
-                  : 'There are no active training sessions scheduled right now. Check back soon!'}
-              </p>
-            </div>
-
+        (() => {
+          const nextSession = "Today at 20:00";
+          return (
+            <div className="space-y-4">
+              <ClosedSessionBanner
+                nextSessionTime={nextSession}
+                description={
+                  role === 'coach'
+                    ? undefined // Uses default universal coach text
+                    : nextSession
+                      ? 'A training session is scheduled. Get ready to join when it starts!'
+                      : 'There are no active training sessions scheduled right now. Check back soon!'
+                }
+              >
             {/* Coach Actions */}
             {role === 'coach' && (
-              <div className="flex flex-col gap-2.5 pt-4 z-10 w-full">
+              <>
                 <button
                   onClick={toggleSession}
                   className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
@@ -211,15 +202,17 @@ export const HomeView: React.FC = () => {
                   Start training
                 </button>
                 <button
-                  onClick={() => setIsScheduleOpen(true)}
+                  onClick={() => setActiveTab('public_schedule')}
                   className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
                 >
                   Schedule training
                 </button>
-              </div>
+              </>
             )}
-          </div>
+          </ClosedSessionBanner>
         </div>
+          );
+        })()
       ) : (
         <>
           {/* 3. Courts Horizontal Slider Section (Scrollbar Hidden, radius=24px) */}
@@ -328,12 +321,7 @@ export const HomeView: React.FC = () => {
         </div>
       )}
 
-      {/* Full Page Schedule Session View Overlay */}
-      {isScheduleOpen && (
-        <div className="fixed inset-0 z-[100] bg-background animate-in fade-in slide-in-from-bottom duration-200 !mt-0">
-          <ScheduleSessionView onClose={() => setIsScheduleOpen(false)} />
-        </div>
-      )}
+      {/* Modals and Sheets */}
 
       {/* End Session Confirmation Dialog */}
       <Dialog

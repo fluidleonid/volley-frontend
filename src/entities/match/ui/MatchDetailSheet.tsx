@@ -4,6 +4,7 @@ import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { useAppStore } from '../../../app/store/appStore';
 import { PlayerDetailSheet } from '../../player/ui/PlayerDetailSheet';
+import { Badge } from '../../../shared/ui/badge';
 
 export interface MatchDetailSheetProps {
   match: Match | null;
@@ -56,6 +57,10 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
     findFullPlayer(p.name, `sheet-b-${idx}`, p.avatarUrl)
   );
 
+  const { role } = useAppStore();
+  const isCurrentUserInMatch = teamAPlayers.some(p => p.id === currentUser.id) || teamBPlayers.some(p => p.id === currentUser.id);
+  const showStatsRow = role !== 'coach' && isCurrentUserInMatch;
+
 
   return (
     <BottomSheet
@@ -69,47 +74,83 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
       <div className="-mx-4 px-[60px]">
         {/* Status Pill Badge */}
         <div className="flex justify-center my-3 mb-8">
-          <div className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full ${match.isWin ? 'bg-[#24351B]' : 'bg-[#FF453A]/10'}`}>
-            <span className={`font-sans text-xs font-medium ${match.isWin ? 'text-[#5AA739]' : 'text-[#FF453A]'}`}>
-              {match.isWin ? 'Win' : 'Loss'}
-            </span>
-          </div>
+          <Badge variant={match.isWin ? 'default' : 'destructive'} size="lg">
+            {match.isWin ? 'Win' : 'Loss'}
+          </Badge>
         </div>
 
         {/* Teams & Avatars & Scores */}
-        <div className="flex items-start justify-between my-6">
-          <div className="flex flex-col items-center">
-            <AvatarGroup
-              players={teamAPlayers}
-              size="lg"
-              stacked={true}
-              hasBorder={false}
-              ringColor="ring-[#121212]"
-              onSelectPlayer={(p) => setSelectedPlayer(p)}
-            />
-            <span className="font-display text-[20px] font-bold text-white mt-2">
-              {match.scoreA ?? 21}
-            </span>
-          </div>
+        {role === 'coach' ? (
+          <div className="flex items-center justify-between my-6 w-full">
+            <div className="flex-1 flex justify-start pl-4">
+              <AvatarGroup
+                players={teamAPlayers}
+                size="lg"
+                stacked={true}
+                hasBorder={false}
+                ringColor="ring-[#121212]"
+                onSelectPlayer={(p) => setSelectedPlayer(p)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-center shrink-0 w-[120px]">
+              <span className="font-display text-[24px] font-bold text-white w-[40px] text-right">
+                {match.scoreA ?? 21}
+              </span>
+              <span className="font-sans text-[24px] font-bold text-muted-foreground mx-3">
+                :
+              </span>
+              <span className="font-display text-[24px] font-bold text-white w-[40px] text-left">
+                {match.scoreB ?? 18}
+              </span>
+            </div>
 
-          <span className="font-sans text-[20px] font-bold text-muted-foreground mt-2">
-            :
-          </span>
-
-          <div className="flex flex-col items-center">
-            <AvatarGroup
-              players={teamBPlayers}
-              size="lg"
-              stacked={true}
-              hasBorder={false}
-              ringColor="ring-[#121212]"
-              onSelectPlayer={(p) => setSelectedPlayer(p)}
-            />
-            <span className="font-display text-[20px] font-bold text-white mt-2">
-              {match.scoreB ?? 18}
-            </span>
+            <div className="flex-1 flex justify-end pr-4">
+              <AvatarGroup
+                players={teamBPlayers}
+                size="lg"
+                stacked={true}
+                hasBorder={false}
+                ringColor="ring-[#121212]"
+                onSelectPlayer={(p) => setSelectedPlayer(p)}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-start justify-between my-6">
+            <div className="flex flex-col items-center">
+              <AvatarGroup
+                players={teamAPlayers}
+                size="lg"
+                stacked={true}
+                hasBorder={false}
+                ringColor="ring-[#121212]"
+                onSelectPlayer={(p) => setSelectedPlayer(p)}
+              />
+              <span className="font-display text-[20px] font-bold text-white mt-2">
+                {match.scoreA ?? 21}
+              </span>
+            </div>
+
+            <span className="font-sans text-[20px] font-bold text-muted-foreground mt-2">
+              :
+            </span>
+
+            <div className="flex flex-col items-center">
+              <AvatarGroup
+                players={teamBPlayers}
+                size="lg"
+                stacked={true}
+                hasBorder={false}
+                ringColor="ring-[#121212]"
+                onSelectPlayer={(p) => setSelectedPlayer(p)}
+              />
+              <span className="font-display text-[20px] font-bold text-white mt-2">
+                {match.scoreB ?? 18}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* 6 Metrics Grid (2 rows x 3 cols) */}
         <div className="my-8 grid grid-cols-3 gap-y-6 gap-x-2 text-left pb-4">
@@ -141,19 +182,23 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
             </div>
           </div>
 
-          <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">XP</div>
-            <div className="font-sans text-sm font-semibold text-white">
-              {match.xpGained > 0 ? `+${match.xpGained}` : match.xpGained}
-            </div>
-          </div>
+          {showStatsRow && (
+            <>
+              <div>
+                <div className="font-sans text-xs text-muted-foreground font-medium mb-1">XP</div>
+                <div className="font-sans text-sm font-semibold text-white">
+                  {match.xpGained > 0 ? `+${match.xpGained}` : match.xpGained}
+                </div>
+              </div>
 
-          <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">BP</div>
-            <div className="font-sans text-sm font-semibold text-white">
-              {match.bpGained || 50}
-            </div>
-          </div>
+              <div>
+                <div className="font-sans text-xs text-muted-foreground font-medium mb-1">BP</div>
+                <div className="font-sans text-sm font-semibold text-white">
+                  {match.bpGained || 50}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       

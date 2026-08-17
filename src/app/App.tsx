@@ -13,10 +13,12 @@ import { CoachView } from '../pages/coach/CoachView';
 import { AttendanceView } from '../pages/coach/AttendanceView';
 import { BillingView } from '../pages/coach/BillingView';
 import { AchievementsView } from '../pages/player/AchievementsView';
+import { PlayersView } from '../pages/coach/PlayersView';
+import { ScheduleSessionView } from '../pages/coach/ScheduleSessionView';
 import { Smartphone } from 'lucide-react';
 
 export function App() {
-  const { flowState, role, activeTab } = useAppStore();
+  const { flowState, role, activeTab, previousTab, setActiveTab } = useAppStore();
   const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
@@ -97,6 +99,10 @@ export function App() {
       return <CoachHomeView />;
     }
 
+    const handleScheduleBack = () => {
+      setActiveTab(previousTab || 'home');
+    };
+
     switch (activeTab) {
       case 'home':
         return <HomeView />;
@@ -114,6 +120,10 @@ export function App() {
         return <BillingView />;
       case 'achievements':
         return <AchievementsView />;
+      case 'players':
+        return <PlayersView />;
+      case 'public_schedule':
+        return <ScheduleSessionView onClose={handleScheduleBack} />;
       default:
         return <HomeView />;
     }
@@ -127,7 +137,7 @@ export function App() {
         {renderTabContent()}
       </main>
 
-      {activeTab !== 'profile' && activeTab !== 'attendance' && activeTab !== 'billing' && activeTab !== 'achievements' && (
+      {activeTab !== 'profile' && activeTab !== 'attendance' && activeTab !== 'achievements' && activeTab !== 'public_schedule' && !(role === 'player' && activeTab === 'billing') && (
         <>
           <div
             className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-background/80 via-background/40 to-transparent backdrop-blur-md"

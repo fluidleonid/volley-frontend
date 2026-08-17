@@ -6,11 +6,15 @@ export interface LeaderboardRowItemProps {
   rank: number;
   player: Player;
   xp: number;
+  onClick?: () => void;
 }
 
-export const LeaderboardRowItem: React.FC<LeaderboardRowItemProps> = ({ rank, player, xp }) => {
+export const LeaderboardRowItem: React.FC<LeaderboardRowItemProps> = ({ rank, player, xp, onClick }) => {
   return (
-    <div className="flex items-center py-3 border-b border-border/60 last:border-0 bg-transparent">
+    <div 
+      onClick={onClick}
+      className={`flex items-center py-3 border-b border-border/60 last:border-0 bg-transparent ${onClick ? 'cursor-pointer active:scale-[0.98] transition-transform select-none' : ''}`}
+    >
       <div className="w-[60px] text-left shrink-0 font-bold text-white text-[20px]">{rank}</div>
       <div className="flex-1 flex items-center">
         <div className="w-10 h-10 rounded-full bg-card mr-3 border border-border flex items-center justify-center overflow-hidden">

@@ -70,7 +70,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
     const day = days.find((d) => d.id === id);
     if (!day) return;
     const newlyEnabled = !day.enabled;
-    
+
     setDays((prev) =>
       prev.map((d) => (d.id === id ? { ...d, enabled: newlyEnabled } : d))
     );
@@ -125,21 +125,17 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
     setSpecialDates((prev) => prev.filter((item) => item.id !== id));
   };
 
-
-
   return (
-    <div className="h-full min-h-screen flex flex-col bg-background text-white px-4 max-w-[480px] mx-auto select-none pb-36">
-      {/* 1. Header */}
-      <div className="sticky top-0 z-40 bg-background pt-[84px] pb-5 -mx-4 px-4">
-        <Header
-          variant="page"
-          title="Schedule public session"
-          onBack={onClose}
-          onClose={onClose}
-        />
-      </div>
+    <div className="relative pb-40 select-none px-4">
+      <Header
+        variant="page"
+        sticky
+        stickyClassName="-mx-4 px-4"
+        title="Public schedule"
+        onBack={onClose}
+      />
 
-      <div className="flex-1 space-y-6 pt-2 overflow-y-auto scrollbar-none pb-8">
+      <div className="space-y-6 pt-2">
         {/* SECTION 1: Regular Weekly Days & Time Slots */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -153,9 +149,8 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
             {days.map((day) => (
               <div
                 key={day.id}
-                className={`rounded-[20px] bg-card p-4 transition-colors ${
-                  day.enabled ? '' : 'opacity-60'
-                }`}
+                className={`rounded-[20px] bg-card p-4 transition-colors ${day.enabled ? '' : 'opacity-60'
+                  }`}
               >
                 {/* Day Header Row with Toggle Switch */}
                 <div className="flex items-center justify-between">
@@ -165,14 +160,12 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
 
                   <button
                     onClick={() => toggleDay(day.id)}
-                    className={`w-12 h-6 rounded-full transition-colors relative p-0.5 cursor-pointer ${
-                      day.enabled ? 'bg-primary' : 'bg-secondary'
-                    }`}
+                    className={`w-12 h-6 rounded-full transition-colors relative p-0.5 cursor-pointer ${day.enabled ? 'bg-primary' : 'bg-secondary'
+                      }`}
                   >
                     <div
-                      className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                        day.enabled ? 'translate-x-6' : 'translate-x-0'
-                      }`}
+                      className={`w-5 h-5 rounded-full bg-white transition-transform ${day.enabled ? 'translate-x-6' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -258,28 +251,26 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
             )}
           </div>
         </div>
+      </div>
 
-        {/* Progressive Blur — fixed, max-w matches main content container, under button */}
-        <div className="fixed bottom-0 inset-x-0 h-[100px] z-[50] pointer-events-none">
-          <div
-            className="mx-auto max-w-[480px] h-full bg-gradient-to-t from-background via-background/85 to-transparent backdrop-blur-md"
-            style={{
-              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
-              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
-            }}
-          />
-        </div>
+      {/* Progressive Blur Background */}
+      <div
+        className="fixed bottom-0 inset-x-0 h-40 z-30 pointer-events-none bg-gradient-to-t from-background/80 via-background/40 to-transparent backdrop-blur-md"
+        style={{
+          WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
+          maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
+        }}
+      />
 
-        {/* Action Button — fixed, max-w matches main content container, above blur */}
-        <div className="fixed bottom-[48px] inset-x-0 z-[60] pointer-events-none">
-          <div className="mx-auto max-w-[480px] px-4">
-            <button
-              onClick={onClose}
-              className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90 cursor-pointer pointer-events-auto"
-            >
-              Save schedule
-            </button>
-          </div>
+      {/* Action Button */}
+      <div className="fixed bottom-0 inset-x-0 z-40 py-8 pointer-events-none">
+        <div className="mx-auto max-w-[480px] px-4">
+          <button
+            onClick={onClose}
+            className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90 cursor-pointer pointer-events-auto"
+          >
+            Save schedule
+          </button>
         </div>
       </div>
 
@@ -299,7 +290,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-4 pt-2 pb-4">
           <div className="space-y-2">
             <label className="text-xs font-semibold text-muted-foreground">Date</label>
-            <div 
+            <div
               onClick={() => setIsCustomDateOpen(true)}
               className="relative w-full h-[48px] rounded-full bg-card border border-transparent focus-within:border-primary transition-all flex items-center px-4 cursor-pointer"
             >
@@ -312,7 +303,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-muted-foreground">Start Time</label>
-            <div 
+            <div
               onClick={() => setIsCustomTimeOpen(true)}
               className="relative w-full h-[48px] rounded-full bg-card border border-transparent focus-within:border-primary transition-all flex items-center px-4 cursor-pointer"
             >
