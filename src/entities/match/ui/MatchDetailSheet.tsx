@@ -21,7 +21,7 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
   onCloseAll,
   hasParent,
 }) => {
-  const { todaysPlayers, leaderboard, currentUser } = useAppStore();
+  const { todaysPlayers, leaderboard, currentUser, role } = useAppStore();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   if (!isOpen || !match) return null;
@@ -57,7 +57,6 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
     findFullPlayer(p.name, `sheet-b-${idx}`, p.avatarUrl)
   );
 
-  const { role } = useAppStore();
   const isCurrentUserInMatch = teamAPlayers.some(p => p.id === currentUser.id) || teamBPlayers.some(p => p.id === currentUser.id);
   const showStatsRow = role !== 'coach' && isCurrentUserInMatch;
 
