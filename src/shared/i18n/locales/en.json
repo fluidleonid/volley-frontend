@@ -1,0 +1,363 @@
+{
+  "profile": {
+    "title": "Profile",
+    "achievements": "Achievements",
+    "gamesPlayed": "Games played",
+    "wins": "Wins",
+    "bp": "BP",
+    "publicGames": "Public games",
+    "publicSchedule": "Public schedule",
+    "privateSchedule": "Private schedule",
+    "trainingCosts": "Training costs",
+    "attendance": "Attendance",
+    "billing": "Billing",
+    "language": "Language",
+    "deleteAccount": "Delete account",
+    "deleteConfirmTitle": "Delete account",
+    "deleteConfirmDesc": "Are you sure you want to delete your account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "sessionDetails": "Session details",
+    "reschedule": "Reschedule",
+    "cancelSession": "Cancel session",
+    "cancelSessionTitle": "Cancel Session",
+    "cancelSessionDesc": "Are you sure you want to cancel this private session? The player will be notified.",
+    "keepSession": "Keep Session"
+  },
+  "language": {
+    "title": "Language",
+    "en": "English",
+    "ru": "Русский",
+    "am": "Հայերեն"
+  },
+  "nav": {
+    "home": "Home",
+    "players": "Players",
+    "cashflow": "Cashflow",
+    "leaderboard": "Leaderboard",
+    "myGames": "My games",
+    "billing": "Billing"
+  },
+  "status": {
+    "spectating": "Spectating",
+    "queued": "Queued",
+    "training": "Training",
+    "resting": "Resting"
+  },
+  "roles": {
+    "coach": "Coach",
+    "admin": "Admin"
+  },
+  "banner": {
+    "findingMatch": "Finding match",
+    "lookingForPlayers": "Looking for free players around",
+    "findingCourt": "Finding a court…",
+    "playing": "Playing",
+    "waitingForMore": "Waiting for {{count}} more…",
+    "matchFound": "Match found!",
+    "accept": "Accept",
+    "nextGameInvite": "Next game invite",
+    "vs": "vs"
+  },
+  "closedSession": {
+    "title": "No active training session",
+    "description": "Start or schedule a training session to open court matchmaking and player check-ins."
+  },
+  "common": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "skip": "Skip",
+    "selectPeriod": "Select Period",
+    "selectDate": "Select date",
+    "selectTime": "Select time",
+    "custom": "Custom",
+    "save": "Save",
+    "done": "Done",
+    "change": "Change",
+    "select": "Select",
+    "add": "Add",
+    "submit": "Submit",
+    "finish": "Finish",
+    "close": "Close",
+    "confirm": "Confirm",
+    "areYouSure": "Are you sure?",
+    "date": "Date",
+    "time": "Time",
+    "court": "Court",
+    "mode": "Mode",
+    "hard": "Hard",
+    "default": "Default",
+    "win": "Win",
+    "loss": "Loss",
+    "matches": "Matches",
+    "contact": "Contact",
+    "message": "Message",
+    "phone": "Phone",
+    "player": "Player",
+    "copyLink": "Copy link",
+    "saveChanges": "Save Changes",
+    "startTime": "Start Time",
+    "invite": "Invite",
+    "days": {
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
+    },
+    "yesterday": "Yesterday"
+  },
+  "home": {
+    "gamesPlayed": "Games played",
+    "wins": "Wins",
+    "bpToday": "BP today",
+    "startTraining": "Start training",
+    "sitOut": "Sit out",
+    "inviteToPlay": "Invite to play",
+    "inviteDesc": "Share this link or QR code with players to join your training session on Volley.",
+    "scanToJoin": "Scan to join instantly in Telegram",
+    "linkCopied": "Link Copied!",
+    "shareLink": "Share Link",
+    "hardMode": "Hard mode",
+    "stop": "Stop",
+    "continueToPlay": "Continue to play",
+    "sessionScheduled": "A training session is scheduled. Get ready to join when it starts!",
+    "noSession": "There are no active training sessions scheduled right now. Check back soon!",
+    "scheduleTraining": "Schedule training",
+    "courts": "Courts",
+    "endSession": "End Session",
+    "todaysPlayers": "Today's players",
+    "noPlayers": "No players yet",
+    "recentGames": "Recent games",
+    "noGames": "No games yet",
+    "endSessionTitle": "End Public Session",
+    "endSessionDesc": "Are you sure you want to end the current training session? All active court matchmaking and player check-ins will be closed.",
+    "confirmEnd": "Confirm End",
+    "cancel": "Cancel",
+    "matchDetails": "Match details",
+    "playing": "Playing",
+    "onlyPlayersFinish": "Only players can finish",
+    "enterScore": "Enter score",
+    "onCourt": "On court",
+    "training": "Training",
+    "spectating": "Spectating",
+    "matchmaking": "Matchmaking",
+    "todaysPrivates": "Today's privates",
+    "noScheduledSessionsYet": "No scheduled sessions yet"
+  },
+  "games": {
+    "title": "My Games",
+    "matchesCount": "{{count}} matches",
+    "winsShort": "W",
+    "lossesShort": "L",
+    "noGames": "No games played yet"
+  },
+  "onboarding": {
+    "welcomeTitle": "Welcome to the Game!",
+    "chooseSkill": "Choose your skill level",
+    "levels": {
+      "beginner": {
+        "title": "Beginner",
+        "subtitle": "I want to learn"
+      },
+      "amateur": {
+        "title": "Amateur",
+        "subtitle": "I play for fun"
+      },
+      "advanced": {
+        "title": "Advanced",
+        "subtitle": "I play to win"
+      },
+      "pro": {
+        "title": "Pro",
+        "subtitle": "It's my lifestyle"
+      }
+    }
+  },
+  "player": {
+    "achievements": {
+      "title": "Achievements",
+      "earnedDate": "Earned {{date}}",
+      "allCategories": "All",
+      "earned": "Earned",
+      "locked": "Locked"
+    },
+    "billingHistory": "Billing history",
+    "leaderboard": {
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "total": "Total",
+      "noRankings": "No rankings yet",
+      "noRankingsDesc": "Players results will appear here"
+    },
+    "invite": {
+      "fillCourt": "Fill the court — pick 1 or 2 players",
+      "addOpponents": "Add 2 opponents to start matching",
+      "readyToPlay": "Ready to play",
+      "addOpponentBalance": "Add 1 more opponent to balance teams",
+      "addTeammateBalance": "Add 1 teammate to balance teams",
+      "addTeammate": "Add teammate",
+      "addOpponent": "Add opponent",
+      "selectTeammate": "Select teammate",
+      "selectOpponents": "Select opponents",
+      "pick1ForTeam": "Pick 1 player for your team",
+      "pick1Or2ForOpposing": "Pick 1 or 2 players for opposing team"
+    }
+  },
+  "coach": {
+    "home": {
+      "reserved": "Reserved"
+    },
+    "players": {
+      "playerDetails": "Player details",
+      "changeLevel": "Change Level",
+      "xpResetDesc": "XP will be reset to the initial level of this tier.",
+      "confirmChange": "Confirm change",
+      "linkAccount": "Link account",
+      "inPersonOnly": "In person only",
+      "schedulePrivate": "Schedule private session",
+      "selectPlayerToLink": "Select a player to link",
+      "createNewPlayer": "Create a new player",
+      "addDetailsForDB": "Add details for club database",
+      "playerName": "Player name*",
+      "enterPlayerName": "Enter player name",
+      "enterPhone": "Enter phone number",
+      "addPlayer": "Add player",
+      "guestName": "Guest name*",
+      "enterGuestName": "Enter guest name",
+      "addGuest": "Add guest",
+      "addGuestPlayer": "Add a guest player",
+      "checkInGuest": "Check in guest player",
+      "searchPlaceholder": "Search player",
+      "createScheduleNew": "Create & schedule new player",
+      "scheduleWithGuest": "Schedule with guest player",
+      "authorized": "Authorized",
+      "manual": "Manual",
+      "totalPlayers": "Total players",
+      "active7d": "Active 7D",
+      "manual7d": "Manual 7D",
+      "noPlayersFound": "No players found in this category.",
+      "levelSubtitles": {
+        "beginner": "Wants to learn",
+        "amateur": "Plays for fun",
+        "advanced": "Plays to win",
+        "pro": "Lives for this game"
+      }
+    },
+    "session": {
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "todaysAttendance": "Today's attendance",
+      "checkInRegistered": "Check in registered players",
+      "privateSession": "Private session",
+      "reschedule": "Reschedule session",
+      "selectNewDateTime": "Select a new date and time",
+      "selectPlayerSchedule": "Select player and schedule a session",
+      "selectPlayer": "Select player",
+      "scheduleSession": "Schedule session"
+    },
+    "schedule": {
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "noUpcomingSessions": "No upcoming sessions",
+      "noPastSessions": "No past sessions",
+      "totalSessionsCount": "{{count}} total sessions",
+      "pickDate": "Pick a date",
+      "pickTime": "Pick a time",
+      "regularWeeklySchedule": "Regular Weekly Schedule",
+      "addSlot": "Add slot",
+      "specialDates": "Special Dates",
+      "addDate": "Add date",
+      "noSpecialDates": "No special dates yet",
+      "startAt": "Start at {{time}}",
+      "addSpecialDateSession": "Add special date session",
+      "addSpecialSession": "Add special session",
+      "saveSchedule": "Save schedule"
+    },
+    "allTime": "All time",
+    "total": "Total",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "thisYear": "This year",
+    "lastYear": "Last year",
+    "public": "Public",
+    "private": "Private",
+    "paid": "Paid",
+    "settle": "Settle",
+    "unknownPlayer": "Unknown Player",
+    "paymentToSettle": "payment to settle",
+    "paymentsToSettle": "payments to settle",
+    "noRecordsFound": "No records found for this period.",
+    "trainings": "Trainings",
+    "games": "Games",
+    "matches": "matches",
+    "attendanceCheckins": "Attendance & Check-ins",
+    "costs": {
+      "publicCost": "Public training cost (֏)",
+      "privateCost": "Private training cost (֏)",
+      "examplePublic": "e.g. 4000",
+      "examplePrivate": "e.g. 10000"
+    }
+  },
+  "billing": {
+    "paymentDetails": "Payment Details",
+    "settlePayment": "Settle payment",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "type": "Type",
+    "personal": "Personal",
+    "markUnpaid": "Mark as Unpaid",
+    "card": "Card",
+    "cash": "Cash"
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "amateur": "Amateur",
+    "advanced": "Advanced",
+    "pro": "Pro"
+  },
+  "achievements": {
+    "ach-1": {
+      "title": "Fresh Blood",
+      "desc": "Attended your very first training session",
+      "verb": "Attended"
+    },
+    "ach-2": {
+      "title": "Marathon Man",
+      "desc": "Played 15+ matches in a single day",
+      "verb": "Played"
+    },
+    "ach-3": {
+      "title": "Welcome to Hell",
+      "desc": "Won your first Hard Mode match",
+      "verb": "Won"
+    },
+    "ach-4": {
+      "title": "25 Hard Mode Wins",
+      "desc": "Won 25 Hard Mode matches",
+      "verb": "Won"
+    },
+    "ach-5": {
+      "title": "Sniper",
+      "desc": "Score 10 aces in one match",
+      "verb": "Score"
+    },
+    "ach-6": {
+      "title": "Team Player",
+      "desc": "Play 50 matches with friends",
+      "verb": "Play"
+    },
+    "ach-7": {
+      "title": "Unstoppable",
+      "desc": "Win 10 matches in a row",
+      "verb": "Win"
+    },
+    "rarity": {
+      "common": "Common",
+      "uncommon": "Uncommon",
+      "rare": "Rare"
+    }
+  }
+}

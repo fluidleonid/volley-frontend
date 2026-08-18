@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Badge } from './badge';
+import { Badge } from './Badge';
+
+import { useTranslation } from 'react-i18next';
 
 export interface DateRange {
   label: string;
@@ -22,8 +24,10 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   onClose,
   onConfirm,
   initialRange,
-  title = 'Select Period'
+  title
 }) => {
+  const { t, i18n } = useTranslation();
+  const defaultTitle = title || t('common.selectPeriod', 'Select Period');
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [startDate, setStartDate] = useState<Date | null>(() => {
     return initialRange?.start ? new Date(initialRange.start) : null;
@@ -124,17 +128,41 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     onClose();
   };
 
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const amMonths = ['Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս', 'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'];
+  const ruMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  const enMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const getMonthName = (date: Date) => {
+    const month = date.getMonth();
+    if (i18n.language === 'am') return amMonths[month];
+    if (i18n.language === 'ru') return ruMonths[month];
+    return enMonths[month];
+  };
+
+  const amWeekDays = ['Կիր', 'Երկ', 'Երք', 'Չրք', 'Հնգ', 'Ուր', 'Շբթ'];
+  const ruWeekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const enWeekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+  const weekDays = i18n.language === 'am' ? amWeekDays : i18n.language === 'ru' ? ruWeekDays : enWeekDays;
+
   const presets = ['All time', 'This month', 'Last month', 'This year', 'Last year'];
+  const presetsMap: Record<string, string> = {
+    'All time': t('coach.allTime', 'All time'),
+    'This month': t('coach.thisMonth', 'This month'),
+    'Last month': t('coach.lastMonth', 'Last month'),
+    'This year': t('coach.thisYear', 'This year'),
+    'Last year': t('coach.lastYear', 'Last year'),
+    'Custom': t('common.custom', 'Custom'),
+  };
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-[340px] bg-background rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
+      <div className="w-full max-w-[380px] bg-background rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
         
         {/* Header Row */}
         <div className="relative flex h-[44px] items-center justify-center pt-0 mb-[16px] select-none shrink-0">
           <h3 className="font-display text-lg font-bold text-white tracking-tight">
-            {title}
+            {defaultTitle}
           </h3>
           <button
             type="button"
@@ -154,7 +182,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="font-display text-[16px] font-bold text-white tracking-tight">
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+              {getMonthName(currentDate)} {currentDate.getFullYear()}
             </span>
             <button onClick={nextMonth} className="p-2 text-muted-foreground hover:text-white bg-secondary rounded-full cursor-pointer">
               <ChevronRight className="h-4 w-4" />
@@ -164,7 +192,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
           {/* Calendar Grid */}
           <div className="px-1">
             <div className="grid grid-cols-7 mb-1">
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+              {weekDays.map(day => (
                 <div key={day} className="text-center text-[10px] font-semibold text-muted-foreground uppercase">{day}</div>
               ))}
             </div>
@@ -221,7 +249,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
                   onClick={() => handlePresetClick(preset)}
                   className={`px-2.5 py-1 cursor-pointer hover:opacity-90 active:scale-95 transition-all text-[12px] ${selectedLabel !== preset ? 'text-white hover:bg-brand-surfaceElevated bg-card' : ''}`}
                 >
-                  {preset}
+                  {presetsMap[preset] || preset}
                 </Badge>
               ))}
             </div>
@@ -233,13 +261,13 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
               onClick={onClose}
               className="flex-1 h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer"
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </button>
             <button
               onClick={handleConfirm}
               className="flex-1 h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer"
             >
-              Apply
+              {t('common.done', 'OK')}
             </button>
           </div>
         </div>

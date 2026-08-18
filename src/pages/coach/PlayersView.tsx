@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { StatCard } from '../../entities/stats/ui/StatCard';
+import { useTranslation } from 'react-i18next';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 import { Player } from '../../shared/types/index';
 import { Avatar } from '../../shared/ui/Avatar';
-import { Badge } from '../../shared/ui/badge';
-import { Plus, Search, ChevronLeft } from 'lucide-react';
+import { Badge } from '../../shared/ui/Badge';
+import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { getPlayerTierInfo } from '../../shared/lib/tier';
+import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
 
 type TabType = 'authorized' | 'manual';
 
 export const PlayersView: React.FC = () => {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<TabType>('authorized');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -28,8 +31,8 @@ export const PlayersView: React.FC = () => {
     : (tab === 'authorized' ? authorizedPlayers : manualPlayers);
 
   const tabs: { id: TabType; label: string }[] = [
-    { id: 'authorized', label: 'Authorized' },
-    { id: 'manual', label: 'Manual' },
+    { id: 'authorized', label: t('coach.players.authorized', 'Authorized') },
+    { id: 'manual', label: t('coach.players.manual', 'Manual') },
   ];
 
   return (
@@ -48,7 +51,7 @@ export const PlayersView: React.FC = () => {
               <input
                 type="text"
                 autoFocus
-                placeholder="Search players..."
+                placeholder={t('coach.players.searchPlaceholder', 'Search players...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-[44px] rounded-full bg-card px-4 text-base font-medium text-white placeholder:text-muted-foreground outline-none border border-transparent focus:border-primary/50 transition-colors"
@@ -56,7 +59,7 @@ export const PlayersView: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center justify-between w-full animate-fade-in">
-              <h1 className="text-[30px] font-bold text-white tracking-tight">Players</h1>
+              <h1 className="text-[30px] font-bold text-white tracking-tight">{t('nav.players', 'Players')}</h1>
 
               <div className="flex items-center gap-2">
                 <button 
@@ -80,9 +83,9 @@ export const PlayersView: React.FC = () => {
       {!isSearchMode && (
         <>
           <div className="grid grid-cols-3 gap-3 my-6 animate-fade-in">
-            <StatCard value={MOCK_PLAYERS.length} label="Total players" />
-            <StatCard value={Math.max(1, Math.floor(MOCK_PLAYERS.length * 0.7))} label="Active 7D" />
-            <StatCard value={manualPlayers.length} label="Manual 7D" />
+            <StatCard value={MOCK_PLAYERS.length} label={t('coach.players.totalPlayers', 'Total players')} />
+            <StatCard value={Math.max(1, Math.floor(MOCK_PLAYERS.length * 0.7))} label={t('coach.players.active7d', 'Active 7D')} />
+            <StatCard value={manualPlayers.length} label={t('coach.players.manual7d', 'Manual 7D')} />
           </div>
 
           {/* Segment Controller */}
@@ -114,38 +117,32 @@ export const PlayersView: React.FC = () => {
       <div className="flex flex-col mt-2">
         {displayedPlayers.length > 0 ? (
           displayedPlayers.map((player) => {
-            const tierInfo = getPlayerTierInfo(player.level);
             return (
-              <div
+              <PlayerListItem
                 key={player.id}
-                onClick={() => setSelectedPlayer(player)}
-                className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar src={player.avatarUrl} alt={player.name} initials={player.name[0]} size="md" hasBorder={false} />
-                  <div>
-                    <span className="font-display text-base font-semibold text-white tracking-tight leading-tight">{player.name}</span>
-                    <div className="text-[13px] text-muted-foreground mt-0.5">{tierInfo.tierName} • {player.xp} XP</div>
-                  </div>
-                </div>
-                {player.hasTelegram && (
-                  <Badge 
-                    variant="neutral" 
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
-                      console.log('Message player', player.name); 
-                    }} 
-                    className="px-3 py-1 cursor-pointer text-white hover:bg-brand-surfaceElevated shadow-sm"
-                  >
-                    Message
-                  </Badge>
-                )}
-              </div>
+                player={player}
+                onClick={(p) => setSelectedPlayer(p)}
+                rightContent={
+                  player.hasTelegram && (
+                    <Badge 
+                      variant="neutral" 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        console.log('Message player', player.name); 
+                      }} 
+                      className="px-3 py-1 cursor-pointer text-white hover:bg-brand-surfaceElevated shadow-sm"
+                    >
+                      <MessageSquare className="h-[14px] w-[14px] mr-1.5" />
+                      {t('common.message', 'Message')}
+                    </Badge>
+                  )
+                }
+              />
             );
           })
         ) : (
           <div className="text-center py-12 text-muted-foreground">
-            <p>No players found in this category.</p>
+            <p>{t('coach.players.noPlayersFound', 'No players found in this category.')}</p>
           </div>
         )}
       </div>

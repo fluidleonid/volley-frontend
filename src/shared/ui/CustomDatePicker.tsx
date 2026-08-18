@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -15,8 +16,10 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   onClose,
   onConfirm,
   initialDate,
-  title = 'Select Date'
+  title
 }) => {
+  const { t, i18n } = useTranslation();
+  const defaultTitle = title || t('common.selectDate', 'Select Date');
   const [currentDate, setCurrentDate] = useState(() => {
     return initialDate ? new Date(initialDate) : new Date();
   });
@@ -47,16 +50,31 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     onConfirm(`${y}-${m}-${d}`);
   };
 
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const amMonths = ['Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս', 'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'];
+  const ruMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  const enMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const getMonthName = (date: Date) => {
+    const month = date.getMonth();
+    if (i18n.language === 'am') return amMonths[month];
+    if (i18n.language === 'ru') return ruMonths[month];
+    return enMonths[month];
+  };
+
+  const amWeekDays = ['Կիր', 'Երկ', 'Երք', 'Չրք', 'Հնգ', 'Ուր', 'Շբթ'];
+  const ruWeekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const enWeekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+  const weekDays = i18n.language === 'am' ? amWeekDays : i18n.language === 'ru' ? ruWeekDays : enWeekDays;
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-[340px] bg-background rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
+      <div className="w-full max-w-[380px] bg-background rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
         
         {/* Header Row */}
         <div className="relative flex h-[44px] items-center justify-center pt-0 mb-[24px] select-none shrink-0">
           <h3 className="font-display text-lg font-bold text-white tracking-tight">
-            {title}
+            {defaultTitle}
           </h3>
           <button
             type="button"
@@ -74,7 +92,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="font-display text-lg font-bold text-white tracking-tight">
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+              {getMonthName(currentDate)} {currentDate.getFullYear()}
             </span>
             <button onClick={nextMonth} className="p-2 text-muted-foreground hover:text-white bg-secondary rounded-full cursor-pointer">
               <ChevronRight className="h-4 w-4" />
@@ -83,7 +101,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
           <div>
             <div className="grid grid-cols-7 mb-2">
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+              {weekDays.map(day => (
                 <div key={day} className="text-center text-xs font-semibold text-muted-foreground">{day}</div>
               ))}
             </div>
@@ -126,13 +144,13 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
               onClick={onClose}
               className="flex-1 h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer"
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </button>
             <button
               onClick={handleConfirm}
               className="flex-1 h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer"
             >
-              OK
+              {t('common.done', 'OK')}
             </button>
           </div>
         </div>

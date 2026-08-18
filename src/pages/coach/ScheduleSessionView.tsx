@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Header } from '../../widgets/layout/Header';
+import { useTranslation } from 'react-i18next';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { CustomTimePicker } from '../../shared/ui/CustomTimePicker';
 import { CustomDatePicker } from '../../shared/ui/CustomDatePicker';
@@ -36,6 +37,7 @@ const INITIAL_DAYS: DaySchedule[] = [
 const INITIAL_SPECIAL: SpecialDateSchedule[] = [];
 
 export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClose }) => {
+  const { t, i18n } = useTranslation();
   const [days, setDays] = useState<DaySchedule[]>(INITIAL_DAYS);
   const [specialDates, setSpecialDates] = useState<SpecialDateSchedule[]>(INITIAL_SPECIAL);
 
@@ -52,18 +54,18 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
   const [isCustomTimeOpen, setIsCustomTimeOpen] = useState(false);
 
   const getFormattedDate = (dateStr: string) => {
-    if (!dateStr) return 'Pick a date';
-    const parts = dateStr.split('-');
-    const localDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    return localDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    if (!dateStr) return t('coach.schedule.pickDate', 'Pick a date');
+    const [y, m, d] = dateStr.split('-');
+    const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    return new Intl.DateTimeFormat(i18n.language === 'am' ? 'hy-AM' : (i18n.language === 'ru' ? 'ru-RU' : 'en-US'), { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
   };
 
   const getFormattedTime = (timeStr: string) => {
-    if (!timeStr) return 'Pick a time';
+    if (!timeStr) return t('coach.schedule.pickTime', 'Pick a time');
     const [h, m] = timeStr.split(':');
     const date = new Date();
-    date.setHours(Number(h), Number(m));
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    date.setHours(parseInt(h), parseInt(m));
+    return new Intl.DateTimeFormat(i18n.language === 'am' ? 'hy-AM' : (i18n.language === 'ru' ? 'ru-RU' : 'en-US'), { hour: 'numeric', minute: 'numeric', hour12: false }).format(date);
   };
 
   const toggleDay = (id: string) => {
@@ -126,12 +128,12 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
   };
 
   return (
-    <div className="relative pb-40 select-none px-4">
+    <div className="relative pb-12 select-none px-4">
       <Header
         variant="page"
         sticky
         stickyClassName="-mx-4 px-4"
-        title="Public schedule"
+        title={t('profile.publicSchedule', 'Public schedule')}
         onBack={onClose}
       />
 
@@ -141,7 +143,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
-              <span>Regular Weekly Schedule</span>
+              <span>{t('coach.schedule.regularWeeklySchedule', 'Regular Weekly Schedule')}</span>
             </h2>
           </div>
 
@@ -155,7 +157,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
                 {/* Day Header Row with Toggle Switch */}
                 <div className="flex items-center justify-between">
                   <span className="font-display text-base font-bold text-white">
-                    {day.dayName}
+                    {t(`common.days.${day.id}`, day.dayName)}
                   </span>
 
                   <button
@@ -194,7 +196,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
                       className="flex h-7 items-center gap-1 rounded-full bg-primary/15 px-3 text-xs font-bold text-primary hover:bg-primary/25 transition-all cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" />
-                      <span>Add slot</span>
+                      <span>{t('coach.schedule.addSlot', 'Add slot')}</span>
                     </button>
                   </div>
                 )}
@@ -208,20 +210,20 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <span>Special Dates</span>
+              <span>{t('coach.schedule.specialDates', 'Special Dates')}</span>
             </h2>
 
             <button
               onClick={() => setIsSpecialPickerOpen(true)}
               className="flex items-center gap-1 text-xs font-bold text-primary hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <Plus className="h-4 w-4 stroke-[3]" /> Add date
+              <Plus className="h-4 w-4 stroke-[3]" /> {t('coach.schedule.addDate', 'Add date')}
             </button>
           </div>
 
           <div className="space-y-2">
             {specialDates.length === 0 ? (
-              <EmptyState message="No special dates yet" icon={Calendar} />
+              <EmptyState message={t('coach.schedule.noSpecialDates', 'No special dates yet')} icon={Calendar} />
             ) : (
               specialDates.map((item) => (
                 <div
@@ -236,7 +238,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
                       <div className="font-display text-sm font-bold text-white">
                         {item.date}
                       </div>
-                      <div className="text-xs text-muted-foreground">Start at {item.time}</div>
+                      <div className="text-xs text-muted-foreground">{t('coach.schedule.startAt', 'Start at {{time}}', { time: item.time }).replace('{{time}}', item.time)}</div>
                     </div>
                   </div>
 
@@ -269,7 +271,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
             onClick={onClose}
             className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90 cursor-pointer pointer-events-auto"
           >
-            Save schedule
+            {t('coach.schedule.saveSchedule', 'Save schedule')}
           </button>
         </div>
       </div>
@@ -285,40 +287,44 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
       <BottomSheet
         isOpen={isSpecialPickerOpen}
         onClose={() => setIsSpecialPickerOpen(false)}
-        title="Add special date session"
+        title={t('coach.schedule.addSpecialDateSession', 'Add special date session')}
       >
         <div className="space-y-4 pt-2 pb-4">
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-muted-foreground">Date</label>
-            <div
-              onClick={() => setIsCustomDateOpen(true)}
-              className="relative w-full h-[48px] rounded-full bg-card border border-transparent focus-within:border-primary transition-all flex items-center px-4 cursor-pointer"
-            >
-              <Calendar className="h-5 w-5 text-muted-foreground mr-3" />
-              <span className={`font-sans text-sm font-semibold ${specialDateVal ? 'text-white' : 'text-muted-foreground'}`}>
+          <button
+            onClick={() => setIsCustomDateOpen(true)}
+            className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
+          >
+            <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4 pr-3">
+              <Calendar className="h-5 w-5" />
+            </div>
+            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
+              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.date', 'Date')}</span>
+              <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {getFormattedDate(specialDateVal)}
               </span>
             </div>
-          </div>
+          </button>
 
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-muted-foreground">Start Time</label>
-            <div
-              onClick={() => setIsCustomTimeOpen(true)}
-              className="relative w-full h-[48px] rounded-full bg-card border border-transparent focus-within:border-primary transition-all flex items-center px-4 cursor-pointer"
-            >
-              <Clock className="h-5 w-5 text-muted-foreground mr-3" />
-              <span className={`font-sans text-sm font-semibold ${specialTimeVal ? 'text-white' : 'text-muted-foreground'}`}>
+          <button
+            onClick={() => setIsCustomTimeOpen(true)}
+            className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
+          >
+            <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4 pr-3">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
+              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.startTime', 'Start Time')}</span>
+              <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {getFormattedTime(specialTimeVal)}
               </span>
             </div>
-          </div>
+          </button>
 
           <button
             onClick={handleAddSpecialDate}
             className="w-full h-[48px] rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer mt-4"
           >
-            Add special session
+            {t('coach.schedule.addSpecialSession', 'Add special session')}
           </button>
         </div>
       </BottomSheet>

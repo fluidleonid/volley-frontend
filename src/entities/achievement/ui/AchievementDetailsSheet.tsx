@@ -1,5 +1,6 @@
 import React from 'react';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { AchievementData } from '../../../shared/types/achievement';
 import { isIconUrl, rarityBadgeClass, rarityGlow } from '../../../shared/lib/achievement-utils';
 import { Badge } from '../../../shared/ui/badge';
@@ -16,6 +17,7 @@ export const AchievementDetailsSheet: React.FC<AchievementDetailsSheetProps> = (
   onClose,
   achievement,
 }) => {
+  const { t } = useTranslation();
   if (!achievement) return null;
 
   const iconIsUrl = isIconUrl(achievement.icon);
@@ -52,23 +54,23 @@ export const AchievementDetailsSheet: React.FC<AchievementDetailsSheetProps> = (
         <div className="relative z-10 flex flex-col items-center w-full">
           {achievement.isEarned && achievement.earnedDate && (
             <div className="text-sm text-muted-foreground font-medium mb-[24px]">
-              Earned {achievement.earnedDate}
+              {t('player.achievements.earnedDate', 'Earned {{date}}', { date: achievement.earnedDate }).replace('{{date}}', achievement.earnedDate)}
             </div>
           )}
 
           <div className="flex flex-col items-center mb-[24px]">
             <h2 className="font-display text-2xl font-bold text-white mb-2">
-              {achievement.title}
+              {t(`achievements.${achievement.id}.title`, achievement.title)}
             </h2>
 
             {achievement.isEarned ? (
-              <p className="text-sm text-white/80">{achievement.desc}</p>
+              <p className="text-sm text-white/80">{t(`achievements.${achievement.id}.desc`, achievement.desc)}</p>
             ) : (
               <div className="w-full flex flex-col items-center max-w-[240px]">
-                <p className="text-sm text-white/80 mb-4">{achievement.desc}</p>
+                <p className="text-sm text-white/80 mb-4">{t(`achievements.${achievement.id}.desc`, achievement.desc)}</p>
                 <div className="w-full flex flex-col items-center">
                   <div className="text-xs text-muted-foreground font-medium mb-2">
-                    {achievement.progress}/{achievement.maxProgress} matches
+                    {achievement.progress}/{achievement.maxProgress} {t(`achievements.${achievement.id}.verb`, achievement.desc.split(' ')[0])}
                   </div>
                   <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                     <div
@@ -83,7 +85,7 @@ export const AchievementDetailsSheet: React.FC<AchievementDetailsSheetProps> = (
 
           <div className="mt-1 flex justify-center">
             <Badge size="lg" className={cn("text-sm", badgeClass)}>
-              {achievement.rarity}
+              {t(`achievements.rarity.${achievement.rarity.toLowerCase()}`, achievement.rarity)}
             </Badge>
           </div>
         </div>

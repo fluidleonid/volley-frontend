@@ -1,5 +1,6 @@
 import React from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Player } from '../../shared/types/index';
 import { Avatar } from '../../shared/ui/Avatar';
 import { Button } from '../../shared/ui/button';
@@ -16,6 +17,7 @@ interface SessionDetailsSheetProps {
   sessionTime?: string;
   onReschedule?: () => void;
   onCancel?: () => void;
+  isPast?: boolean;
 }
 
 export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
@@ -24,17 +26,19 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
   player,
   onAvatarClick,
   hasParent,
-  sessionDate = 'Today',
+  sessionDate = new Date().toISOString().split('T')[0],
   sessionTime = '18:00',
   onReschedule,
   onCancel,
+  isPast,
 }) => {
+  const { t } = useTranslation();
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
   if (!isOpen || !player) return null;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Session details" hasParent={hasParent}>
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={t('profile.sessionDetails', 'Session details')} hasParent={hasParent}>
       <div className="flex flex-col items-center mt-2 px-2 pb-2">
         <div 
           className="flex flex-col items-center cursor-pointer active:scale-95 transition-transform"
@@ -54,47 +58,49 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
         {/* Metrics Grid similar to MatchDetailSheet */}
         <div className="my-8 grid grid-cols-2 gap-y-6 gap-x-2 text-left pb-4 w-full px-4">
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Date</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.date', 'Date')}</div>
             <div className="font-sans text-sm font-semibold text-white">
-              {sessionDate}
+              {sessionDate === new Date().toISOString().split('T')[0] ? t('player.leaderboard.today', 'Today') : sessionDate}
             </div>
           </div>
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Time</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.time', 'Time')}</div>
             <div className="font-sans text-sm font-semibold text-white">
               {sessionTime}
             </div>
           </div>
         </div>
 
-        <div className="w-full space-y-3 mt-4">
-          <Button fullWidth size="lg" variant="secondary" onClick={() => {
-            if (onReschedule) onReschedule();
-            else onClose();
-          }}>
-            Reschedule
-          </Button>
-          <button 
-            className="w-full h-[52px] rounded-full bg-card flex items-center justify-center text-[#FF453A] font-bold hover:bg-brand-surfaceElevated active:scale-95 transition-all" 
-            onClick={() => setIsCancelConfirmOpen(true)}
-          >
-            Cancel session
-          </button>
-        </div>
+        {!isPast && (
+          <div className="w-full space-y-3 mt-4">
+            <Button fullWidth size="lg" variant="secondary" onClick={() => {
+              if (onReschedule) onReschedule();
+              else onClose();
+            }}>
+              {t('profile.reschedule', 'Reschedule')}
+            </Button>
+            <button 
+              className="w-full h-[52px] rounded-full bg-card flex items-center justify-center text-[#FF453A] font-bold hover:bg-brand-surfaceElevated active:scale-95 transition-all" 
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
+              {t('profile.cancelSession', 'Cancel session')}
+            </button>
+          </div>
+        )}
       </div>
 
       <Dialog
         isOpen={isCancelConfirmOpen}
         onClose={() => setIsCancelConfirmOpen(false)}
-        title="Cancel Session"
-        description="Are you sure you want to cancel this private session? The player will be notified."
-        primaryButtonText="Cancel Session"
+        title={t('profile.cancelSessionTitle', 'Cancel Session')}
+        description={t('profile.cancelSessionDesc', 'Are you sure you want to cancel this private session? The player will be notified.')}
+        primaryButtonText={t('profile.cancelSession', 'Cancel Session')}
         primaryButtonOnClick={() => {
           setIsCancelConfirmOpen(false);
           if (onCancel) onCancel();
           else onClose();
         }}
-        secondaryButtonText="Keep Session"
+        secondaryButtonText={t('profile.keepSession', 'Keep Session')}
         secondaryButtonOnClick={() => setIsCancelConfirmOpen(false)}
       />
     </BottomSheet>

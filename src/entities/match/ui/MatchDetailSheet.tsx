@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Match, Player } from '../../../shared/types/index';
+import { useTranslation } from 'react-i18next';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { useAppStore } from '../../../app/store/appStore';
@@ -21,10 +22,26 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
   onCloseAll,
   hasParent,
 }) => {
+  const { t, i18n } = useTranslation();
   const { todaysPlayers, leaderboard, currentUser, role } = useAppStore();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   if (!isOpen || !match) return null;
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const months = {
+      ru: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+      en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      am: ['Հնվ', 'Փտր', 'Մար', 'Ապր', 'Մայ', 'Հնս', 'Հլս', 'Օգս', 'Սեպ', 'Հոկ', 'Նոյ', 'Դեկ']
+    };
+    const lang = i18n.language === 'ru' ? 'ru' : (i18n.language === 'am' ? 'am' : 'en');
+    const m = months[lang][date.getMonth()];
+    const d = date.getDate();
+    const y = date.getFullYear();
+    
+    return lang === 'en' ? `${m} ${d}, ${y}` : `${d} ${m} ${y}`;
+  };
 
   // Attempt to find full player data by name
   const findFullPlayer = (name: string, fallbackId: string, avatarUrl?: string): Player => {
@@ -67,14 +84,14 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
       onClose={onClose}
       onCloseAll={onCloseAll}
       hasParent={hasParent}
-      title="Match details"
+      title={t('home.matchDetails', 'Match details')}
       zIndex={100}
     >
       <div className="-mx-4 px-[60px]">
         {/* Status Pill Badge */}
         <div className="flex justify-center my-3 mb-8">
           <Badge variant={match.isWin ? 'default' : 'destructive'} size="lg">
-            {match.isWin ? 'Win' : 'Loss'}
+            {match.isWin ? t('common.win', 'Win') : t('common.loss', 'Loss')}
           </Badge>
         </div>
 
@@ -154,30 +171,30 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
         {/* 6 Metrics Grid (2 rows x 3 cols) */}
         <div className="my-8 grid grid-cols-3 gap-y-6 gap-x-2 text-left pb-4">
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Date</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.date', 'Date')}</div>
             <div className="font-sans text-sm font-semibold text-white">
-              {match.date || 'Jul 1, 2026'}
+              {formatDate(match.date || '2026-07-01')}
             </div>
           </div>
 
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Time</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.time', 'Time')}</div>
             <div className="font-sans text-sm font-semibold text-white">
               {match.time || '16m 40s'}
             </div>
           </div>
 
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Court</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.court', 'Court')}</div>
             <div className="font-sans text-sm font-semibold text-white">
               {match.courtName || '# 2'}
             </div>
           </div>
 
           <div>
-            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">Mode</div>
+            <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.mode', 'Mode')}</div>
             <div className="font-sans text-sm font-semibold text-white">
-              {match.isHardmode ? 'Hard' : 'Default'}
+              {match.isHardmode ? t('common.hard', 'Hard') : t('common.default', 'Default')}
             </div>
           </div>
 

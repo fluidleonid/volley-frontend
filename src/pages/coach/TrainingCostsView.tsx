@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { Header } from '../../widgets/layout/Header';
 import { Input } from '../../shared/ui/Input';
 
@@ -8,6 +9,7 @@ interface TrainingCostsViewProps {
 }
 
 export const TrainingCostsView: React.FC<TrainingCostsViewProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const { trainingCosts, setTrainingCosts } = useAppStore();
   const [publicCost, setPublicCost] = useState(trainingCosts.public.toString());
   const [privateCost, setPrivateCost] = useState(trainingCosts.private.toString());
@@ -22,33 +24,33 @@ export const TrainingCostsView: React.FC<TrainingCostsViewProps> = ({ onClose })
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-right-full duration-300 max-w-[480px] mx-auto px-4">
-      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title="Training costs" onBack={onClose} />
+      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title={t('profile.trainingCosts', 'Training costs')} onBack={onClose} />
       
       <div className="flex-1 overflow-y-auto py-6">
         <div className="space-y-6">
           <Input
-            label="Public training cost (֏)"
+            label={t('coach.costs.publicCost', 'Public training cost (֏)')}
             type="number"
             value={publicCost}
             onChange={(e) => setPublicCost(e.target.value)}
-            placeholder="e.g. 4000"
+            placeholder={t('coach.costs.examplePublic', 'e.g. 4000')}
           />
 
           <Input
-            label="Private training cost (֏)"
+            label={t('coach.costs.privateCost', 'Private training cost (֏)')}
             type="number"
             value={privateCost}
             onChange={(e) => setPrivateCost(e.target.value)}
-            placeholder="e.g. 10000"
+            placeholder={t('coach.costs.examplePrivate', 'e.g. 10000')}
           />
         </div>
       </div>
-      <div className="sticky bottom-0 z-40 py-8 bg-background/80 backdrop-blur-md border-t border-border/60 -mx-4 px-4 mt-auto">
+      <div className="sticky bottom-0 z-40 py-8 bg-background/80 backdrop-blur-md -mx-4 px-4 mt-auto">
         <button
           onClick={handleSave}
           className="w-full h-[56px] rounded-full bg-primary text-primary-foreground font-bold text-lg active:scale-95 transition-all hover:bg-primary/90"
         >
-          Save Changes
+          {t('common.saveChanges', 'Save Changes')}
         </button>
       </div>
     </div>

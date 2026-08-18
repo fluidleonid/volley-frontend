@@ -1,5 +1,6 @@
 import React from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../shared/ui/Avatar';
 import { Player } from '../../shared/types/index';
 import { useAppStore } from '../../app/store/appStore';
@@ -22,6 +23,7 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
   selectedPlayerIds,
   onTogglePlayer,
 }) => {
+  const { t } = useTranslation();
   const { todaysPlayers, currentUser } = useAppStore();
 
   if (!isOpen) return null;
@@ -100,7 +102,7 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
       onClick={onClose}
       className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90 cursor-pointer"
     >
-      Done
+      {t('common.done', 'Done')}
     </button>
   );
 
@@ -145,11 +147,11 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   {isOnCourt ? (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <Dumbbell className="h-3 w-3" /> On court
+                      <Dumbbell className="h-3 w-3" /> {t('home.onCourt', 'On court')}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <Box className="h-3 w-3" /> Spectating
+                      <Box className="h-3 w-3" /> {t('home.spectating', 'Spectating')}
                     </span>
                   )}
                 </div>

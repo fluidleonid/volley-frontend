@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Copy, Check, Share2, Send, QrCode } from 'lucide-react';
 import courtLg from '../../shared/assets/icons/court-lg.svg';
 
@@ -9,6 +10,7 @@ export interface InviteSheetProps {
 }
 
 export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const inviteUrl = 'https://t.me/volley_bot?start=join';
 
@@ -24,12 +26,12 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title="Invite to play"
+      title={t('home.inviteToPlay', 'Invite to play')}
     >
       <div className="space-y-5 pt-1">
         {/* Subtitle / Description */}
         <p className="font-sans text-sm text-muted-foreground text-center px-4">
-          Share this link or QR code with players to join your training session on Volley.
+          {t('home.inviteDesc', 'Share this link or QR code with players to join your training session on Volley.')}
         </p>
 
         {/* 1. Ticket-Style Invite Link Container with court-lg.svg Notch Cutouts */}
@@ -60,7 +62,7 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
           <button
             onClick={handleCopy}
             className="pr-3 flex items-center justify-center text-muted-foreground hover:text-white transition-colors"
-            title="Copy link"
+            title={t('common.copyLink', 'Copy link')}
           >
             {copied ? (
               <Check className="h-5 w-5 text-primary" />
@@ -76,7 +78,7 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
             <QrCode className="h-32 w-32 text-black" />
           </div>
           <span className="font-sans text-xs text-muted-foreground">
-            Scan to join instantly in Telegram
+            {t('home.scanToJoin', 'Scan to join instantly in Telegram')}
           </span>
         </div>
 
@@ -89,12 +91,12 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
             {copied ? (
               <>
                 <Check className="h-5 w-5 stroke-[3]" />
-                <span>Link Copied!</span>
+                <span>{t('home.linkCopied', 'Link Copied!')}</span>
               </>
             ) : (
               <>
                 <Share2 className="h-5 w-5 stroke-[2.5]" />
-                <span>Share Link</span>
+                <span>{t('home.shareLink', 'Share Link')}</span>
               </>
             )}
           </button>

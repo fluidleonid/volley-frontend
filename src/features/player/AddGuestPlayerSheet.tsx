@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/Input';
 import { HatGlasses } from 'lucide-react';
@@ -25,6 +26,7 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
   onAddGuest,
   hasParent,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [level, setLevel] = useState('Beginner');
 
@@ -53,8 +55,8 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6 pt-2">
         <div className="space-y-4">
           <Input
-            label="Guest name*"
-            placeholder="Enter guest name"
+            label={t('coach.players.guestName', 'Guest name*')}
+            placeholder={t('coach.players.enterGuestName', 'Enter guest name')}
             icon={<HatGlasses className="h-5 w-5" />}
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -87,7 +89,7 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
           size="xl"
           disabled={!name.trim()}
         >
-          Add guest
+          {t('coach.players.addGuest', 'Add guest')}
         </Button>
       </form>
     </BottomSheet>

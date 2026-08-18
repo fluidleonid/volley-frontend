@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Court } from '../../../shared/types/index';
 import { Timer } from 'lucide-react';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
+import { useTranslation } from 'react-i18next';
 import courtSm from '../../../shared/assets/icons/court-sm.svg';
 
 export interface CourtCardProps {
@@ -17,6 +18,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
   onToggleAvailability,
   onSelectCourt,
 }) => {
+  const { t } = useTranslation();
   const isPlaying = court.teamA.length > 0 || court.teamB.length > 0;
   const isAvailable = court.isAvailable;
 
@@ -120,7 +122,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
           </div>
         ) : (
           <div className="font-sans text-[11px] font-medium text-muted-foreground flex items-center justify-center">
-            {!isAvailable ? 'Reserved' : 'Matchmaking'}
+            {!isAvailable ? t('coach.home.reserved', 'Reserved') : t('home.matchmaking', 'Matchmaking')}
           </div>
         )}
       </div>

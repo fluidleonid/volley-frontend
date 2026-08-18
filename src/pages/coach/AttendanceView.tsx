@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { Header } from '../../widgets/layout/Header';
 
 interface AttendanceRecord {
@@ -44,6 +45,7 @@ const mockAttendance: MonthGroup[] = [
 ];
 
 export const AttendanceView: React.FC = () => {
+  const { t } = useTranslation();
   const { setActiveTab } = useAppStore();
 
   return (
@@ -52,7 +54,7 @@ export const AttendanceView: React.FC = () => {
         variant="page"
         sticky
         stickyClassName="-mx-4 px-4"
-        title="Attendance & Check-ins"
+        title={t('coach.attendanceCheckins', 'Attendance & Check-ins')}
         onBack={() => setActiveTab('profile')}
         onClose={() => setActiveTab('home')}
       />
@@ -60,11 +62,11 @@ export const AttendanceView: React.FC = () => {
       <div className="flex gap-3">
         <div className="flex-1 bg-card rounded-2xl p-4 border-none">
           <div className="font-display text-[24px] font-bold text-white leading-tight">40</div>
-          <div className="text-sm text-muted-foreground mt-1">Trainings</div>
+          <div className="text-sm text-muted-foreground mt-1">{t('coach.trainings', 'Trainings')}</div>
         </div>
         <div className="flex-1 bg-card rounded-2xl p-4 border-none">
           <div className="font-display text-[24px] font-bold text-white leading-tight">122</div>
-          <div className="text-sm text-muted-foreground mt-1">Games</div>
+          <div className="text-sm text-muted-foreground mt-1">{t('coach.games', 'Games')}</div>
         </div>
       </div>
 
@@ -79,10 +81,10 @@ export const AttendanceView: React.FC = () => {
                     {record.dateStr}
                   </div>
                   <div className="flex-1 flex items-center">
-                    <span className="text-muted-foreground text-[15px]">{record.type}</span>
+                    <span className="text-muted-foreground text-[15px]">{t(`coach.${record.type.toLowerCase()}`, record.type)}</span>
                   </div>
                   <div className="text-right flex items-center gap-1.5">
-                    <span className="text-muted-foreground text-[15px]">{record.matches}</span>
+                    <span className="text-muted-foreground text-[15px]">{record.matches.includes('matches') ? record.matches.replace('matches', t('coach.matches', 'matches')) : record.matches}</span>
                   </div>
                 </div>
               ))}

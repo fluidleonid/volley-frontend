@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { NavigationTab } from '../../shared/types/index';
 import { Home, Trophy, Menu, UsersRound, Coins } from 'lucide-react';
@@ -12,16 +13,17 @@ interface NavItem {
 
 export const BottomNav: React.FC = () => {
   const { activeTab, setActiveTab, role } = useAppStore();
+  const { t } = useTranslation();
 
   const navItems: NavItem[] = role === 'coach' ? [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'players', label: 'Players', icon: UsersRound },
-    { id: 'billing', label: 'Cashflow', icon: Coins },
-    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
+    { id: 'home', label: t('nav.home'), icon: Home },
+    { id: 'players', label: t('nav.players'), icon: UsersRound },
+    { id: 'billing', label: t('nav.cashflow'), icon: Coins },
+    { id: 'leaderboard', label: t('nav.leaderboard'), icon: Trophy },
   ] : [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
-    { id: 'games', label: 'My games', icon: Menu },
+    { id: 'home', label: t('nav.home'), icon: Home },
+    { id: 'leaderboard', label: t('nav.leaderboard'), icon: Trophy },
+    { id: 'games', label: t('nav.myGames'), icon: Menu },
   ];
 
   return (

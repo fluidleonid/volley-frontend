@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../../shared/types/index';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../app/store/appStore';
 import { Receipt, CalendarClock, Dumbbell, Box } from 'lucide-react';
 import { MenuRowItem } from '../../menu/ui/MenuRowItem';
@@ -9,6 +10,8 @@ import { XpBar } from '../../../shared/ui/XpBar';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { SelectPlayerForSessionSheet } from '../../../features/session/SelectPlayerForSessionSheet';
 import { SessionDetailsSheet } from '../../../features/session/SessionDetailsSheet';
+import { PrivateSessionFlow } from '../../../widgets/flows/PrivateSessionFlow';
+import { PlayerBillingSheet } from './PlayerBillingSheet';
 import { Badge } from '../../../shared/ui/badge';
 import { MessageCircle } from 'lucide-react';
 import { getPlayerTierInfo } from '../../../shared/lib/tier';
@@ -28,12 +31,17 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   onCloseAll,
   hasParent,
 }) => {
+  const { t } = useTranslation();
   const { role, todaysPlayers, isSessionActive } = useAppStore();
   const [isChangeLevelOpen, setIsChangeLevelOpen] = React.useState(false);
   const [isLinkAccountOpen, setIsLinkAccountOpen] = React.useState(false);
   const [isSessionDetailsOpen, setIsSessionDetailsOpen] = React.useState(false);
+  const [isPrivateSessionFlowOpen, setIsPrivateSessionFlowOpen] = React.useState(false);
+  const [isBillingOpen, setIsBillingOpen] = React.useState(false);
 
   if (!isOpen || !player) return null;
+
+  const isAnySubSheetOpen = isChangeLevelOpen || isLinkAccountOpen || isSessionDetailsOpen || isPrivateSessionFlowOpen || isBillingOpen;
 
   const isTraining = player.status !== 'spectating';
   const isAdmin = role === 'coach';
@@ -45,12 +53,13 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   const tierInfo = getPlayerTierInfo(player.level);
 
   return (
-    <BottomSheet
-      isOpen={isOpen}
-      onClose={onClose}
+    <>
+      <BottomSheet
+        isOpen={!isAnySubSheetOpen}
+        onClose={onClose}
       onCloseAll={onCloseAll}
       hasParent={hasParent}
-      title="Player details"
+      title={t('coach.players.playerDetails', 'Player details')}
       zIndex={140}
     >
       {/* Hero Player Card Banner */}
@@ -73,12 +82,12 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
             {isTraining ? (
               <>
                 <Dumbbell className="h-3.5 w-3.5" />
-                <span>Training</span>
+                <span>{t('home.training', 'Training')}</span>
               </>
             ) : (
               <>
                 <Box className="h-3.5 w-3.5" />
-                <span>Spectating</span>
+                <span>{t('home.spectating', 'Spectating')}</span>
               </>
             )}
           </div>
@@ -96,19 +105,19 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         {/* Contact Row */}
         <MenuRowItem
           icon={MessageCircle}
-          label="Contact"
+          label={t('common.contact', 'Contact')}
           showChevron={false}
           rightElement={
             player.hasTelegram ? (
               <Badge variant="neutral" className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
-                Message
+                {t('common.message', 'Message')}
               </Badge>
             ) : isAdmin ? (
               <Badge variant="neutral" onClick={() => setIsLinkAccountOpen(true)} className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
-                Link account
+                {t('coach.players.linkAccount', 'Link account')}
               </Badge>
             ) : (
-              <Badge variant="neutral">In person only</Badge>
+              <Badge variant="neutral">{t('coach.players.inPersonOnly', 'In person only')}</Badge>
             )
           }
         />
@@ -117,13 +126,13 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         {isAdmin && (
           <>
             {/* Billing row item */}
-            <MenuRowItem icon={Receipt} label="Billing" />
+            <MenuRowItem icon={Receipt} label={t('nav.billing', 'Billing')} onClick={() => setIsBillingOpen(true)} />
 
             {/* Schedule private session row item */}
             <MenuRowItem 
               icon={CalendarClock} 
-              label="Schedule private session" 
-              onClick={() => setIsSessionDetailsOpen(true)}
+              label={t('coach.players.schedulePrivate', 'Schedule private session')} 
+              onClick={() => setIsPrivateSessionFlowOpen(true)}
             />
 
           </>
@@ -138,24 +147,26 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
               onClick={onClose}
               className="w-full h-[52px] rounded-full bg-card text-white font-sans text-base font-bold transition-all active:scale-95 hover:bg-brand-surfaceElevated"
             >
-              Check-out
+              {t('coach.session.checkOut', 'Check-out')}
             </button>
           ) : (
             <button
               onClick={onClose}
               className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
             >
-              Check-in
+              {t('coach.session.checkIn', 'Check-in')}
             </button>
           )}
         </div>
       )}
+      </BottomSheet>
 
       <SelectPlayerForSessionSheet
         isOpen={isLinkAccountOpen}
         onClose={() => setIsLinkAccountOpen(false)}
-        title="Link account"
-        subtitle="Select a player to link"
+        onCloseAll={onCloseAll || onClose}
+        title={t('coach.players.linkAccount', 'Link account')}
+        subtitle={t('coach.players.selectPlayerToLink', 'Select a player to link')}
         mode="single"
         hideAddButtons
         onSelectPlayer={() => setIsLinkAccountOpen(false)}
@@ -164,17 +175,36 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
       <SessionDetailsSheet
         isOpen={isSessionDetailsOpen}
         onClose={() => setIsSessionDetailsOpen(false)}
+        onCloseAll={onCloseAll || onClose}
         player={player}
         onAvatarClick={() => setIsSessionDetailsOpen(false)}
+        hasParent
+      />
+
+      <PrivateSessionFlow
+        isOpen={isPrivateSessionFlowOpen}
+        onClose={() => setIsPrivateSessionFlowOpen(false)}
+        onCloseAll={onCloseAll || onClose}
+        hasParent
+        initialPlayer={player}
+        onSchedule={() => setIsPrivateSessionFlowOpen(false)}
+      />
+
+      <PlayerBillingSheet
+        isOpen={isBillingOpen}
+        onClose={() => setIsBillingOpen(false)}
+        onCloseAll={onCloseAll || onClose}
+        player={player}
         hasParent
       />
 
       <ChangeLevelSheet 
         isOpen={isChangeLevelOpen}
         onClose={() => setIsChangeLevelOpen(false)}
+        onCloseAll={onCloseAll || onClose}
         player={player}
         hasParent
       />
-    </BottomSheet>
+    </>
   );
 };

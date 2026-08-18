@@ -3,6 +3,7 @@ import { AchievementData } from '../../../shared/types/achievement';
 import { isIconUrl, rarityBadgeClass, rarityGlow } from '../../../shared/lib/achievement-utils';
 import { Badge } from '../../../shared/ui/badge';
 import { cn } from '../../../shared/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface AchievementCardProps {
   achievement: AchievementData;
@@ -10,6 +11,7 @@ interface AchievementCardProps {
 }
 
 export const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, onClick }) => {
+  const { t } = useTranslation();
   const iconIsUrl = isIconUrl(achievement.icon);
   const glow = rarityGlow(achievement.rarity, achievement.glowColor);
   const badgeClass = rarityBadgeClass(achievement.rarity);
@@ -44,17 +46,17 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, o
 
         <div className="w-full flex flex-col mt-[12px]">
           <div className="font-display text-xs font-bold text-white truncate leading-tight">
-            {achievement.title}
+            {t(`achievements.${achievement.id}.title`, achievement.title)}
           </div>
 
           {achievement.isEarned ? (
             <div className="text-[10px] text-muted-foreground truncate leading-tight">
-              {achievement.desc}
+              {t(`achievements.${achievement.id}.desc`, achievement.desc)}
             </div>
           ) : (
             <div className="w-full flex flex-col">
               <div className="text-[10px] text-muted-foreground truncate leading-tight">
-                {achievement.progress}/{achievement.maxProgress} {achievement.desc.split(' ')[0]}
+                {achievement.progress}/{achievement.maxProgress} {t(`achievements.${achievement.id}.verb`, achievement.desc.split(' ')[0])}
               </div>
               <div className="w-full h-1 bg-secondary rounded-full overflow-hidden mt-1">
                 <div
@@ -67,7 +69,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, o
 
           <div className="mt-[6px]">
             <Badge size="sm" className={cn("text-[9px] h-[16px] px-2", badgeClass)}>
-              {achievement.rarity}
+              {t(`achievements.rarity.${achievement.rarity.toLowerCase()}`, achievement.rarity)}
             </Badge>
           </div>
         </div>

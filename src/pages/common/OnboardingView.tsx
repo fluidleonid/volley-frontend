@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import logotextSvg from '../../shared/assets/icons/logotext.svg';
 import playerCardPng from '../../shared/assets/images/player-card.png';
@@ -20,7 +21,7 @@ export interface SkillLevelOption {
 export const skillLevels: SkillLevelOption[] = [
   {
     id: 'beginner',
-    title: 'Beginner',
+    title: 'Beginner', // Localized in component
     subtitle: 'I want to learn',
     accentColor: 'var(--level-beginner)',
     ringColor: 'var(--level-beginner)',
@@ -57,6 +58,7 @@ export const skillLevels: SkillLevelOption[] = [
 ];
 
 export const OnboardingView: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedLevelId, setSelectedLevelId] = useState<string>('beginner');
   const { completeOnboarding } = useAppStore();
 
@@ -97,10 +99,10 @@ export const OnboardingView: React.FC = () => {
         />
 
         <h1 className="mt-[24px] text-[24px] font-extrabold tracking-tight text-white leading-tight">
-          Welcome to the Game!
+          {t('onboarding.welcomeTitle', 'Welcome to the Game!')}
         </h1>
         <p className="mt-1 text-[14px] font-medium text-muted-foreground">
-          Choose your skill level
+          {t('onboarding.chooseSkill', 'Choose your skill level')}
         </p>
       </div>
 
@@ -197,10 +199,10 @@ export const OnboardingView: React.FC = () => {
               {/* Left Side: Title & Subtitle ONLY */}
               <div>
                 <div className="text-base font-semibold text-white leading-snug">
-                  {level.title}
+                  {t(`onboarding.levels.${level.id}.title`, level.title)}
                 </div>
                 <div className="text-xs font-normal text-muted-foreground">
-                  {level.subtitle}
+                  {t(`onboarding.levels.${level.id}.subtitle`, level.subtitle)}
                 </div>
               </div>
 
@@ -218,7 +220,7 @@ export const OnboardingView: React.FC = () => {
       {/* Group 4: Bottom Continue Action Button (Using Reusable Button Component) */}
       <div className="mt-auto w-full">
         <Button fullWidth size="xl" onClick={handleContinue}>
-          Continue
+          {t('common.continue', 'Continue')}
         </Button>
       </div>
     </div>

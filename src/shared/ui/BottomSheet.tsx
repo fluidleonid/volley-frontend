@@ -103,7 +103,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     setIsDragging(false);
     startYRef.current = null;
     if (dragY > 80) {
-      onClose();
+      handleCloseAll();
     }
     setDragY(0);
   };
@@ -131,7 +131,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           onTouchEnd={handlePointerUp}
           style={{
             transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
-            transition: isDragging ? 'none' : 'transform 0.2s ease-out',
+            transition: isDragging ? 'none' : 'transform 0.2s ease-out, height 0.3s ease-out, max-height 0.3s ease-out',
             ...(topOffset ? { height: `calc(100vh - ${topOffset}px)`, maxHeight: `calc(100vh - ${topOffset}px)` } : {}),
             ...(isScrollable && !topOffset ? { maxHeight: '90vh' } : {}),
           }}

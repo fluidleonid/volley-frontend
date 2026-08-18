@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Player } from '../../shared/types/index';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { LeaderboardRowItem } from '../../entities/leaderboard/ui/LeaderboardRowItem';
@@ -9,12 +10,13 @@ import place1Svg from '../../shared/assets/icons/place1.svg';
 import place2Svg from '../../shared/assets/icons/place2.svg';
 import place3Svg from '../../shared/assets/icons/place3.svg';
 import { useScroll } from '../../shared/hooks/useScroll';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../shared/ui/Badge';
 import { BpIcon } from '../../shared/ui/icons/BpIcon';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 
 export const LeaderboardView: React.FC = () => {
+  const { t } = useTranslation();
   const { leaderboard, currentUser, role } = useAppStore();
   const [tab, setTab] = useState<TabType>('total');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -32,10 +34,10 @@ export const LeaderboardView: React.FC = () => {
   const rest = filteredLeaderboard.filter((l) => l.rank > 3);
 
   const tabs: { id: TabType; label: string }[] = [
-    { id: 'today', label: 'Today' },
-    { id: 'week', label: 'This week' },
-    { id: 'month', label: 'This month' },
-    { id: 'total', label: 'Total' },
+    { id: 'today', label: t('player.leaderboard.today', 'Today') },
+    { id: 'week', label: t('player.leaderboard.thisWeek', 'This week') },
+    { id: 'month', label: t('player.leaderboard.thisMonth', 'This month') },
+    { id: 'total', label: t('player.leaderboard.total', 'Total') },
   ];
 
   const isEmpty = tab === 'today';
@@ -68,7 +70,7 @@ export const LeaderboardView: React.FC = () => {
         <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
           }`}>
           <div className="flex items-center justify-between h-[44px]">
-            <h1 className="text-[30px] font-bold text-white tracking-tight">Leaderboard</h1>
+            <h1 className="text-[30px] font-bold text-white tracking-tight">{t('nav.leaderboard', 'Leaderboard')}</h1>
 
             {role !== 'coach' && (
               <Badge variant="neutral" size="lg" className="bg-primary/20 backdrop-blur-md text-primary font-bold tracking-tight border-0">
@@ -193,8 +195,8 @@ export const LeaderboardView: React.FC = () => {
                 <path d="M7 16H17M7 11H13M8 4H16C17.1046 4 18 4.89543 18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6C6 4.89543 6.89543 4 8 4Z" stroke="currentColor" className="text-primary" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-white">No rankings yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Players results will appear here</p>
+            <h3 className="text-lg font-bold text-white">{t('player.leaderboard.noRankings', 'No rankings yet')}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{t('player.leaderboard.noRankingsDesc', 'Players results will appear here')}</p>
           </div>
         ) : (
           <div className="flex flex-col relative z-20">

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { MatchHistoryCard } from '../../entities/match/ui/MatchHistoryCard';
 import { Trophy } from 'lucide-react';
@@ -9,6 +10,7 @@ import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 export const GamesView: React.FC = () => {
   const { recentMatches } = useAppStore();
   const scrolled = useScroll();
+  const { t, i18n } = useTranslation();
 
   const groupedByDate = useMemo(() => {
     const groups: Record<string, {
@@ -22,8 +24,12 @@ export const GamesView: React.FC = () => {
     recentMatches.forEach(match => {
       // Parse date to Month D, YYYY
       let dateLabel = match.date;
-      if (match.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        dateLabel = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(match.date));
+      if (match.date === 'Today') {
+        dateLabel = t('player.leaderboard.today', 'Today');
+      } else if (match.date === 'Yesterday') {
+        dateLabel = t('common.yesterday', 'Yesterday');
+      } else if (match.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        dateLabel = new Intl.DateTimeFormat(i18n.language === 'am' ? 'hy-AM' : (i18n.language === 'ru' ? 'ru-RU' : 'en-US'), { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(match.date));
       }
 
       if (!groups[dateLabel]) {
@@ -39,7 +45,7 @@ export const GamesView: React.FC = () => {
     });
 
     return groups;
-  }, [recentMatches]);
+  }, [recentMatches, i18n.language]);
 
   return (
     <div className="pb-32 select-none bg-background">
@@ -49,7 +55,7 @@ export const GamesView: React.FC = () => {
           scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
         }`}>
           <div className="flex items-center h-[44px]">
-            <h1 className="text-[30px] font-bold text-white tracking-tight">My Games</h1>
+            <h1 className="text-[30px] font-bold text-white tracking-tight">{t('games.title')}</h1>
           </div>
         </div>
 
@@ -59,7 +65,7 @@ export const GamesView: React.FC = () => {
             <div key={dateLabel} className="space-y-3">
               <ListGroupHeader
                 title={dateLabel}
-                subtitle={`${stats.matches.length} matches • ${stats.wins}W - ${stats.losses}L • +${stats.xp} XP • +${stats.bp} BP`}
+                subtitle={`${t('games.matchesCount', { count: stats.matches.length })} • ${stats.wins}${t('games.winsShort')} - ${stats.losses}${t('games.lossesShort')} • +${stats.xp} XP • +${stats.bp} BP`}
               />
               <div className="flex flex-col">
                 {stats.matches.map((match) => (
@@ -72,7 +78,7 @@ export const GamesView: React.FC = () => {
           {Object.keys(groupedByDate).length === 0 && (
             <div className="text-center py-10">
               <Trophy className="w-12 h-12 text-secondary mx-auto mb-3" />
-              <p className="text-muted-foreground text-sm font-medium">No games played yet</p>
+              <p className="text-muted-foreground text-sm font-medium">{t('games.noGames')}</p>
             </div>
           )}
         </div>

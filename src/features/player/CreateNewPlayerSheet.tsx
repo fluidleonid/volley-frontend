@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/Input';
 
@@ -18,6 +19,7 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
   onCreatePlayer,
   hasParent,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -36,10 +38,10 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
   const titleNode = (
     <div className="text-center space-y-0.5">
       <h3 className="font-display text-lg font-bold text-white tracking-tight">
-        Create a new player
+        {t('coach.players.createNewPlayer', 'Create a new player')}
       </h3>
       <p className="font-sans text-xs text-muted-foreground font-normal">
-        Add details for club database
+        {t('coach.players.addDetailsForDB', 'Add details for club database')}
       </p>
     </div>
   );
@@ -49,8 +51,8 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6 pt-2">
         <div className="space-y-4">
           <Input
-            label="Player name*"
-            placeholder="Enter player name"
+            label={t('coach.players.playerName', 'Player name*')}
+            placeholder={t('coach.players.enterPlayerName', 'Enter player name')}
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
@@ -58,8 +60,8 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
 
           <Input
             type="tel"
-            label="Phone"
-            placeholder="Enter phone number"
+            label={t('common.phone', 'Phone')}
+            placeholder={t('coach.players.enterPhone', 'Enter phone number')}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
@@ -79,7 +81,7 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
                     : 'bg-card text-muted-foreground hover:text-white border border-transparent'
                 }`}
               >
-                {lvl}
+                {t(`levels.${lvl.toLowerCase()}`, lvl)}
               </button>
             ))}
           </div>
@@ -91,7 +93,7 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
           size="xl"
           disabled={!name.trim()}
         >
-          Add player
+          {t('coach.players.addPlayer', 'Add player')}
         </Button>
       </form>
     </BottomSheet>

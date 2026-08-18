@@ -1,0 +1,363 @@
+{
+  "profile": {
+    "title": "Профиль",
+    "achievements": "Достижения",
+    "gamesPlayed": "Игр сыграно",
+    "wins": "Выиграно",
+    "bp": "BP",
+    "publicGames": "Публичные игры",
+    "publicSchedule": "Публичное расписание",
+    "privateSchedule": "Индивидуальное расписание",
+    "trainingCosts": "Стоимость тренировок",
+    "attendance": "Посещаемость",
+    "billing": "Оплата",
+    "language": "Язык",
+    "deleteAccount": "Удалить аккаунт",
+    "deleteConfirmTitle": "Удаление аккаунта",
+    "deleteConfirmDesc": "Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо.",
+    "cancel": "Отмена",
+    "sessionDetails": "Детали сессии",
+    "reschedule": "Перенести",
+    "cancelSession": "Отменить сессию",
+    "cancelSessionTitle": "Отмена сессии",
+    "cancelSessionDesc": "Вы уверены, что хотите отменить эту личную сессию? Игрок будет уведомлён.",
+    "keepSession": "Сохранить сессию"
+  },
+  "language": {
+    "title": "Язык",
+    "en": "English",
+    "ru": "Русский",
+    "am": "Հայերեն"
+  },
+  "nav": {
+    "home": "Главная",
+    "players": "Игроки",
+    "cashflow": "Финансы",
+    "leaderboard": "Рейтинг",
+    "myGames": "Мои игры",
+    "billing": "Оплата"
+  },
+  "status": {
+    "spectating": "Наблюдает",
+    "queued": "В очереди",
+    "training": "Тренировка",
+    "resting": "Отдых"
+  },
+  "roles": {
+    "coach": "Тренер",
+    "admin": "Админ"
+  },
+  "banner": {
+    "findingMatch": "Поиск матча",
+    "lookingForPlayers": "Ищем свободных игроков рядом",
+    "findingCourt": "Поиск площадки…",
+    "playing": "Игра",
+    "waitingForMore": "Ожидаем еще {{count}}…",
+    "matchFound": "Матч найден!",
+    "accept": "Принять",
+    "nextGameInvite": "Приглашение",
+    "vs": "vs"
+  },
+  "closedSession": {
+    "title": "Нет активной тренировки",
+    "description": "Начните или запланируйте тренировку, чтобы открыть подбор матчей и регистрацию игроков."
+  },
+  "common": {
+    "continue": "Продолжить",
+    "cancel": "Отмена",
+    "skip": "Пропустить",
+    "selectPeriod": "Выберите период",
+    "selectDate": "Выберите дату",
+    "selectTime": "Выберите время",
+    "custom": "Свой",
+    "save": "Сохранить",
+    "done": "Готово",
+    "change": "Изменить",
+    "select": "Выбрать",
+    "add": "Добавить",
+    "submit": "Отправить",
+    "finish": "Завершить",
+    "close": "Закрыть",
+    "confirm": "Подтвердить",
+    "areYouSure": "Вы уверены?",
+    "date": "Дата",
+    "time": "Время",
+    "court": "Площадка",
+    "mode": "Режим",
+    "hard": "Hard",
+    "default": "Обычный",
+    "win": "Выигрыш",
+    "loss": "Поражение",
+    "matches": "Матчи",
+    "contact": "Контакт",
+    "message": "Написать",
+    "phone": "Телефон",
+    "player": "Игрок",
+    "copyLink": "Скопировать ссылку",
+    "saveChanges": "Сохранить изменения",
+    "startTime": "Время начала",
+    "invite": "Пригласить",
+    "days": {
+      "mon": "Понедельник",
+      "tue": "Вторник",
+      "wed": "Среда",
+      "thu": "Четверг",
+      "fri": "Пятница",
+      "sat": "Суббота",
+      "sun": "Воскресенье"
+    },
+    "yesterday": "Вчера"
+  },
+  "home": {
+    "gamesPlayed": "Игр сыграно",
+    "wins": "Победы",
+    "bpToday": "BP сегодня",
+    "startTraining": "Начать тренировку",
+    "sitOut": "Отдохнуть",
+    "inviteToPlay": "Пригласить играть",
+    "inviteDesc": "Поделитесь этой ссылкой или QR-кодом, чтобы игроки присоединились к тренировке.",
+    "scanToJoin": "Сканируйте для входа через Telegram",
+    "linkCopied": "Ссылка скопирована!",
+    "shareLink": "Поделиться ссылкой",
+    "hardMode": "Hard mode",
+    "stop": "Стоп",
+    "continueToPlay": "Продолжить играть",
+    "sessionScheduled": "Тренировка запланирована. Приготовьтесь присоединиться, когда она начнется!",
+    "noSession": "Сейчас нет активных тренировок. Загляните позже!",
+    "scheduleTraining": "Запланировать тренировку",
+    "courts": "Площадки",
+    "endSession": "Завершить сессию",
+    "todaysPlayers": "Игроки сегодня",
+    "noPlayers": "Пока нет игроков",
+    "recentGames": "Недавние игры",
+    "noGames": "Пока нет игр",
+    "endSessionTitle": "Завершить публичную сессию",
+    "endSessionDesc": "Вы уверены, что хотите завершить текущую тренировку? Подбор матчей и регистрация будут закрыты.",
+    "confirmEnd": "Подтвердить завершение",
+    "cancel": "Отмена",
+    "matchDetails": "Детали матча",
+    "playing": "В игре",
+    "onlyPlayersFinish": "Завершить может только игрок",
+    "enterScore": "Введите счёт",
+    "onCourt": "На площадке",
+    "training": "Тренировка",
+    "spectating": "Наблюдает",
+    "matchmaking": "Поиск матча",
+    "todaysPrivates": "Сегодняшние индивидуальные",
+    "noScheduledSessionsYet": "Пока нет запланированных сессий"
+  },
+  "games": {
+    "title": "Мои игры",
+    "matchesCount": "{{count}} матчей",
+    "winsShort": "В",
+    "lossesShort": "П",
+    "noGames": "Пока нет игр"
+  },
+  "onboarding": {
+    "welcomeTitle": "Добро пожаловать в игру!",
+    "chooseSkill": "Выберите уровень навыка",
+    "levels": {
+      "beginner": {
+        "title": "Новичок",
+        "subtitle": "Хочу научиться"
+      },
+      "amateur": {
+        "title": "Любитель",
+        "subtitle": "Играю для удовольствия"
+      },
+      "advanced": {
+        "title": "Продвинутый",
+        "subtitle": "Играю чтобы выигрывать"
+      },
+      "pro": {
+        "title": "Профессионал",
+        "subtitle": "Это мой образ жизни"
+      }
+    }
+  },
+  "player": {
+    "achievements": {
+      "title": "Достижения",
+      "earnedDate": "Получено {{date}}",
+      "allCategories": "Все",
+      "earned": "Получено",
+      "locked": "Заблокировано"
+    },
+    "billingHistory": "История платежей",
+    "leaderboard": {
+      "today": "Сегодня",
+      "thisWeek": "Эта неделя",
+      "thisMonth": "Этот месяц",
+      "total": "Всего",
+      "noRankings": "Пока нет рейтинга",
+      "noRankingsDesc": "Результаты игроков появятся здесь"
+    },
+    "invite": {
+      "fillCourt": "Заполните корт — выберите 1 или 2 игроков",
+      "addOpponents": "Добавьте 2 соперников для начала матча",
+      "readyToPlay": "Готов к игре",
+      "addOpponentBalance": "Добавьте ещё 1 соперника для баланса",
+      "addTeammateBalance": "Добавьте 1 партнёра для баланса",
+      "addTeammate": "Добавить партнёра",
+      "addOpponent": "Добавить соперника",
+      "selectTeammate": "Выбрать партнёра",
+      "selectOpponents": "Выбрать соперников",
+      "pick1ForTeam": "Выберите 1 игрока для своей команды",
+      "pick1Or2ForOpposing": "Выберите 1 или 2 игроков для команды соперника"
+    }
+  },
+  "coach": {
+    "home": {
+      "reserved": "Зарезервировано"
+    },
+    "players": {
+      "playerDetails": "Профиль игрока",
+      "changeLevel": "Изменить уровень",
+      "xpResetDesc": "XP будет сброшен до начального значения этого уровня.",
+      "confirmChange": "Подтвердить изменение",
+      "linkAccount": "Привязать аккаунт",
+      "inPersonOnly": "Только лично",
+      "schedulePrivate": "Запланировать личную сессию",
+      "selectPlayerToLink": "Выберите игрока для привязки",
+      "createNewPlayer": "Создать нового игрока",
+      "addDetailsForDB": "Добавьте данные в базу клуба",
+      "playerName": "Имя игрока*",
+      "enterPlayerName": "Введите имя игрока",
+      "enterPhone": "Введите номер телефона",
+      "addPlayer": "Добавить игрока",
+      "guestName": "Имя гостя*",
+      "enterGuestName": "Введите имя гостя",
+      "addGuest": "Добавить гостя",
+      "addGuestPlayer": "Добавить гостевого игрока",
+      "checkInGuest": "Зарегистрировать гостя",
+      "searchPlaceholder": "Поиск игрока",
+      "createScheduleNew": "Создать и запланировать нового игрока",
+      "scheduleWithGuest": "Запланировать с гостевым игроком",
+      "authorized": "Авторизованные",
+      "manual": "Вручную",
+      "totalPlayers": "Всего игроков",
+      "active7d": "Активных за 7 дней",
+      "manual7d": "Вручную за 7 дней",
+      "noPlayersFound": "Игроки в этой категории не найдены.",
+      "levelSubtitles": {
+        "beginner": "Хочет научиться",
+        "amateur": "Играет для удовольствия",
+        "advanced": "Играет чтобы выигрывать",
+        "pro": "Это его образ жизни"
+      }
+    },
+    "session": {
+      "checkIn": "Отметиться",
+      "checkOut": "Выйти",
+      "todaysAttendance": "Посещаемость сегодня",
+      "checkInRegistered": "Отметьте зарегистрированных игроков",
+      "privateSession": "Личная сессия",
+      "reschedule": "Перенести сессию",
+      "selectNewDateTime": "Выберите новую дату и время",
+      "selectPlayerSchedule": "Выберите игрока и запланируйте сессию",
+      "selectPlayer": "Выбрать игрока",
+      "scheduleSession": "Запланировать сессию"
+    },
+    "schedule": {
+      "upcoming": "Предстоящие",
+      "past": "Прошедшие",
+      "noUpcomingSessions": "Нет предстоящих сессий",
+      "noPastSessions": "Нет прошедших сессий",
+      "totalSessionsCount": "{{count}} сессий всего",
+      "pickDate": "Выберите дату",
+      "pickTime": "Выберите время",
+      "regularWeeklySchedule": "Регулярное недельное расписание",
+      "addSlot": "Добавить слот",
+      "specialDates": "Особые даты",
+      "addDate": "Добавить дату",
+      "noSpecialDates": "Пока нет особых дат",
+      "startAt": "Начало в {{time}}",
+      "addSpecialDateSession": "Добавить сессию на особую дату",
+      "addSpecialSession": "Добавить особую сессию",
+      "saveSchedule": "Сохранить расписание"
+    },
+    "allTime": "За всё время",
+    "total": "Итого",
+    "thisMonth": "За этот месяц",
+    "lastMonth": "Прошлый месяц",
+    "thisYear": "Этот год",
+    "lastYear": "Прошлый год",
+    "public": "Публичные",
+    "private": "Индивидуальные",
+    "paid": "Оплачено",
+    "settle": "Долг",
+    "unknownPlayer": "Неизвестный игрок",
+    "paymentToSettle": "неоплаченный платёж",
+    "paymentsToSettle": "неоплаченных платежа",
+    "noRecordsFound": "Записей за этот период не найдено.",
+    "trainings": "Тренировки",
+    "games": "Игры",
+    "matches": "матчей",
+    "attendanceCheckins": "Посещаемость и регистрация",
+    "costs": {
+      "publicCost": "Стоимость публичной тренировки (֏)",
+      "privateCost": "Стоимость личной тренировки (֏)",
+      "examplePublic": "Напр. 4000",
+      "examplePrivate": "Напр. 10000"
+    }
+  },
+  "billing": {
+    "paymentDetails": "Детали оплаты",
+    "settlePayment": "Оплатить",
+    "paid": "Оплачено",
+    "unpaid": "Не оплачено",
+    "type": "Тип",
+    "personal": "Личная",
+    "markUnpaid": "Отметить как неоплаченное",
+    "card": "Карта",
+    "cash": "Наличные"
+  },
+  "levels": {
+    "beginner": "Новичок",
+    "amateur": "Любитель",
+    "advanced": "Продвинутый",
+    "pro": "Профессионал"
+  },
+  "achievements": {
+    "ach-1": {
+      "title": "Новая кровь",
+      "desc": "Посетил свою первую тренировку",
+      "verb": "Посетил"
+    },
+    "ach-2": {
+      "title": "Марафонец",
+      "desc": "Сыграл 15+ матчей за один день",
+      "verb": "Сыграл"
+    },
+    "ach-3": {
+      "title": "Добро пожаловать в ад",
+      "desc": "Выиграл первый матч в сложном режиме",
+      "verb": "Выиграл"
+    },
+    "ach-4": {
+      "title": "25 побед (Сложный)",
+      "desc": "Выиграл 25 матчей в сложном режиме",
+      "verb": "Выиграл"
+    },
+    "ach-5": {
+      "title": "Снайпер",
+      "desc": "Сделал 10 эйсов за один матч",
+      "verb": "Сделал"
+    },
+    "ach-6": {
+      "title": "Командный игрок",
+      "desc": "Сыграл 50 матчей с друзьями",
+      "verb": "Сыграл"
+    },
+    "ach-7": {
+      "title": "Неудержимый",
+      "desc": "Выиграл 10 матчей подряд",
+      "verb": "Выиграл"
+    },
+    "rarity": {
+      "common": "Обычное",
+      "uncommon": "Необычное",
+      "rare": "Редкое"
+    }
+  }
+}

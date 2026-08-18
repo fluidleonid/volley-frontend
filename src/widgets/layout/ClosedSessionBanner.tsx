@@ -1,6 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CalendarClock } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../shared/ui/Badge';
 import publicSessionImg from '../../shared/assets/images/publicsession.png';
 
 interface ClosedSessionBannerProps {
@@ -11,12 +12,17 @@ interface ClosedSessionBannerProps {
 }
 
 export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
-  title = "No active training session",
+  title,
   description,
   nextSessionTime,
   children
 }) => {
-  const defaultDescription = "Start or schedule a training session to open court matchmaking and player check-ins.";
+  const { t } = useTranslation();
+  
+  const defaultTitle = t('closedSession.title');
+  const finalTitle = title || defaultTitle;
+  
+  const defaultDescription = t('closedSession.description');
   const finalDescription = description || defaultDescription;
 
   return (
@@ -33,7 +39,7 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
 
       <div className="flex flex-col gap-2 z-10 pt-2">
         <h3 className="font-display text-2xl font-bold text-white tracking-tight leading-snug">
-          {title}
+          {finalTitle}
         </h3>
         <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[320px]">
           {finalDescription}

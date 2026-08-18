@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Player } from '../../shared/types/index';
+import { useTranslation } from 'react-i18next';
 import { SelectPlayerForSessionSheet } from '../../features/session/SelectPlayerForSessionSheet';
 import { AddGuestPlayerSheet } from '../../features/player/AddGuestPlayerSheet';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
@@ -19,6 +20,7 @@ export const PublicAttendanceFlow: React.FC<PublicAttendanceFlowProps> = ({
   onAddGuest,
   onCreatePlayer
 }) => {
+  const { t } = useTranslation();
   const [isAddGuestOpen, setIsAddGuestOpen] = useState(false);
   const [isCreatePlayerOpen, setIsCreatePlayerOpen] = useState(false);
 
@@ -28,8 +30,8 @@ export const PublicAttendanceFlow: React.FC<PublicAttendanceFlowProps> = ({
         isOpen={isOpen && !isAddGuestOpen && !isCreatePlayerOpen}
         onClose={onClose}
         mode="multiple"
-        title="Today's attendance"
-        subtitle="Check in registered players"
+        title={t('coach.session.todaysAttendance', "Today's attendance")}
+        subtitle={t('coach.session.checkInRegistered', 'Check in registered players')}
         onSelectPlayers={(players) => {
           onAddPlayers(players);
           onClose();
@@ -41,8 +43,8 @@ export const PublicAttendanceFlow: React.FC<PublicAttendanceFlowProps> = ({
       <AddGuestPlayerSheet
         isOpen={isAddGuestOpen}
         onClose={() => setIsAddGuestOpen(false)}
-        title="Add a guest player"
-        subtitle="Check in guest player"
+        title={t('coach.players.addGuestPlayer', 'Add a guest player')}
+        subtitle={t('coach.players.checkInGuest', 'Check in guest player')}
         requireLevel={true}
         onAddGuest={(data) => {
           onAddGuest(data);

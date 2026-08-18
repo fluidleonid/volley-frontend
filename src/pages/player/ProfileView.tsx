@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { ChevronRight, Calendar, Receipt, Banknote, Trash2 } from 'lucide-react';
 import { AchievementData } from '../../shared/types/achievement';
@@ -14,7 +15,8 @@ import { getPlayerTierInfo } from '../../shared/lib/tier';
 import { TrainingCostsView } from '../coach/TrainingCostsView';
 import { PrivateSessionsScheduleView } from '../coach/PrivateSessionsScheduleView';
 import { CoachPublicGamesView } from '../coach/CoachPublicGamesView';
-import { CalendarDays, CalendarClock, Activity } from 'lucide-react';
+import { LanguageSelectView } from '../../features/language/LanguageSelectView';
+import { CalendarDays, CalendarClock, Activity, Globe } from 'lucide-react';
 import { Dialog } from '../../shared/ui/Dialog';
 
 const topAchievements = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).slice(0, 5);
@@ -25,7 +27,10 @@ export const ProfileView: React.FC = () => {
   const [isTrainingCostsOpen, setIsTrainingCostsOpen] = useState(false);
   const [isPrivateScheduleOpen, setIsPrivateScheduleOpen] = useState(false);
   const [isPublicGamesOpen, setIsPublicGamesOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const { t } = useTranslation();
 
   const earnedCount = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).length;
   
@@ -33,7 +38,7 @@ export const ProfileView: React.FC = () => {
 
   return (
     <div className="bg-background text-white pb-24 px-4 max-w-[480px] select-none">
-      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title="Profile" onBack={() => setActiveTab('home')} />
+      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title={t('profile.title')} onBack={() => setActiveTab('home')} />
 
       <PlayerCard 
         avatarUrl={currentUser.avatarUrl} 
@@ -56,9 +61,9 @@ export const ProfileView: React.FC = () => {
       {role === 'player' && (
         <>
           <div className="grid grid-cols-3 gap-3 mt-6">
-            <StatCard value={currentUser.gamesPlayed} label="Games played" />
-            <StatCard value={currentUser.wins} label="Wins" />
-            <StatCard value={867} label="BP" />
+            <StatCard value={currentUser.gamesPlayed} label={t('profile.gamesPlayed')} />
+            <StatCard value={currentUser.wins} label={t('profile.wins')} />
+            <StatCard value={867} label={t('profile.bp')} />
           </div>
 
           <div className="space-y-3 pt-2 mt-6">
@@ -67,7 +72,7 @@ export const ProfileView: React.FC = () => {
               onClick={() => setActiveTab('achievements')}
             >
               <div className="flex items-center gap-1.5">
-                <h3 className="font-display text-lg font-bold text-white tracking-tight">Achievements</h3>
+                <h3 className="font-display text-lg font-bold text-white tracking-tight">{t('profile.achievements')}</h3>
                 <span className="font-display text-lg font-normal text-muted-foreground">{earnedCount}</span>
               </div>
 
@@ -90,25 +95,26 @@ export const ProfileView: React.FC = () => {
       <div className="space-y-[4px] pt-2 mt-6">
         {role === 'coach' && (
           <>
-            <MenuRowItem icon={Activity} label="Public games" onClick={() => setIsPublicGamesOpen(true)} />
-            <MenuRowItem icon={CalendarDays} label="Public schedule" onClick={() => setActiveTab('public_schedule')} />
-            <MenuRowItem icon={CalendarClock} label="Private schedule" onClick={() => setIsPrivateScheduleOpen(true)} />
-            <MenuRowItem icon={Banknote} label="Training costs" onClick={() => setIsTrainingCostsOpen(true)} />
+            <MenuRowItem icon={Activity} label={t('profile.publicGames')} onClick={() => setIsPublicGamesOpen(true)} />
+            <MenuRowItem icon={CalendarDays} label={t('profile.publicSchedule')} onClick={() => setActiveTab('public_schedule')} />
+            <MenuRowItem icon={CalendarClock} label={t('profile.privateSchedule')} onClick={() => setIsPrivateScheduleOpen(true)} />
+            <MenuRowItem icon={Banknote} label={t('profile.trainingCosts')} onClick={() => setIsTrainingCostsOpen(true)} />
           </>
         )}
         {role === 'player' && (
           <>
-            <MenuRowItem icon={Calendar} label="Attendance" onClick={() => setActiveTab('attendance')} />
-            <MenuRowItem icon={Receipt} label="Billing" onClick={() => setActiveTab('billing')} />
+            <MenuRowItem icon={Calendar} label={t('profile.attendance')} onClick={() => setActiveTab('attendance')} />
+            <MenuRowItem icon={Receipt} label={t('profile.billing')} onClick={() => setActiveTab('billing')} />
           </>
         )}
+        <MenuRowItem icon={Globe} label={t('profile.language')} onClick={() => setIsLanguageOpen(true)} />
       </div>
 
       {role === 'player' && (
         <div className="mt-8">
           <MenuRowItem 
             icon={Trash2} 
-            label="Delete account" 
+            label={t('profile.deleteAccount')} 
             showChevron={false} 
             onClick={() => setIsDeleteConfirmOpen(true)} 
             className="text-destructive hover:text-destructive/80"
@@ -132,17 +138,21 @@ export const ProfileView: React.FC = () => {
         <CoachPublicGamesView onClose={() => setIsPublicGamesOpen(false)} />
       )}
 
+      {isLanguageOpen && (
+        <LanguageSelectView onClose={() => setIsLanguageOpen(false)} />
+      )}
+
       <Dialog
         isOpen={isDeleteConfirmOpen}
         onClose={() => setIsDeleteConfirmOpen(false)}
-        title="Delete account"
-        description="Are you sure you want to delete your account? This action cannot be undone."
-        primaryButtonText="Delete account"
+        title={t('profile.deleteConfirmTitle')}
+        description={t('profile.deleteConfirmDesc')}
+        primaryButtonText={t('profile.deleteAccount')}
         primaryButtonOnClick={() => {
           setIsDeleteConfirmOpen(false);
           setFlowState('splash');
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t('profile.cancel')}
         secondaryButtonOnClick={() => setIsDeleteConfirmOpen(false)}
       />
     </div>

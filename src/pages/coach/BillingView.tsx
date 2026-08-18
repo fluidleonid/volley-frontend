@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
-import { Badge } from '../../shared/ui/badge';
+import { useTranslation } from 'react-i18next';
+import { Badge } from '../../shared/ui/Badge';
 import { SettlePaymentSheet } from '../../features/payment/SettlePaymentSheet';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { CustomDateRangePicker, DateRange } from '../../shared/ui/CustomDateRangePicker';
+import { TransactionListItem } from '../../entities/billing/ui/TransactionListItem';
+import { PlayerBillingSheet } from '../../entities/player/ui/PlayerBillingSheet';
+import { Player } from '../../shared/types/index';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 
 import { useScroll } from '../../shared/hooks/useScroll';
@@ -83,13 +87,19 @@ const coachMockBillingRaw: CoachBillingRecord[] = [
 ];
 
 export const BillingView: React.FC = () => {
+  const { t } = useTranslation();
   const { setActiveTab, role } = useAppStore();
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
   const scrolled = useScroll();
   
   const [coachTab, setCoachTab] = useState<'public' | 'private'>('public');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange>({ label: 'All time', start: null, end: null });
+  const [dateRange, setDateRange] = useState<DateRange>({
+    label: 'All time',
+    startDate: undefined,
+    endDate: undefined,
+  });
+  const [selectedBillingPlayer, setSelectedBillingPlayer] = useState<Player | null>(null);
 
   const filteredCoachRecords = coachMockBillingRaw.filter(r => r.isPublic === (coachTab === 'public'));
   const coachGroups = filteredCoachRecords.reduce((acc, record) => {
@@ -120,7 +130,7 @@ export const BillingView: React.FC = () => {
           <div className="flex items-center justify-between h-[44px]">
             {role === 'coach' ? (
               <h1 className="text-[30px] font-bold text-white tracking-tight">
-                Cashflow
+                {t('nav.cashflow', 'Cashflow')}
               </h1>
             ) : (
               <div className="flex items-center gap-2">
@@ -131,7 +141,7 @@ export const BillingView: React.FC = () => {
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <h1 className="text-[28px] font-bold text-white tracking-tight">
-                  Billing History
+                  {t('player.billingHistory', 'Billing History')}
                 </h1>
               </div>
             )}
@@ -143,7 +153,13 @@ export const BillingView: React.FC = () => {
                 onClick={() => setIsDatePickerOpen(true)}
                 className="h-[44px] px-4 flex items-center justify-center bg-card/60 backdrop-blur-md text-primary font-bold tracking-tight border-0 cursor-pointer hover:bg-card/80 active:scale-95 transition-all"
               >
-                {dateRange.label}
+                {dateRange.label === 'All time' ? t('coach.allTime', 'All time') :
+                 dateRange.label === 'This month' ? t('coach.thisMonth', 'This month') :
+                 dateRange.label === 'Last month' ? t('coach.lastMonth', 'Last month') :
+                 dateRange.label === 'This year' ? t('coach.thisYear', 'This year') :
+                 dateRange.label === 'Last year' ? t('coach.lastYear', 'Last year') :
+                 dateRange.label === 'Custom' ? t('common.custom', 'Custom') :
+                 dateRange.label}
               </Badge>
             )}
           </div>
@@ -152,32 +168,32 @@ export const BillingView: React.FC = () => {
         {/* Top Cards & Segments */}
         <div className="pt-2">
           {role === 'coach' ? (
-            <div className={`grid gap-3 ${dateRange.label === 'All time' ? 'grid-cols-2' : 'grid-cols-1'}`}>
-              <StatCard value="160K ֏" label="Total" />
-              {dateRange.label === 'All time' && (
-                <StatCard value="16,000 ֏" label="This month" />
+            <div className={`grid gap-3 ${dateRange.label === t('coach.allTime', 'All time') ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              <StatCard value="160K ֏" label={t('coach.total', 'Total')} />
+              {dateRange.label === t('coach.allTime', 'All time') && (
+                <StatCard value="16,000 ֏" label={t('coach.thisMonth', 'This month')} />
               )}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              <StatCard value="160K ֏" label="Total" />
-              <StatCard value="16,000 ֏" label="This month" />
+              <StatCard value="160K ֏" label={t('coach.total', 'Total')} />
+              <StatCard value="16,000 ֏" label={t('coach.thisMonth', 'This month')} />
             </div>
           )}
 
           {role === 'coach' && (
             <div className="flex rounded-[20px] bg-card p-1 mt-6 relative w-full shadow-lg">
-              {['public', 'private'].map((t, i) => {
-                const isActive = coachTab === t;
+              {['public', 'private'].map((tab, i) => {
+                const isActive = coachTab === tab;
                 return (
-                  <div key={t} className="relative flex-1 flex">
+                  <div key={tab} className="relative flex-1 flex">
                     <button
-                      onClick={() => setCoachTab(t as 'public' | 'private')}
+                      onClick={() => setCoachTab(tab as 'public' | 'private')}
                       className={`flex-1 rounded-[20px] py-1.5 text-sm font-bold transition-all relative z-10 capitalize ${
                         isActive ? 'bg-secondary text-white shadow' : 'text-muted-foreground hover:text-white'
                       }`}
                     >
-                      {t}
+                      {t(`coach.${tab}`, tab)}
                     </button>
                     {!isActive && i === 0 && coachTab !== 'private' && (
                       <div className="absolute right-0 top-[20%] bottom-[20%] w-[1px] bg-secondary pointer-events-none" />
@@ -203,10 +219,10 @@ export const BillingView: React.FC = () => {
                 <div key={group.date}>
                   <ListGroupHeader 
                     title={group.date}
-                    subtitle={`${formatAmount(totalEarned)} total`}
+                    subtitle={`${formatAmount(totalEarned)} ${t('coach.total', 'total').toLowerCase()}`}
                     rightContent={
                       unpaidEarnedCount > 0 ? (
-                        <span className="text-[#FF453A]">• {unpaidEarnedCount} {unpaidEarnedCount === 1 ? 'payment' : 'payments'} to settle</span>
+                        <span className="text-[#FF453A]">• {unpaidEarnedCount} {unpaidEarnedCount === 1 ? t('coach.paymentToSettle', 'payment to settle') : t('coach.paymentsToSettle', 'payments to settle')}</span>
                       ) : undefined
                     }
                   />
@@ -214,28 +230,12 @@ export const BillingView: React.FC = () => {
                     {group.records.map((record, index) => {
                       const p = getPlayer(record.playerId);
                       return (
-                        <div 
-                          key={`${record.id}-${index}`} 
-                          onClick={() => setSelectedRecord(record)}
-                          className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
-                        >
-                          <div className="flex items-center gap-3 pointer-events-none">
-                            {p && <Avatar src={p.avatarUrl} alt={p.name} initials={p.name[0]} size="sm" hasBorder={false} />}
-                            <span className="font-bold text-white text-[16px]">{p ? p.name : 'Unknown Player'}</span>
-                          </div>
-                          <div className="flex items-center gap-3 pointer-events-none">
-                            <span className="font-medium text-white text-[15px]">{record.amount}</span>
-                            {record.status === 'Paid' ? (
-                              <Badge variant="default" className="w-[72px]">
-                                Paid
-                              </Badge>
-                            ) : (
-                              <Badge variant="neutral" className="w-[72px]">
-                                Settle
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
+                        <TransactionListItem
+                          key={`${record.id}-${index}`}
+                          record={record as any}
+                          player={p}
+                          onClick={(r) => setSelectedRecord(r as any)}
+                        />
                       );
                     })}
                   </div>
@@ -243,7 +243,7 @@ export const BillingView: React.FC = () => {
               );
             }) : (
               <div className="text-center py-12 text-muted-foreground">
-                <p>No records found for this period.</p>
+                <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
               </div>
             )
           ) : (
@@ -263,8 +263,8 @@ export const BillingView: React.FC = () => {
                         {record.amount}
                       </div>
                       <div className="col-span-1 flex justify-end">
-                        <Badge variant={record.status === 'Paid' ? 'default' : 'neutral'} className="w-[72px]">
-                          {record.status}
+                        <Badge variant={record.status === 'Paid' ? 'default' : 'neutral'} className="min-w-[72px] w-auto px-2 whitespace-nowrap">
+                          {t(`coach.${record.status.toLowerCase()}`, record.status)}
                         </Badge>
                       </div>
                     </div>
@@ -277,9 +277,21 @@ export const BillingView: React.FC = () => {
       </div>
 
       <SettlePaymentSheet
-        isOpen={!!selectedRecord}
+        isOpen={!!selectedRecord && !selectedBillingPlayer}
         onClose={() => setSelectedRecord(null)}
         record={selectedRecord}
+        onPlayerClick={(player) => setSelectedBillingPlayer(player)}
+      />
+      
+      <PlayerBillingSheet
+        isOpen={!!selectedBillingPlayer}
+        onClose={() => setSelectedBillingPlayer(null)}
+        player={selectedBillingPlayer}
+        hasParent={true}
+        onCloseAll={() => {
+          setSelectedBillingPlayer(null);
+          setSelectedRecord(null);
+        }}
       />
       
       <CustomDateRangePicker

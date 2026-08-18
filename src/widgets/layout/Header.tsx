@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { useAppStore } from '../../app/store/appStore';
 import { Shield, User, Coffee, Sparkles, Box, ChevronLeft, X } from 'lucide-react';
@@ -42,20 +43,21 @@ export const Header: React.FC<HeaderProps> = ({
   const windowScrolled = useScroll();
   const scrolled = forceScrolled ?? windowScrolled;
   const { role, setRole, currentUser, playerState, setActiveTab } = useAppStore();
+  const { t } = useTranslation();
 
   const getStatusDisplay = () => {
     switch (playerState) {
       case 'spectating':
-        return { label: 'Spectating', icon: Box, color: 'text-muted-foreground' };
+        return { label: t('status.spectating'), icon: Box, color: 'text-muted-foreground' };
       case 'queued':
       case 'match_found':
-        return { label: 'Queued', icon: Sparkles, color: 'text-muted-foreground' };
+        return { label: t('status.queued'), icon: Sparkles, color: 'text-muted-foreground' };
       case 'playing':
-        return { label: 'Training', icon: Sparkles, color: 'text-muted-foreground' };
+        return { label: t('status.training'), icon: Sparkles, color: 'text-muted-foreground' };
       case 'resting':
-        return { label: 'Resting', icon: Coffee, color: 'text-muted-foreground' };
+        return { label: t('status.resting'), icon: Coffee, color: 'text-muted-foreground' };
       default:
-        return { label: 'Spectating', icon: Box, color: 'text-muted-foreground' };
+        return { label: t('status.spectating'), icon: Box, color: 'text-muted-foreground' };
     }
   };
 
@@ -117,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               {role === 'coach' ? (
                 <span className="text-primary font-bold flex items-center gap-1 leading-none">
-                  <Shield className="h-3 w-3 text-primary" /> Admin
+                  <Shield className="h-3 w-3 text-primary" /> {t('roles.admin')}
                 </span>
               ) : (
                 <User className="h-3 w-3 inline" />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { FinishGameSheet } from './FinishGameSheet';
 import { PlayerDetailSheet } from '../../player/ui/PlayerDetailSheet';
@@ -21,6 +22,7 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
   onCloseAll,
   hasParent,
 }) => {
+  const { t } = useTranslation();
   const { currentUser, role } = useAppStore();
   const [isFinishSheetOpen, setIsFinishSheetOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -65,13 +67,13 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
         onClose={onClose}
         onCloseAll={handleCloseAllSheets}
         hasParent={hasParent}
-        title="Match details"
+        title={t('home.matchDetails', 'Match details')}
         zIndex={100}
       >
         <div className="-mx-4 px-[60px]">
           {/* Status Pill Badge */}
           <div className="flex justify-center my-3">
-            <Badge variant="neutral" size="lg">Playing</Badge>
+            <Badge variant="neutral" size="lg">{t('home.playing', 'Playing')}</Badge>
           </div>
 
           {/* Teams & Avatars (44px avatars, vs in center, NO Team A/B text) */}
@@ -102,15 +104,15 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
           {/* 3 Metrics Row (NO divider line) */}
           <div className="my-6 grid grid-cols-3 gap-x-2 text-left">
             <div>
-              <div className="font-sans text-xs text-muted-foreground font-medium">Date</div>
+              <div className="font-sans text-xs text-muted-foreground font-medium">{t('common.date', 'Date')}</div>
               <div className="font-sans text-sm font-semibold text-white mt-1">Jul 1, 2026</div>
             </div>
             <div>
-              <div className="font-sans text-xs text-muted-foreground font-medium">Time</div>
+              <div className="font-sans text-xs text-muted-foreground font-medium">{t('common.time', 'Time')}</div>
               <div className="font-sans text-sm font-semibold text-white mt-1">16m 40s</div>
             </div>
             <div>
-              <div className="font-sans text-xs text-muted-foreground font-medium">Court</div>
+              <div className="font-sans text-xs text-muted-foreground font-medium">{t('common.court', 'Court')}</div>
               <div className="font-sans text-sm font-semibold text-white mt-1"># 1</div>
             </div>
           </div>
@@ -125,7 +127,7 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
                 : 'bg-card text-muted-foreground border border-border opacity-50 cursor-not-allowed'
             }`}
           >
-            {canFinishGame ? 'Finish' : 'Only players can finish'}
+            {canFinishGame ? t('common.finish', 'Finish') : t('home.onlyPlayersFinish', 'Only players can finish')}
           </button>
         </div>
       </BottomSheet>

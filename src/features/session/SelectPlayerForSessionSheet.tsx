@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../shared/ui/Avatar';
 import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/Input';
@@ -34,6 +35,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
   onCreateNewPlayer,
   hideAddButtons = false,
 }) => {
+  const { t } = useTranslation();
   const { leaderboard } = useAppStore(); // Assuming leaderboard has all players
   
   // Extract Player objects from leaderboard entries
@@ -91,7 +93,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
       disabled={localSelectedIds.length === 0}
       className="pointer-events-auto shadow-lg shadow-primary/20"
     >
-      {mode === 'single' ? 'Select' : 'Add'}
+      {mode === 'single' ? t('common.select', 'Select') : t('common.add', 'Add')}
     </Button>
   );
 
@@ -105,7 +107,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
             icon={<Search className="h-5 w-5" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search player"
+            placeholder={t('coach.players.searchPlaceholder', 'Search player')}
           />
         </div>
 
@@ -121,7 +123,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
                 <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
                   <Plus className="h-5 w-5 text-primary" />
                 </div>
-                <span className="relative z-10 text-base font-semibold text-white tracking-tight">Create & schedule new player</span>
+                <span className="relative z-10 text-base font-semibold text-white tracking-tight">{t('coach.players.createScheduleNew', 'Create & schedule new player')}</span>
               </button>
               <button
                 onClick={onAddGuest}
@@ -131,7 +133,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
                 <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-secondary shrink-0">
                   <HatGlasses className="h-5 w-5 text-primary" />
                 </div>
-                <span className="relative z-10 text-base font-semibold text-white tracking-tight">Schedule with guest player</span>
+                <span className="relative z-10 text-base font-semibold text-white tracking-tight">{t('coach.players.scheduleWithGuest', 'Schedule with guest player')}</span>
               </button>
             </div>
           )}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../shared/ui/button';
 import { Dialog } from '../../../shared/ui/Dialog';
 import { Check } from 'lucide-react';
@@ -19,6 +20,7 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
   player,
   hasParent = false,
 }) => {
+  const { t } = useTranslation();
   const [selectedLevelId, setSelectedLevelId] = useState<string>('beginner');
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -42,7 +44,7 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
 
   return (
     <>
-      <BottomSheet isOpen={isOpen} onClose={onClose} title="Change Level" hasParent={hasParent} zIndex={150}>
+      <BottomSheet isOpen={isOpen} onClose={onClose} title={t('coach.players.changeLevel', 'Change Level')} hasParent={hasParent} zIndex={150}>
         <div className="flex flex-col h-full mt-4">
           <div className="space-y-2.5 w-full mb-8">
             {skillLevels.map((level) => {
@@ -60,13 +62,13 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
                 >
                   <div>
                     <div className="text-base font-semibold text-white leading-snug">
-                      {level.title}
+                      {t(`onboarding.levels.${level.id}.title`, level.title)}
                     </div>
                     <div className="text-xs font-normal text-muted-foreground">
-                      {level.id === 'beginner' ? 'Wants to learn' : 
-                       level.id === 'amateur' ? 'Plays for fun' : 
-                       level.id === 'advanced' ? 'Plays to win' : 
-                       level.id === 'pro' ? 'Lives for this game' : 
+                      {level.id === 'beginner' ? t('coach.players.levelSubtitles.beginner', 'Wants to learn') : 
+                       level.id === 'amateur' ? t('coach.players.levelSubtitles.amateur', 'Plays for fun') : 
+                       level.id === 'advanced' ? t('coach.players.levelSubtitles.advanced', 'Plays to win') : 
+                       level.id === 'pro' ? t('coach.players.levelSubtitles.pro', 'Lives for this game') : 
                        level.subtitle}
                     </div>
                   </div>
@@ -83,7 +85,7 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
 
           <div className="mt-auto w-full pb-8">
             <Button fullWidth size="xl" onClick={handleChangeClick}>
-              Change
+              {t('common.change', 'Change')}
             </Button>
           </div>
         </div>
@@ -92,11 +94,11 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
       <Dialog
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
-        title="Are you sure?"
-        description="XP will be reset to the initial level of this tier."
-        primaryButtonText="Confirm change"
+        title={t('common.areYouSure', 'Are you sure?')}
+        description={t('coach.players.xpResetDesc', 'XP will be reset to the initial level of this tier.')}
+        primaryButtonText={t('coach.players.confirmChange', 'Confirm change')}
         primaryButtonOnClick={handleConfirm}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t('common.cancel', 'Cancel')}
         secondaryButtonOnClick={() => setIsConfirmOpen(false)}
       />
     </>

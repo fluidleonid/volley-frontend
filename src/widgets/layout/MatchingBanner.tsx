@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { Player } from '../../shared/types/index';
 
@@ -74,6 +75,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     invitedPlayers,
     role,
   } = useAppStore();
+  const { t } = useTranslation();
 
   const [dotCount, setDotCount] = useState(1);
   const [bannerStage, setBannerStage] = useState<BannerStage>('searching');
@@ -191,7 +193,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
   };
 
   const handleBannerClick = () => {
-    if (bannerStage === 'all_accepted') setMatchDetailOpen(true);
+    if (bannerStage === 'all_accepted' || playerState === 'playing') setMatchDetailOpen(true);
   };
 
   const fillAngle = Math.min(360, Math.max(0, progress * 360));
@@ -230,11 +232,11 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
         <div className="flex h-[56px] items-center rounded-[28px] bg-card p-2 pl-3.5 animate-slide-up w-full">
           <div>
             <div className="text-xs font-bold text-white leading-none flex items-center">
-              <span>Finding match</span>
+              <span>{t('banner.findingMatch')}</span>
               <span className="inline-block w-3 text-left">{'.'.repeat(dotCount)}</span>
             </div>
             <div className="mt-1 text-[11px] text-muted-foreground leading-none">
-              Looking for free players around
+              {t('banner.lookingForPlayers')}
             </div>
           </div>
         </div>
@@ -245,10 +247,10 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
       return (
         <div className="flex h-[56px] items-center justify-between rounded-[28px] bg-card p-2 pl-3.5 animate-slide-up w-full">
           <div className="flex flex-col justify-center">
-            <div className="text-xs font-bold text-white leading-none mb-1">Finding a court…</div>
+            <div className="text-xs font-bold text-white leading-none mb-1">{t('banner.findingCourt')}</div>
             <div className="flex items-center gap-1.5">
               <TeamAvatars players={displayTeamA} forceAccepted />
-              <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">vs</span>
+              <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">{t('banner.vs')}</span>
               <TeamAvatars players={displayTeamB} forceAccepted />
             </div>
           </div>
@@ -268,14 +270,14 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
           <div className="flex flex-col justify-center">
             <div className="text-xs font-bold text-white leading-none mb-1">
               {playerState === 'playing' || bannerStage === 'all_accepted'
-                ? 'Playing'
+                ? t('banner.playing')
                 : bannerStage === 'waiting_others'
-                ? `Waiting for ${remainingToWait} more…`
-                : 'Match found!'}
+                ? t('banner.waitingForMore', { count: remainingToWait })
+                : t('banner.matchFound')}
             </div>
             <div className="flex items-center gap-1.5">
               <TeamAvatars players={teamAWithAccepted} />
-              <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">vs</span>
+              <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">{t('banner.vs')}</span>
               <TeamAvatars players={teamBWithAccepted} />
             </div>
           </div>
@@ -294,7 +296,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
               }}
               className="relative flex h-[44px] w-[90px] items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform active:scale-95 overflow-hidden"
             >
-              <span className="relative z-10 font-extrabold text-primary-foreground">Accept</span>
+              <span className="relative z-10 font-extrabold text-primary-foreground">{t('banner.accept')}</span>
             </button>
           )}
         </div>
@@ -331,11 +333,11 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
           <div className="w-[calc(100%-44px)] shrink-0 flex h-[56px] items-center justify-between rounded-[28px] bg-card p-2 pl-3.5 opacity-95 hover:opacity-100 transition-opacity">
             <div className="flex flex-col justify-center">
               <div className="text-xs font-bold text-white leading-none mb-1">
-                {isInviteHost ? 'Finding a court…' : 'Next game invite'}
+                {isInviteHost ? t('banner.findingCourt') : t('banner.nextGameInvite')}
               </div>
               <div className="flex items-center gap-1.5">
                 <TeamAvatars players={secondTeamA} forceAccepted />
-                <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">vs</span>
+                <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-tight">{t('banner.vs')}</span>
                 <TeamAvatars players={secondTeamB} forceAccepted />
               </div>
             </div>

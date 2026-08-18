@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary'
 import './index.css'
+import '../shared/i18n/config'
 import App from './App'
 
 function Fallback({ error }: { error: any }) {

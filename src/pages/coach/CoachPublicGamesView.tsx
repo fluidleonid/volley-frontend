@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { MatchHistoryCard } from '../../entities/match/ui/MatchHistoryCard';
 import { Trophy } from 'lucide-react';
 import { Match } from '../../shared/types/index';
 import { Header } from '../../widgets/layout/Header';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../shared/ui/Badge';
 import { CustomDateRangePicker, DateRange } from '../../shared/ui/CustomDateRangePicker';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
@@ -13,9 +14,10 @@ interface CoachPublicGamesViewProps {
 }
 
 export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const { recentMatches } = useAppStore();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange>({ label: 'All time', start: null, end: null });
+  const [dateRange, setDateRange] = useState<DateRange>({ label: t('coach.allTime', 'All time'), start: null, end: null });
 
   const groupedByDate = useMemo(() => {
     const groups: Record<string, {
@@ -48,12 +50,12 @@ export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onCl
   }, [recentMatches]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-right-full duration-300 max-w-[480px] mx-auto px-4 pb-20">
+    <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-right-full duration-300 max-w-[480px] mx-auto px-4">
       <Header 
         variant="page" 
         sticky 
         stickyClassName="-mx-4 px-4"
-        title="Public games" 
+        title={t('profile.publicGames', 'Public games')}
         onBack={onClose}
         rightContent={
           <Badge 
@@ -67,16 +69,16 @@ export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onCl
         }
       />
 
-      <div className="flex-1 overflow-y-auto space-y-6 scrollbar-none pt-2">
+      <div className="flex-1 overflow-y-auto space-y-6 scrollbar-none pt-2 pb-8">
         {Object.entries(groupedByDate).map(([dateLabel, stats]) => (
           <div key={dateLabel} className="space-y-3">
             <ListGroupHeader
               title={dateLabel}
-              subtitle={`${stats.matches.length} match${stats.matches.length !== 1 ? 'es' : ''}`}
+              subtitle={t('games.matchesCount', '{{count}} matches', { count: stats.matches.length }).replace('{{count}}', stats.matches.length.toString())}
             />
             <div className="flex flex-col gap-2">
               {stats.matches.map((match) => (
-                <MatchHistoryCard key={match.id} match={match} variant="coach" />
+                <MatchHistoryCard key={match.id} match={match} />
               ))}
             </div>
           </div>
@@ -85,7 +87,7 @@ export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onCl
         {Object.keys(groupedByDate).length === 0 && (
           <div className="text-center py-10">
             <Trophy className="w-12 h-12 text-secondary mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm font-medium">No games played yet</p>
+            <p className="text-muted-foreground text-sm font-medium">{t('games.noGames', 'No games played yet')}</p>
           </div>
         )}
       </div>

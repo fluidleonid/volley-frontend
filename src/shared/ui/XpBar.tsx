@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ChevronRight } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export const XpBar: React.FC<XpBarProps> = ({
   label,
   onLabelClick,
 }) => {
+  const { t } = useTranslation();
   const filledSegments = Math.round((current / max) * segments);
 
   return (
@@ -27,7 +29,7 @@ export const XpBar: React.FC<XpBarProps> = ({
           className={`flex items-center gap-1 text-base font-bold text-white ${onLabelClick ? 'cursor-pointer hover:opacity-80 active:scale-95 transition-all' : ''}`}
           disabled={!onLabelClick}
         >
-          {label}
+          {t(`levels.${label.toLowerCase()}`, label)}
           {onLabelClick && <ChevronRight className="h-4 w-4" />}
         </button>
         <span className="text-xs text-muted-foreground">

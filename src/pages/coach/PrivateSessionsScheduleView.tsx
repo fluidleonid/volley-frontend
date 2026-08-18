@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Header } from '../../widgets/layout/Header';
+import { useTranslation } from 'react-i18next';
 import { CalendarClock, Plus } from 'lucide-react';
 import { EmptyState } from '../../shared/ui/EmptyState';
 import { PrivateSessionFlow } from '../../widgets/flows/PrivateSessionFlow';
+import { SessionListItem } from '../../entities/session/ui/SessionListItem';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
+import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
+import { Player } from '../../shared/types/index';
 
 interface PrivateSessionsScheduleViewProps {
   onClose: () => void;
@@ -49,8 +53,11 @@ const PAST_MOCK_GROUPS: SessionGroup[] = [
 ];
 
 export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
   const [isPrivateFlowOpen, setIsPrivateFlowOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<PrivateSession | null>(null);
 
   const groups = tab === 'upcoming' ? UPCOMING_MOCK_GROUPS : PAST_MOCK_GROUPS;
 
@@ -60,7 +67,7 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
         variant="page" 
         sticky 
         stickyClassName="-mx-4 px-4" 
-        title="Private schedule" 
+        title={t('profile.privateSchedule', 'Private schedule')} 
         onBack={onClose} 
         rightContent={
           tab === 'upcoming' && (
@@ -76,17 +83,17 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
 
       {/* Segment Controller */}
       <div className="flex rounded-[20px] bg-card p-1 mb-6 mt-4 relative w-full animate-fade-in">
-        {(['upcoming', 'past'] as const).map((t, i) => {
-          const isActive = tab === t;
+        {(['upcoming', 'past'] as const).map((tabKey, i) => {
+          const isActive = tab === tabKey;
           return (
-            <div key={t} className="relative flex-1 flex">
+            <div key={tabKey} className="relative flex-1 flex">
               <button
-                onClick={() => setTab(t)}
+                onClick={() => setTab(tabKey)}
                 className={`flex-1 rounded-[20px] py-1.5 text-sm font-bold transition-all relative z-10 capitalize ${
                   isActive ? 'bg-secondary text-white shadow' : 'text-muted-foreground hover:text-white'
                 }`}
               >
-                {t}
+                {t(`coach.schedule.${tabKey}`, tabKey)}
               </button>
               {/* Vertical Divider */}
               {!isActive && i === 0 && tab !== 'past' && (
@@ -103,46 +110,64 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
             <div key={group.dateLabel}>
               <ListGroupHeader 
                 title={group.dateLabel}
-                subtitle={`${group.sessions.length} total session${group.sessions.length !== 1 ? 's' : ''}`}
+                subtitle={t('coach.schedule.totalSessionsCount', '{{count}} total sessions', { count: group.sessions.length }).replace('{{count}}', group.sessions.length.toString())}
               />
 
               <div className="flex flex-col border-t border-border/60 pt-1">
                 {group.sessions.map((session) => (
-                  <div
+                  <SessionListItem
                     key={session.id}
-                    className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={session.avatarUrl}
-                        alt={session.name}
-                        className="w-9 h-9 rounded-full object-cover"
-                      />
-                      <span className="font-display text-base font-semibold text-white tracking-tight">
-                        {session.name}
-                      </span>
-                    </div>
-
-                    <span className="font-display text-base font-normal text-muted-foreground">
-                      {session.time}
-                    </span>
-                  </div>
+                    session={session}
+                    onClick={(s) => {
+                      setSelectedSession(s);
+                      setIsDetailsOpen(true);
+                    }}
+                  />
                 ))}
               </div>
             </div>
           ))
         ) : (
           <div className="pt-10">
-            <EmptyState message={`No ${tab} sessions`} icon={CalendarClock} />
+            <EmptyState message={t(`coach.schedule.no${tab.charAt(0).toUpperCase() + tab.slice(1)}Sessions`, `No ${tab} sessions`)} icon={CalendarClock} />
           </div>
         )}
       </div>
 
       <PrivateSessionFlow 
         isOpen={isPrivateFlowOpen}
-        onClose={() => setIsPrivateFlowOpen(false)}
+        onClose={() => {
+          setIsPrivateFlowOpen(false);
+          setTimeout(() => setSelectedSession(null), 300);
+        }}
         onSchedule={(data) => {
           console.log('Scheduled private session', data);
+        }}
+        initialPlayer={selectedSession ? { name: selectedSession.name, avatarUrl: selectedSession.avatarUrl } as Player : undefined}
+        readOnlyPlayer={!!selectedSession}
+      />
+
+      <SessionDetailsSheet
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        player={selectedSession ? {
+          id: selectedSession.id,
+          name: selectedSession.name,
+          avatarUrl: selectedSession.avatarUrl,
+          level: 10,
+          xp: 0,
+          status: 'spectating',
+          gamesPlayed: 0,
+          wins: 0,
+          bpToday: 0,
+          winStreak: 0,
+          hasTelegram: true,
+        } : null}
+        sessionTime={selectedSession?.time}
+        isPast={tab === 'past'}
+        onReschedule={() => {
+          setIsDetailsOpen(false);
+          setIsPrivateFlowOpen(true);
         }}
       />
     </div>

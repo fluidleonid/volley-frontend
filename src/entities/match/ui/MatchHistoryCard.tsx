@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { Match } from '../../../shared/types/index';
 import { MatchDetailSheet } from './MatchDetailSheet';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../shared/ui/badge';
 import { BpIcon } from '../../../shared/ui/icons/BpIcon';
 
@@ -12,6 +13,7 @@ export interface MatchHistoryCardProps {
 }
 
 export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onClick, variant = 'player' }) => {
+  const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const isWin = match.isWin;
 
@@ -59,11 +61,7 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
     <>
       <div
         onClick={handleClick}
-        className={
-          variant === 'coach'
-            ? "flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
-            : "flex flex-row items-center justify-between py-3 border-b border-solid border-border/60 last:border-b-0 w-full cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.99]"
-        }
+        className="flex flex-row items-center justify-between py-3 border-b border-solid border-border/60 last:border-b-0 w-full cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.99]"
       >
         {variant === 'coach' ? (
           <>
@@ -97,7 +95,7 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
                 <span
                   className={`font-display text-xs font-extrabold ${isWin ? 'text-primary' : 'text-[#FF3B30]'}`}
                 >
-                  {isWin ? 'W' : 'L'}
+                  {isWin ? t('games.winsShort', 'W') : t('games.lossesShort', 'L')}
                 </span>
               </div>
             </div>

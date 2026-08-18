@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { Input } from '../../../shared/ui/Input';
@@ -25,6 +26,7 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
   teamA,
   teamB,
 }) => {
+  const { t } = useTranslation();
   const { currentUser, finishMatch } = useAppStore();
   const [scoreA, setScoreA] = useState<string>('0');
   const [scoreB, setScoreB] = useState<string>('0');
@@ -63,7 +65,7 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
       onClose={onClose}
       onCloseAll={onCloseAll}
       hasParent={hasParent}
-      title="Enter score"
+      title={t('home.enterScore', 'Enter score')}
       zIndex={120}
     >
       <div className="-mx-4 px-[60px]">
@@ -130,7 +132,7 @@ export const FinishGameSheet: React.FC<FinishGameSheetProps> = ({
           onClick={handleSave}
           className="flex h-[52px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg transition-all active:scale-95 cursor-pointer mt-6"
         >
-          Submit
+          {t('common.submit', 'Submit')}
         </button>
       </div>
     </BottomSheet>

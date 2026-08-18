@@ -1,0 +1,363 @@
+{
+  "profile": {
+    "title": "Անձնական էջ",
+    "achievements": "Նվաճումներ",
+    "gamesPlayed": "Խաղացած խաղեր",
+    "wins": "Հաղթանակներ",
+    "bp": "BP",
+    "publicGames": "Հանրային խաղեր",
+    "publicSchedule": "Հանրային ժամանակացույց",
+    "privateSchedule": "Անձնական ժամանակացույց",
+    "trainingCosts": "Մարզումների արժեքը",
+    "attendance": "Հաճախելիություն",
+    "billing": "Վճարումներ",
+    "language": "Լեզու",
+    "deleteAccount": "Ջնջել հաշիվը",
+    "deleteConfirmTitle": "Ջնջել հաշիվը",
+    "deleteConfirmDesc": "Վստա՞հ եք, որ ցանկանում եք ջնջել ձեր հաշիվը: Այս գործողությունը անդառնալի է:",
+    "cancel": "Չեղարկել",
+    "sessionDetails": "Նիստի մանրամասներ",
+    "reschedule": "Վերապլանավորել",
+    "cancelSession": "Չեղարկել նիստը",
+    "cancelSessionTitle": "Չեղարկել նիստը",
+    "cancelSessionDesc": "Վստա՞հ եք, որ ցանկանում եք չեղարկել անձնական նիստը: Խաղացողը կծանուցվի:",
+    "keepSession": "Պահել նիստը"
+  },
+  "language": {
+    "title": "Լեզու",
+    "en": "English",
+    "ru": "Русский",
+    "am": "Հայերեն"
+  },
+  "nav": {
+    "home": "Գլխավոր",
+    "players": "Խաղացողներ",
+    "cashflow": "Ֆինանսներ",
+    "leaderboard": "Վարկանիշ",
+    "myGames": "Իմ խաղերը",
+    "billing": "Վճարումներ"
+  },
+  "status": {
+    "spectating": "Դիտող",
+    "queued": "Հերթում",
+    "training": "Մարզում",
+    "resting": "Հանգստանում է"
+  },
+  "roles": {
+    "coach": "Մարզիչ",
+    "admin": "Ադմին"
+  },
+  "banner": {
+    "findingMatch": "Խաղի որոնում",
+    "lookingForPlayers": "Գտնում ենք ազատ խաղացողներ մոտակայքում",
+    "findingCourt": "Հրապարակի որոնում...",
+    "playing": "Խաղ",
+    "waitingForMore": "Սպասում ենք ևս {{count}}...",
+    "matchFound": "Խաղը գտնված է:",
+    "accept": "Ընդունել",
+    "nextGameInvite": "Հրավեր հաջորդ խաղին",
+    "vs": "vs"
+  },
+  "closedSession": {
+    "title": "Ակտիվ մարզումներ չկան",
+    "description": "Սկսել կամ պլանավորել մարզում, որպեսզի բացեք խաղերի ընտրությունը և խաղացողների գրանցումը:"
+  },
+  "common": {
+    "continue": "Շարունակել",
+    "cancel": "Չեղարկել",
+    "skip": "Բաց թողնել",
+    "selectPeriod": "Ընտրել ժամանակահատվածը",
+    "selectDate": "Ընտրել ամսաթիվ",
+    "selectTime": "Ընտրել ժամ",
+    "custom": "Այլ",
+    "save": "Պահպանել",
+    "done": "Պատրաստ է",
+    "change": "Փոխել",
+    "select": "Ընտրել",
+    "add": "Ավելացնել",
+    "submit": "Ուղարկել",
+    "finish": "Ավարտել",
+    "close": "Փակել",
+    "confirm": "Հաստատել",
+    "areYouSure": "Վստա՞հ եք:",
+    "date": "Ամսաթիվ",
+    "time": "Ժամանակ",
+    "court": "Հրապարակ",
+    "mode": "Ռեժիմ",
+    "hard": "Hard",
+    "default": "Սովորական",
+    "win": "Հաղթանակ",
+    "loss": "Պարտություն",
+    "matches": "Խաղեր",
+    "contact": "Կապ",
+    "message": "Հաղորդագրություն",
+    "phone": "Հեռախոս",
+    "player": "Խաղացող",
+    "copyLink": "Պատճենել հղումը",
+    "saveChanges": "Պահպանել փոփոխությունները",
+    "startTime": "Սկզբի ժամանակը",
+    "invite": "Հրավիրել",
+    "days": {
+      "mon": "Երկուշաբթի",
+      "tue": "Երեքշաբթի",
+      "wed": "Չորեքշաբթի",
+      "thu": "Հինգշաբթի",
+      "fri": "Ուրբաթ",
+      "sat": "Շաբաթ",
+      "sun": "Կիրակի"
+    },
+    "yesterday": "Երեկ"
+  },
+  "home": {
+    "gamesPlayed": "Խաղացած խաղեր",
+    "wins": "Հաղթանակներ",
+    "bpToday": "BP այսօր",
+    "startTraining": "Սկսել մարզումը",
+    "sitOut": "Հանգստանալ",
+    "inviteToPlay": "Հրավիրել խաղալ",
+    "inviteDesc": "Կիսվեք այս հղումով կամ QR կոդով, որպեսզի խաղացողները միանան մարզմանը:",
+    "scanToJoin": "Սկանավորեք Telegram-ով միանալու համար",
+    "linkCopied": "Հղումը պատճենված է:",
+    "shareLink": "Կիսվել հղումով",
+    "hardMode": "Hard mode",
+    "stop": "Կանգնեցնել",
+    "continueToPlay": "Շարունակել խաղալ",
+    "sessionScheduled": "Մարզումն պլանավորված է: Պատրաստվեք միանալուն:",
+    "noSession": "Այս պահին ակտիվ մարզումներ չկան:",
+    "scheduleTraining": "Պլանավորել մարզում",
+    "courts": "Հրապարակներ",
+    "endSession": "Ավարտել մարզումը",
+    "todaysPlayers": "Այսօրվա խաղացողները",
+    "noPlayers": "Դեռ խաղացողներ չկան",
+    "recentGames": "Վերջին խաղերը",
+    "noGames": "Դեռ խաղեր չկան",
+    "endSessionTitle": "Ավարտե՞լ հանրային մարզումը",
+    "endSessionDesc": "Վստա՞հ եք, որ ցանկանում եք ավարտել ակտիվ մարզումը: Խաղերի ընտրությունը և գրանցումը կփակվեն:",
+    "confirmEnd": "Հաստատել ավարտը",
+    "cancel": "Չեղարկել",
+    "matchDetails": "Խաղի մանրամասներ",
+    "playing": "Խաղում են",
+    "onlyPlayersFinish": "Ավարտել կարող է միայն խաղացողը",
+    "enterScore": "Մուտքագրեք հաշիվը",
+    "onCourt": "Հրապարակում",
+    "training": "Մարզում",
+    "spectating": "Դիտում են",
+    "matchmaking": "Խաղի որոնում",
+    "todaysPrivates": "Այսօրվա անձնական մարզումները",
+    "noScheduledSessionsYet": "Դեռ պլանավորված մարզումներ չկան"
+  },
+  "games": {
+    "title": "Իմ խաղերը",
+    "matchesCount": "{{count}} խաղ",
+    "winsShort": "Հ",
+    "lossesShort": "Պ",
+    "noGames": "Դեռ խաղեր չկան"
+  },
+  "onboarding": {
+    "welcomeTitle": "Բարի գալուստ խաղ:",
+    "chooseSkill": "Ընտրեք ձեր հմտության մակարդակը",
+    "levels": {
+      "beginner": {
+        "title": "Սկսնակ",
+        "subtitle": "Ուզում եմ սովորել"
+      },
+      "amateur": {
+        "title": "Սիրողական",
+        "subtitle": "Խաղում եմ հաճույքի համար"
+      },
+      "advanced": {
+        "title": "Առաջադեմ",
+        "subtitle": "Խաղում եմ հաղթելու համար"
+      },
+      "pro": {
+        "title": "Պրոֆեսիոնալ",
+        "subtitle": "Սա իմ աշխատանքն է"
+      }
+    }
+  },
+  "player": {
+    "achievements": {
+      "title": "Նվաճումներ",
+      "earnedDate": "Ստացվել է {{date}}",
+      "allCategories": "Բոլորը",
+      "earned": "Ստացված",
+      "locked": "Փակված"
+    },
+    "billingHistory": "Վճարումների պատմություն",
+    "leaderboard": {
+      "today": "Այսօր",
+      "thisWeek": "Այս շաբաթ",
+      "thisMonth": "Այս ամիս",
+      "total": "Ընդհանուր",
+      "noRankings": "Դեռ վարկանիշ չկա",
+      "noRankingsDesc": "Խաղացողների արդյունքները կհավաքվեն այստեղ"
+    },
+    "invite": {
+      "fillCourt": "Լրացրեք հրապարակը — ընտրեք 1 կամ 2 խաղացող",
+      "addOpponents": "Ավելացրեք 2 հակառակորդ խաղը սկսելու համար",
+      "readyToPlay": "Պատրաստ են խաղալ",
+      "addOpponentBalance": "Ավելացրեք ևս 1 հակառակորդ հավասարակշռության համար",
+      "addTeammateBalance": "Ավելացրեք 1 թիմակից հավասարակշռության համար",
+      "addTeammate": "Ավելացնել թիմակից",
+      "addOpponent": "Ավելացնել հակառակորդ",
+      "selectTeammate": "Ընտրել թիմակից",
+      "selectOpponents": "Ընտրել հակառակորդ",
+      "pick1ForTeam": "Ընտրեք 1 խաղացող ձեր թիմի համար",
+      "pick1Or2ForOpposing": "Ընտրեք 1 կամ 2 խաղացող հակառակորդի թիմի համար"
+    }
+  },
+  "coach": {
+    "home": {
+      "reserved": "Ամրագրված է"
+    },
+    "players": {
+      "playerDetails": "Խաղացողի պրոֆիլ",
+      "changeLevel": "Փոխել մակարդակը",
+      "xpResetDesc": "XP-ն կվերականգնվի սկզբնական արժեքին:",
+      "confirmChange": "Հաստատել փոփոխությունը",
+      "linkAccount": "Կապել հաշիվը",
+      "inPersonOnly": "Միայն անձամբ",
+      "schedulePrivate": "Պլանավորել անձնական մարզում",
+      "selectPlayerToLink": "Ընտրեք խաղացող կապելու համար",
+      "createNewPlayer": "Ստեղծել նոր խաղացող",
+      "addDetailsForDB": "Ավելացրեք տվյալները տվյալների բազայում",
+      "playerName": "Խաղացողի անունը*",
+      "enterPlayerName": "Մուտքագրեք խաղացողի անունը",
+      "enterPhone": "Մուտքագրեք հեռախոսահամարը",
+      "addPlayer": "Ավելացնել խաղացող",
+      "guestName": "Հյուրի անունը*",
+      "enterGuestName": "Մուտքագրեք հյուրի անունը",
+      "addGuest": "Ավելացնել հյուր",
+      "addGuestPlayer": "Ավելացնել հյուր խաղացող",
+      "checkInGuest": "Գրանցել հյուրին",
+      "searchPlaceholder": "Որոնել խաղացող",
+      "createScheduleNew": "Ստեղծել և պլանավորել նոր խաղացող",
+      "scheduleWithGuest": "Պլանավորել հյուր խաղացողի հետ",
+      "authorized": "Լիազորված",
+      "manual": "Ձեռքով",
+      "totalPlayers": "Բոլոր խաղացողները",
+      "active7d": "Ակտիվ 7 օր",
+      "manual7d": "Ձեռքով 7 օր",
+      "noPlayersFound": "Այս կատեգորիայում խաղացողներ չգտնվեցին",
+      "levelSubtitles": {
+        "beginner": "Ուզում է սովորել",
+        "amateur": "Խաղում է հաճույքի համար",
+        "advanced": "Խաղում է հաղթելու համար",
+        "pro": "Դա իր ապրելակերպն է"
+      }
+    },
+    "session": {
+      "checkIn": "Գրանցվել",
+      "checkOut": "Դուրս գալ",
+      "todaysAttendance": "Այսօրվա հաճախելիությունը",
+      "checkInRegistered": "Գրանցեք գրանցված խաղացողներին",
+      "privateSession": "Անձնական մարզում",
+      "reschedule": "Վերապլանավորել մարզումը",
+      "selectNewDateTime": "Ընտրեք նոր ամսաթիվ և ժամ",
+      "selectPlayerSchedule": "Ընտրեք խաղացող և պլանավորեք մարզումը",
+      "selectPlayer": "Ընտրեք խաղացող",
+      "scheduleSession": "Պլանավորել մարզում"
+    },
+    "schedule": {
+      "upcoming": "Առաջիկա",
+      "past": "Անցած",
+      "noUpcomingSessions": "Առաջիկա մարզումներ չկան",
+      "noPastSessions": "Անցած մարզումներ չկան",
+      "totalSessionsCount": "{{count}} մարզում ընդհանուր",
+      "pickDate": "Ընտրեք ամսաթիվ",
+      "pickTime": "Ընտրեք ժամ",
+      "regularWeeklySchedule": "Շաբաթական սովորական ժամանակացույց",
+      "addSlot": "Ավելացնել ժամ",
+      "specialDates": "Հատուկ ամսաթվեր",
+      "addDate": "Ավելացնել ամսաթիվ",
+      "noSpecialDates": "Դեռ հատուկ ամսաթվեր չկան",
+      "startAt": "Սկիզբը՝ {{time}}",
+      "addSpecialDateSession": "Ավելացնել մարզում հատուկ ամսաթվով",
+      "addSpecialSession": "Ավելացնել հատուկ մարզում",
+      "saveSchedule": "Պահպանել ժամանակացույցը"
+    },
+    "allTime": "Ամբողջ ժամանակի համար",
+    "total": "Ընդհանուր",
+    "thisMonth": "Այս ամիս",
+    "lastMonth": "Նախորդ ամիս",
+    "thisYear": "Այս տարի",
+    "lastYear": "Նախորդ տարի",
+    "public": "Հանրային",
+    "private": "Անձնական",
+    "paid": "Վճարված է",
+    "settle": "Վճարել",
+    "unknownPlayer": "Անհայտ խաղացող",
+    "paymentToSettle": "վճարում մնացել է",
+    "paymentsToSettle": "վճարում մնացել է",
+    "noRecordsFound": "Գրառումներ այս զտիչների համար չկան",
+    "trainings": "Մարզումներ",
+    "games": "Խաղեր",
+    "matches": "Խաղեր",
+    "attendanceCheckins": "Հաճախումներ և գրանցումներ",
+    "costs": {
+      "publicCost": "Հանրային մարզման արժեքը (֏)",
+      "privateCost": "Անձնական մարզման արժեքը (֏)",
+      "examplePublic": "Օրին. 4000",
+      "examplePrivate": "Օրին. 10000"
+    }
+  },
+  "billing": {
+    "paymentDetails": "Վճարման մանրամասներ",
+    "settlePayment": "Վճարել",
+    "paid": "Վճարված է",
+    "unpaid": "Չվճարված",
+    "type": "Տեսակ",
+    "personal": "Անձնական",
+    "markUnpaid": "Նշել որպես չվճարված",
+    "card": "Քարտ",
+    "cash": "Կանխիկ"
+  },
+  "levels": {
+    "beginner": "Սկսնակ",
+    "amateur": "Սիրողական",
+    "advanced": "Առաջադեմ",
+    "pro": "Պրոֆեսիոնալ"
+  },
+  "achievements": {
+    "ach-1": {
+      "title": "Նոր արյուն",
+      "desc": "Մասնակցել ես քո առաջին մարզմանը",
+      "verb": "Մասնակցել ես"
+    },
+    "ach-2": {
+      "title": "Մարաթոնյան",
+      "desc": "Խաղացել ես 15+ խաղ մեկ օրում",
+      "verb": "Խաղացել ես"
+    },
+    "ach-3": {
+      "title": "Բարի գալուստ դժոխք",
+      "desc": "Հաղթել ես առաջին խաղը Բարդ ռեժիմում",
+      "verb": "Հաղթել ես"
+    },
+    "ach-4": {
+      "title": "25 Հաղթանակ",
+      "desc": "Հաղթել ես 25 խաղ Բարդ ռեժիմում",
+      "verb": "Հաղթել ես"
+    },
+    "ach-5": {
+      "title": "Դիպուկահար",
+      "desc": "Արել ես 10 էյս մեկ խաղում",
+      "verb": "Արել ես"
+    },
+    "ach-6": {
+      "title": "Թիմային խաղացող",
+      "desc": "Խաղացել ես 50 խաղ ընկերների հետ",
+      "verb": "Խաղացել ես"
+    },
+    "ach-7": {
+      "title": "Անկասելի",
+      "desc": "Հաղթել ես 10 անգամ անընդմեջ",
+      "verb": "Հաղթել ես"
+    },
+    "rarity": {
+      "common": "Սովորական",
+      "uncommon": "Ոչ սովորական",
+      "rare": "Հազվադեպ"
+    }
+  }
+}

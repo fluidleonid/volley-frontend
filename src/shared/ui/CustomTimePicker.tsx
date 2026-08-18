@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { Keyboard, Clock as ClockIcon, X } from 'lucide-react';
 
@@ -18,8 +19,10 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
   onClose,
   onConfirm,
   initialTime = '12:00',
-  title = 'Select time',
+  title
 }) => {
+  const { t } = useTranslation();
+  const defaultTitle = title || t('common.selectTime', 'Select time');
   const [selectedHour, setSelectedHour] = useState<number | string>(12);
   const [selectedMinute, setSelectedMinute] = useState<number | string>(0);
   const [isPM, setIsPM] = useState(false);
@@ -50,13 +53,15 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
 
   const handleConfirm = () => {
     let finalHour = Number(selectedHour);
-    if (isNaN(finalHour) || finalHour < 1) finalHour = 12;
+    if (isNaN(finalHour) || finalHour < 0) finalHour = 0;
     if (finalHour > 12) finalHour = 12;
+    
+    if (isPM && finalHour < 12) finalHour += 12;
+    if (!isPM && finalHour === 12) finalHour = 0;
+
     let finalMin = Number(selectedMinute);
     if (isNaN(finalMin) || finalMin < 0) finalMin = 0;
     if (finalMin > 59) finalMin = 59;
-    if (isPM && finalHour < 12) finalHour += 12;
-    if (!isPM && finalHour === 12) finalHour = 0;
     const hStr = String(finalHour).padStart(2, '0');
     const mStr = String(finalMin).padStart(2, '0');
     onConfirm(`${hStr}:${mStr}`);
@@ -201,7 +206,7 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
       <div className="w-full max-w-[340px] bg-background rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 p-6 pt-5">
 
         <div className="relative flex h-[44px] items-center justify-center mb-[24px] select-none shrink-0">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">{title}</h3>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">{defaultTitle}</h3>
           <button
             type="button"
             onClick={onClose}
@@ -231,14 +236,14 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
                   }}
                   onBlur={() => {
                     let val = Number(selectedHour);
-                    if (isNaN(val) || val < 1) val = 12;
+                    if (isNaN(val) || val < 0) val = 0;
                     if (val > 12) val = 12;
                     setSelectedHour(val);
                   }}
                   className="w-full h-full bg-transparent text-center text-[40px] font-bold focus:outline-none appearance-none"
                 />
               ) : (
-                <span className="text-[40px] font-bold leading-none">{String(Number(selectedHour) || 12).padStart(2, '0')}</span>
+                <span className="text-[40px] font-bold leading-none">{String(Number(selectedHour) || 0).padStart(2, '0')}</span>
               )}
             </div>
 
@@ -273,17 +278,17 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
               )}
             </div>
           </div>
-
-          <div className="flex flex-col gap-1 ml-1">
+          
+          <div className="flex flex-col gap-1.5 justify-center ml-2">
             <button
               onClick={() => setIsPM(false)}
-              className={`px-3 py-[9px] rounded-[10px] border text-xs font-bold transition-colors ${!isPM ? 'bg-primary/20 border-primary text-primary' : 'border-border text-muted-foreground hover:text-white bg-secondary/50'}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border ${!isPM ? 'bg-primary/20 text-primary border-primary/30' : 'border-border/50 text-muted-foreground hover:bg-secondary'}`}
             >
               AM
             </button>
             <button
               onClick={() => setIsPM(true)}
-              className={`px-3 py-[9px] rounded-[10px] border text-xs font-bold transition-colors ${isPM ? 'bg-primary/20 border-primary text-primary' : 'border-border text-muted-foreground hover:text-white bg-secondary/50'}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border ${isPM ? 'bg-primary/20 text-primary border-primary/30' : 'border-border/50 text-muted-foreground hover:bg-secondary'}`}
             >
               PM
             </button>
@@ -308,13 +313,13 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
             onClick={onClose}
             className="flex-1 h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer"
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </button>
           <button
             onClick={handleConfirm}
             className="flex-1 h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer"
           >
-            OK
+            {t('common.done', 'OK')}
           </button>
         </div>
       </div>

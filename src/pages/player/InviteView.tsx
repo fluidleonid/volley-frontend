@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { Avatar } from '../../shared/ui/Avatar';
 import { SelectPlayerSheet } from '../../features/session/SelectPlayerSheet';
@@ -13,6 +14,7 @@ export interface InviteViewProps {
 }
 
 export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const { currentUser, setActiveTab, sendInvite } = useAppStore();
 
   // Team A starts with logged in user
@@ -68,25 +70,25 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
     const countB = teamBPlayers.length;
 
     if (countA === 1 && countB === 0) {
-      return "Fill the court — pick 1 or 2 players";
+      return t('player.invite.fillCourt', "Fill the court — pick 1 or 2 players");
     }
     if (countA === 2 && countB === 0) {
-      return "Add 2 opponents to start matching";
+      return t('player.invite.addOpponents', "Add 2 opponents to start matching");
     }
     if (countA === 1 && countB === 1) {
-      return "Ready to play";
+      return t('player.invite.readyToPlay', "Ready to play");
     }
     if (countA === 2 && countB === 2) {
-      return "Ready to play";
+      return t('player.invite.readyToPlay', "Ready to play");
     }
     if (countA === 2 && countB === 1) {
-      return "Add 1 more opponent to balance teams";
+      return t('player.invite.addOpponentBalance', "Add 1 more opponent to balance teams");
     }
     if (countA === 1 && countB === 2) {
-      return "Add 1 teammate to balance teams";
+      return t('player.invite.addTeammateBalance', "Add 1 teammate to balance teams");
     }
 
-    return "Fill the court — pick 1 or 2 players";
+    return t('player.invite.fillCourt', "Fill the court — pick 1 or 2 players");
   };
 
   // Button is active only when teams are strictly balanced: 1v1 or 2v2
@@ -105,7 +107,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       <div className="sticky top-0 z-40 bg-background pt-[84px] pb-5 -mx-4 px-4">
         <Header
           variant="page"
-          title="Invite to play"
+          title={t('home.inviteToPlay', 'Invite to play')}
           onBack={handleBack}
         />
       </div>
@@ -152,7 +154,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
               {teamAPlayers.length < 2 && (
                 <div
                   className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-brand-surfaceElevated bg-secondary text-white transition-all"
-                  title="Add teammate"
+                  title={t('player.invite.addTeammate', 'Add teammate')}
                 >
                   <Plus className="h-5 w-5 stroke-[2.5]" />
                 </div>
@@ -181,7 +183,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
               {teamBPlayers.length < 2 && (
                 <div
                   className="relative z-10 flex h-[44px] w-[44px] items-center justify-center rounded-full ring-2 ring-brand-surfaceElevated bg-secondary text-white transition-all"
-                  title="Add opponent"
+                  title={t('player.invite.addOpponent', 'Add opponent')}
                 >
                   <Plus className="h-5 w-5 stroke-[2.5]" />
                 </div>
@@ -208,7 +210,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
             : 'opacity-20 shadow-none cursor-not-allowed'
             }`}
         >
-          Invite
+          {t('common.invite', 'Invite')}
         </button>
       </div>
 
@@ -216,11 +218,11 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
       <SelectPlayerSheet
         isOpen={!!activePicker}
         onClose={() => setActivePicker(null)}
-        title={activePicker === 'teamA' ? 'Select teammate' : 'Select opponents'}
+        title={activePicker === 'teamA' ? t('player.invite.selectTeammate', 'Select teammate') : t('player.invite.selectOpponents', 'Select opponents')}
         subtitle={
           activePicker === 'teamA'
-            ? 'Pick 1 player for your team'
-            : 'Pick 1 or 2 players for opposing team'
+            ? t('player.invite.pick1ForTeam', 'Pick 1 player for your team')
+            : t('player.invite.pick1Or2ForOpposing', 'Pick 1 or 2 players for opposing team')
         }
         selectedPlayerIds={selectedPlayerIdsInActivePicker}
         onTogglePlayer={handleTogglePlayerInPicker}

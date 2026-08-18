@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { CourtCard } from '../../entities/court/ui/CourtCard';
 import { EmptyState } from '../../shared/ui/EmptyState';
 import { Avatar } from '../../shared/ui/Avatar';
@@ -13,6 +14,7 @@ import { PrivateSessionFlow } from '../../widgets/flows/PrivateSessionFlow';
 import { PublicAttendanceFlow } from '../../widgets/flows/PublicAttendanceFlow';
 import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
 import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
+import { SessionListItem } from '../../entities/session/ui/SessionListItem';
 interface PrivateSession {
   id: string;
   name: string;
@@ -37,6 +39,7 @@ const mockPrivateSessions: PrivateSession[] = [
 
 
 export const CoachHomeView: React.FC = () => {
+  const { t } = useTranslation();
   const {
     role,
     playerState,
@@ -78,13 +81,13 @@ export const CoachHomeView: React.FC = () => {
             onClick={toggleSession}
             className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
           >
-            Start training
+            {t('home.startTraining')}
           </button>
           <button
             onClick={() => setActiveTab('public_schedule')}
             className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
           >
-            Schedule training
+            {t('home.scheduleTraining')}
           </button>
         </ClosedSessionBanner>
       ) : (
@@ -101,7 +104,7 @@ export const CoachHomeView: React.FC = () => {
                   <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
                 </button>
                 <span className="mt-2 block font-sans text-sm font-medium text-muted-foreground">
-                  Start training
+                  {t('home.startTraining')}
                 </span>
               </div>
             )}
@@ -117,7 +120,7 @@ export const CoachHomeView: React.FC = () => {
                     <Pause className="h-5 w-5 fill-white text-white" />
                   </button>
                   <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    Sit out
+                    {t('home.sitOut')}
                   </span>
                 </div>
 
@@ -129,7 +132,7 @@ export const CoachHomeView: React.FC = () => {
                     <Plus className="h-5 w-5 stroke-[3] text-primary-foreground" />
                   </button>
                   <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    Invite to play
+                    {t('home.inviteToPlay')}
                   </span>
                 </div>
               </div>
@@ -146,7 +149,7 @@ export const CoachHomeView: React.FC = () => {
                     <Square className="h-5 w-5 fill-white text-white" />
                   </button>
                   <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    Stop
+                    {t('home.stop')}
                   </span>
                 </div>
 
@@ -158,7 +161,7 @@ export const CoachHomeView: React.FC = () => {
                     <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
                   </button>
                   <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    Continue to play
+                    {t('home.continueToPlay')}
                   </span>
                 </div>
               </div>
@@ -169,7 +172,7 @@ export const CoachHomeView: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.courts')}</h2>
                 <span className="font-display text-lg font-normal text-muted-foreground">
                   {activeCourtsCount}/6
                 </span>
@@ -179,7 +182,7 @@ export const CoachHomeView: React.FC = () => {
                 onClick={() => setIsEndSessionConfirmOpen(true)}
                 className="font-sans text-sm font-bold text-muted-foreground hover:text-white transition-colors cursor-pointer"
               >
-                End Session
+                {t('home.endSession')}
               </button>
             </div>
 
@@ -200,7 +203,7 @@ export const CoachHomeView: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPlayers')}</h2>
                 <span className="font-display text-lg font-normal text-muted-foreground">
                   {todaysPlayers.length}
                 </span>
@@ -210,7 +213,7 @@ export const CoachHomeView: React.FC = () => {
                 onClick={() => setIsPublicFlowOpen(true)}
                 className="flex items-center gap-1 text-sm font-bold text-primary hover:opacity-80 transition-opacity"
               >
-                <Plus className="h-4 w-4 stroke-[3]" /> Add
+                <Plus className="h-4 w-4 stroke-[3]" /> {t('common.add', 'Add')}
               </button>
             </div>
 
@@ -234,7 +237,7 @@ export const CoachHomeView: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <EmptyState message="No players yet" icon={Users} />
+              <EmptyState message={t('home.noPlayers')} icon={Users} />
             )}
           </div>
         </>
@@ -244,7 +247,7 @@ export const CoachHomeView: React.FC = () => {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's privates</h2>
+            <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPrivates', "Today's privates")}</h2>
             <span className="font-display text-lg font-normal text-muted-foreground">
               {mockPrivateSessions.length}
             </span>
@@ -254,37 +257,22 @@ export const CoachHomeView: React.FC = () => {
             onClick={() => setIsPrivateFlowOpen(true)}
             className="flex items-center gap-1 text-sm font-bold text-primary hover:opacity-80 transition-opacity"
           >
-            <Plus className="h-4 w-4 stroke-[3]" /> Add
+            <Plus className="h-4 w-4 stroke-[3]" /> {t('common.add', 'Add')}
           </button>
         </div>
 
         {mockPrivateSessions.length > 0 ? (
           <div className="flex flex-col border-t border-border/60 pt-1">
             {mockPrivateSessions.map((session) => (
-              <div
+              <SessionListItem
                 key={session.id}
-                onClick={() => setSelectedPrivateSession(session)}
-                className="flex items-center justify-between py-3 border-b border-dashed border-border/60 last:border-b-0 cursor-pointer hover:bg-brand-surfaceElevated transition-colors active:scale-[0.98] px-2 -mx-2 rounded-xl"
-              >
-                <div className="flex items-center gap-3">
-                  <img
-                    src={session.avatarUrl}
-                    alt={session.name}
-                    className="w-9 h-9 rounded-full object-cover"
-                  />
-                  <span className="font-display text-base font-semibold text-white tracking-tight">
-                    {session.name}
-                  </span>
-                </div>
-
-                <span className="font-display text-base font-normal text-muted-foreground">
-                  {session.time}
-                </span>
-              </div>
+                session={session}
+                onClick={(s) => setSelectedPrivateSession(s)}
+              />
             ))}
           </div>
         ) : (
-          <EmptyState message="No scheduled sessions yet" icon={CalendarClock} />
+          <EmptyState message={t('home.noScheduledSessionsYet', 'No scheduled sessions yet')} icon={CalendarClock} />
         )}
       </div>
 
@@ -359,14 +347,14 @@ export const CoachHomeView: React.FC = () => {
       <Dialog
         isOpen={isEndSessionConfirmOpen}
         onClose={() => setIsEndSessionConfirmOpen(false)}
-        title="End Public Session"
-        description="Are you sure you want to end the current training session? All active court matchmaking and player check-ins will be closed."
-        primaryButtonText="Confirm End"
+        title={t('home.endSessionTitle')}
+        description={t('home.endSessionDesc')}
+        primaryButtonText={t('home.confirmEnd')}
         primaryButtonOnClick={() => {
           setIsEndSessionConfirmOpen(false);
           toggleSession();
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t('home.cancel')}
         secondaryButtonOnClick={() => setIsEndSessionConfirmOpen(false)}
       />
 

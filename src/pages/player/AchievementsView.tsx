@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
+import { useTranslation } from 'react-i18next';
 import { AchievementData } from '../../shared/types/achievement';
 import { AchievementCard } from '../../entities/achievement/ui/AchievementCard';
 import { AchievementDetailsSheet } from '../../entities/achievement/ui/AchievementDetailsSheet';
@@ -10,15 +11,16 @@ const earnedAchievements = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned);
 const lockedAchievements = MOCK_ACHIEVEMENTS.filter((a) => !a.isEarned);
 
 export const AchievementsView: React.FC = () => {
+  const { t } = useTranslation();
   const { setActiveTab } = useAppStore();
   const [selected, setSelected] = useState<AchievementData | null>(null);
 
   return (
     <div className="bg-background text-white pb-24 px-4 max-w-[480px] select-none mx-auto">
-      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title="Achievements" onBack={() => setActiveTab('profile')} />
+      <Header variant="page" sticky stickyClassName="-mx-4 px-4" title={t('profile.achievements', 'Achievements')} onBack={() => setActiveTab('profile')} />
 
       <div className="flex items-center gap-2 mb-4 mt-2">
-        <span className="font-display text-lg font-bold text-white tracking-tight">Earned</span>
+        <span className="font-display text-lg font-bold text-white tracking-tight">{t('player.achievements.earned', 'Earned')}</span>
         <span className="font-display text-lg font-normal text-muted-foreground">{earnedAchievements.length}</span>
       </div>
 
@@ -29,7 +31,7 @@ export const AchievementsView: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <span className="font-display text-lg font-bold text-white tracking-tight">Locked</span>
+        <span className="font-display text-lg font-bold text-white tracking-tight">{t('player.achievements.locked', 'Locked')}</span>
         <span className="font-display text-lg font-normal text-muted-foreground">{TOTAL_ACHIEVEMENTS_COUNT}</span>
       </div>
 

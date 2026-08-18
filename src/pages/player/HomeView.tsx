@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { Card } from '../../shared/ui/card';
 import { CourtCard } from '../../entities/court/ui/CourtCard';
@@ -35,6 +36,7 @@ export const HomeView: React.FC = () => {
     toggleSession,
     setActiveTab,
   } = useAppStore();
+  const { t } = useTranslation();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
@@ -54,7 +56,7 @@ export const HomeView: React.FC = () => {
             {currentUser.gamesPlayed}
           </span>
           <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
-            Games played
+            {t('home.gamesPlayed')}
           </span>
         </Card>
 
@@ -63,7 +65,7 @@ export const HomeView: React.FC = () => {
             {currentUser.wins}
           </span>
           <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
-            Wins
+            {t('home.wins')}
           </span>
         </Card>
 
@@ -72,7 +74,7 @@ export const HomeView: React.FC = () => {
             {currentUser.bpToday.toFixed(1)}
           </span>
           <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
-            BP today
+            {t('home.bpToday')}
           </span>
         </Card>
       </div>
@@ -90,7 +92,7 @@ export const HomeView: React.FC = () => {
                 <Play className="h-5 w-5 fill-current ml-0.5" />
               </button>
               <span className="mt-2 block font-sans text-sm font-medium text-muted-foreground">
-                Start training
+                {t('home.startTraining')}
               </span>
             </div>
           )}
@@ -107,7 +109,7 @@ export const HomeView: React.FC = () => {
                   <Pause className="h-5 w-5 fill-current" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  Sit out
+                  {t('home.sitOut')}
                 </span>
               </div>
 
@@ -120,7 +122,7 @@ export const HomeView: React.FC = () => {
                   <Plus className="h-5 w-5 stroke-[3]" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  Invite to play
+                  {t('home.inviteToPlay')}
                 </span>
               </div>
 
@@ -136,7 +138,7 @@ export const HomeView: React.FC = () => {
                   <Zap className="h-5 w-5" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  Hard mode
+                  {t('home.hardMode')}
                 </span>
               </div>
             </div>
@@ -154,7 +156,7 @@ export const HomeView: React.FC = () => {
                   <Square className="h-5 w-5 fill-current" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  Stop
+                  {t('home.stop')}
                 </span>
               </div>
 
@@ -167,7 +169,7 @@ export const HomeView: React.FC = () => {
                   <Play className="h-5 w-5 fill-current ml-0.5" />
                 </button>
                 <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  Continue to play
+                  {t('home.continueToPlay')}
                 </span>
               </div>
             </div>
@@ -178,17 +180,17 @@ export const HomeView: React.FC = () => {
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
       {!isSessionActive ? (
         (() => {
-          const nextSession = "Today at 20:00";
+          const nextSession = `${t('player.leaderboard.today', 'Today')} 20:00`;
           return (
             <div className="space-y-4">
               <ClosedSessionBanner
                 nextSessionTime={nextSession}
-                description={
+                  description={
                   role === 'coach'
                     ? undefined // Uses default universal coach text
                     : nextSession
-                      ? 'A training session is scheduled. Get ready to join when it starts!'
-                      : 'There are no active training sessions scheduled right now. Check back soon!'
+                      ? t('home.sessionScheduled')
+                      : t('home.noSession')
                 }
               >
             {/* Coach Actions */}
@@ -198,13 +200,13 @@ export const HomeView: React.FC = () => {
                   onClick={toggleSession}
                   className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
                 >
-                  Start training
+                  {t('home.startTraining')}
                 </button>
                 <button
                   onClick={() => setActiveTab('public_schedule')}
                   className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
                 >
-                  Schedule training
+                  {t('home.scheduleTraining')}
                 </button>
               </>
             )}
@@ -218,7 +220,7 @@ export const HomeView: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">Courts</h2>
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.courts')}</h2>
                 <span className="font-display text-lg font-normal text-muted-foreground">
                   {courts.filter((c) => c.isAvailable).length}/6
                 </span>
@@ -229,7 +231,7 @@ export const HomeView: React.FC = () => {
                   onClick={() => setIsEndSessionConfirmOpen(true)}
                   className="font-sans text-sm font-bold text-muted-foreground hover:text-white transition-colors cursor-pointer"
                 >
-                  End Session
+                  {t('home.endSession')}
                 </button>
               )}
             </div>
@@ -251,7 +253,7 @@ export const HomeView: React.FC = () => {
           {/* 4. Today's Players Horizontal Row */}
           <div className="space-y-3">
             <div className="flex items-center gap-1.5">
-              <h2 className="font-display text-lg font-bold text-white tracking-tight">Today's players</h2>
+              <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPlayers')}</h2>
               <span className="font-display text-lg font-normal text-muted-foreground">
                 {todaysPlayers.length}
               </span>
@@ -276,7 +278,7 @@ export const HomeView: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <EmptyState message="No players yet" icon={Users} />
+              <EmptyState message={t('home.noPlayers')} icon={Users} />
             )}
           </div>
         </>
@@ -300,7 +302,7 @@ export const HomeView: React.FC = () => {
 
       {/* 5. Recent Games Section */}
       <div className="space-y-3">
-        <h2 className="font-display text-lg font-bold text-white tracking-tight">Recent games</h2>
+        <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.recentGames')}</h2>
 
         {recentMatches.length > 0 ? (
           <div className="flex flex-col">
@@ -309,7 +311,7 @@ export const HomeView: React.FC = () => {
             ))}
           </div>
         ) : (
-          <EmptyState message="No games yet" icon={History} />
+          <EmptyState message={t('home.noGames')} icon={History} />
         )}
       </div>
 
@@ -326,14 +328,14 @@ export const HomeView: React.FC = () => {
       <Dialog
         isOpen={isEndSessionConfirmOpen}
         onClose={() => setIsEndSessionConfirmOpen(false)}
-        title="End Public Session"
-        description="Are you sure you want to end the current training session? All active court matchmaking and player check-ins will be closed."
-        primaryButtonText="Confirm End"
+        title={t('home.endSessionTitle')}
+        description={t('home.endSessionDesc')}
+        primaryButtonText={t('home.confirmEnd')}
         primaryButtonOnClick={() => {
           setIsEndSessionConfirmOpen(false);
           toggleSession();
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t('home.cancel')}
         secondaryButtonOnClick={() => setIsEndSessionConfirmOpen(false)}
       />
     </div>
