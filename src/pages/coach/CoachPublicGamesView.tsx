@@ -5,7 +5,7 @@ import { MatchHistoryCard } from '../../entities/match/ui/MatchHistoryCard';
 import { Trophy } from 'lucide-react';
 import { Match } from '../../shared/types/index';
 import { Header } from '../../widgets/layout/Header';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import { CustomDateRangePicker, DateRange } from '../../shared/ui/CustomDateRangePicker';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 

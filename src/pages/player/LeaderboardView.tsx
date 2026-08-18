@@ -10,7 +10,7 @@ import place1Svg from '../../shared/assets/icons/place1.svg';
 import place2Svg from '../../shared/assets/icons/place2.svg';
 import place3Svg from '../../shared/assets/icons/place3.svg';
 import { useScroll } from '../../shared/hooks/useScroll';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import { BpIcon } from '../../shared/ui/icons/BpIcon';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';

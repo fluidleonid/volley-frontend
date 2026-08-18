@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
 import { useTranslation } from 'react-i18next';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import { SettlePaymentSheet } from '../../features/payment/SettlePaymentSheet';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { CustomDateRangePicker, DateRange } from '../../shared/ui/CustomDateRangePicker';
@@ -12,7 +12,7 @@ import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 
 import { useScroll } from '../../shared/hooks/useScroll';
 import { ChevronLeft } from 'lucide-react';
-import { Avatar } from '../../shared/ui/Avatar';
+
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
 // -------------------------------------------------------------
@@ -96,8 +96,8 @@ export const BillingView: React.FC = () => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({
     label: 'All time',
-    startDate: undefined,
-    endDate: undefined,
+    start: null,
+    end: null,
   });
   const [selectedBillingPlayer, setSelectedBillingPlayer] = useState<Player | null>(null);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Badge } from './Badge';
+import { Badge } from './badge';
 
 import { useTranslation } from 'react-i18next';
 

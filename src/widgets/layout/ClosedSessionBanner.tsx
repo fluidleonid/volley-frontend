@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock } from 'lucide-react';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import publicSessionImg from '../../shared/assets/images/publicsession.png';
 
 interface ClosedSessionBannerProps {

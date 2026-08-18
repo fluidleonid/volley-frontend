@@ -10,6 +10,7 @@ import { skillLevels } from '../../../pages/common/OnboardingView';
 interface ChangeLevelSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onCloseAll?: () => void;
   player: Player | null;
   hasParent?: boolean;
 }

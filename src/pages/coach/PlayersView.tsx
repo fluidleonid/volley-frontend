@@ -3,13 +3,11 @@ import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 import { Player } from '../../shared/types/index';
-import { Avatar } from '../../shared/ui/Avatar';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { useScroll } from '../../shared/hooks/useScroll';
-import { getPlayerTierInfo } from '../../shared/lib/tier';
 import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
 
 type TabType = 'authorized' | 'manual';
@@ -126,7 +124,7 @@ export const PlayersView: React.FC = () => {
                   player.hasTelegram && (
                     <Badge 
                       variant="neutral" 
-                      onClick={(e) => { 
+                      onClick={(e: React.MouseEvent) => { 
                         e.stopPropagation(); 
                         console.log('Message player', player.name); 
                       }} 

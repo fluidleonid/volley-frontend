@@ -11,6 +11,7 @@ import { Search, Plus, Check, HatGlasses } from 'lucide-react';
 interface SelectPlayerForSessionSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onCloseAll?: () => void;
   mode?: 'single' | 'multiple';
   title?: string;
   subtitle?: string;

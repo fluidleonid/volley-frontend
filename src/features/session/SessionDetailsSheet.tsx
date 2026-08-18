@@ -10,6 +10,7 @@ import { useState } from 'react';
 interface SessionDetailsSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onCloseAll?: () => void;
   player: Player | null;
   onAvatarClick?: () => void;
   hasParent?: boolean;

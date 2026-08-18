@@ -1,7 +1,7 @@
 import React from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
-import { Badge } from '../../shared/ui/Badge';
+import { Badge } from '../../shared/ui/badge';
 import { CreditCard, Banknote } from 'lucide-react';
 import { useAppStore } from '../../app/store/appStore';
 
@@ -14,6 +14,7 @@ interface SettlePaymentSheetProps {
   record: {
     amount: string;
     status: string;
+    playerId?: string;
   } | null;
   hasParent?: boolean;
   onCloseAll?: () => void;
