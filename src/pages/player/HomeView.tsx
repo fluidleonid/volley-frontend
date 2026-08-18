@@ -32,8 +32,6 @@ export const HomeView: React.FC = () => {
     courts,
     todaysPlayers,
     recentMatches,
-    isMatchDetailOpen,
-    setMatchDetailOpen,
     isSessionActive,
     toggleSession,
     setActiveTab,
@@ -317,7 +315,6 @@ export const HomeView: React.FC = () => {
       <ActiveGameSheet 
         isOpen={!!selectedGameCourt} 
         onClose={() => setSelectedGameCourt(null)} 
-        court={selectedGameCourt!} 
       />
       
       {isInviteOpen && <InviteView onClose={() => setIsInviteOpen(false)} />}

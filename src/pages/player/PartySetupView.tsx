@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Rotate3D, Shield, Sword, MoreVertical, Check, ChevronDown } from 'lucide-react';
+import { Plus, Rotate3D, Shield, Sword, MoreVertical, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { Avatar } from '../../shared/ui/Avatar';

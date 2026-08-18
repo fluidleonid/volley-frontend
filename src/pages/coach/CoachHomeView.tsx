@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../app/store/appStore';
 import { useTranslation } from 'react-i18next';
-import { CourtCard } from '../../entities/court/ui/CourtCard';
 import { EmptyState } from '../../shared/ui/EmptyState';
-import { Avatar } from '../../shared/ui/Avatar';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { ActiveGameSheet } from '../../entities/match/ui/ActiveGameSheet';
 import { Dialog } from '../../shared/ui/Dialog';
 import { InviteView } from '../player/InviteView';
 import { Player, Court } from '../../shared/types/index';
-import { Play, Plus, Pause, Square, Users, CalendarClock } from 'lucide-react';
+import { Plus, CalendarClock } from 'lucide-react';
 import { PrivateSessionFlow } from '../../widgets/flows/PrivateSessionFlow';
 import { PublicAttendanceFlow } from '../../widgets/flows/PublicAttendanceFlow';
 import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
@@ -17,6 +15,7 @@ import { SessionListItem } from '../../entities/session/ui/SessionListItem';
 import { CoachActiveSessionWidget } from './components/CoachActiveSessionWidget';
 import { CoachCourtsGrid } from './components/CoachCourtsGrid';
 import { TodaysPlayersList } from './components/TodaysPlayersList';
+
 interface PrivateSession {
   id: string;
   name: string;
@@ -71,8 +70,6 @@ export const CoachHomeView: React.FC = () => {
   const handleInvite = () => {
     setIsInviteOpen(true);
   };
-
-  const activeCourtsCount = courts.filter((c) => c.isAvailable).length;
 
   return (
     <div className="space-y-6 pb-28 px-4 max-w-[480px] mx-auto select-none">

@@ -16,7 +16,7 @@ import { TrainingCostsView } from '../coach/TrainingCostsView';
 import { PrivateSessionsScheduleView } from '../coach/PrivateSessionsScheduleView';
 import { CoachPublicGamesView } from '../coach/CoachPublicGamesView';
 import { LanguageSelectView } from '../../features/language/LanguageSelectView';
-import { CalendarDays, CalendarClock, Activity, Globe, Ban, BookOpen } from 'lucide-react';
+import { CalendarDays, CalendarClock, Globe, Ban, BookOpen } from 'lucide-react';
 import { Dialog } from '../../shared/ui/Dialog';
 import { BlacklistView } from './BlacklistView';
 import coachCardImg from '../../shared/assets/images/coach-card.png';

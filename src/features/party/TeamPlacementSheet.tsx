@@ -38,7 +38,7 @@ export const TeamPlacementSheet: React.FC<TeamPlacementSheetProps> = ({
       description: t('party.rivalsDesc', 'Prioritize playing against each other'),
       icon: <Sword className="h-5 w-5" />
     }
-  ] as const;
+  ];
 
   return (
     <BottomSheet

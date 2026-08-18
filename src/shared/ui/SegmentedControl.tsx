@@ -35,7 +35,7 @@ export const SegmentedControl = <T extends string | number>({
                 : 'bg-card text-muted-foreground hover:text-white border border-transparent'
             }`}
           >
-            {opt.icon && React.cloneElement(opt.icon as React.ReactElement, { className: 'h-4 w-4' })}
+            {opt.icon && React.cloneElement(opt.icon as React.ReactElement<any>, { className: 'h-4 w-4' })}
             <span className={opt.icon ? "text-sm" : ""}>{opt.label}</span>
           </button>
         );
