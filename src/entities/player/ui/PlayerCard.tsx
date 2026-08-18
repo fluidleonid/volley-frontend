@@ -2,14 +2,17 @@ import React from 'react';
 import playerCardPng from '../../../shared/assets/images/player-card.png';
 import shuttleIconSvg from '../../../shared/assets/icons/shuttle-icon.svg';
 import { Avatar } from '../../../shared/ui/Avatar';
+import { useTranslation } from 'react-i18next';
+import whistleIconSvg from '../../../shared/assets/icons/whistle-fill.svg';
 
 export interface PlayerCardProps {
   avatarUrl?: string;
   accentColor?: string;
   ringColor?: string;
-  iconCount?: number;
   glowColor?: string;
   className?: string;
+  backgroundImage?: string;
+  isCoachCard?: boolean;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -19,7 +22,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   iconCount = 4,
   glowColor = 'rgba(104,189,68,0.9)',
   className = '',
+  backgroundImage = playerCardPng,
+  isCoachCard = false,
 }) => {
+  const { t } = useTranslation();
+
   // Exact vector contour path (rounded rectangle + bottom cutout notch)
   const cardContourPath = `
     M 22,0
@@ -58,7 +65,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
           {/* Background Image clipped to exact contour path */}
           <image
-            href={playerCardPng}
+            href={backgroundImage}
+            x="0"
+            y="0"
             width="333"
             height="172"
             preserveAspectRatio="xMidYMid slice"
@@ -90,25 +99,50 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           />
         </div>
 
-        {/* Shuttlecock Level Icons (Inside the bottom cutout tab) */}
+        {/* Shuttlecock Level Icons or Coach Label (Inside the bottom cutout tab) */}
         <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
-          {Array.from({ length: iconCount }).map((_, idx) => (
-            <div
-              key={idx}
-              className="h-5 w-5 shrink-0 transition-colors duration-300"
-              style={{
-                backgroundColor: accentColor,
-                maskImage: `url(${shuttleIconSvg})`,
-                WebkitMaskImage: `url(${shuttleIconSvg})`,
-                maskSize: 'contain',
-                WebkitMaskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                WebkitMaskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                WebkitMaskPosition: 'center',
-              }}
-            />
-          ))}
+          {isCoachCard ? (
+            <div className="flex items-center gap-1.5">
+              <div
+                className="h-[20px] w-[20px] shrink-0 transition-colors duration-300"
+                style={{
+                  backgroundColor: accentColor,
+                  maskImage: `url("${whistleIconSvg}")`,
+                  WebkitMaskImage: `url("${whistleIconSvg}")`,
+                  maskSize: 'contain',
+                  WebkitMaskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskPosition: 'center',
+                }}
+              />
+              <span 
+                className="font-display font-black tracking-widest text-[16px] uppercase leading-none"
+                style={{ color: accentColor }}
+              >
+                {t('roles.coach', 'COACH')}
+              </span>
+            </div>
+          ) : (
+            Array.from({ length: iconCount }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-5 w-5 shrink-0 transition-colors duration-300"
+                style={{
+                  backgroundColor: accentColor,
+                  maskImage: `url("${shuttleIconSvg}")`,
+                  WebkitMaskImage: `url("${shuttleIconSvg}")`,
+                  maskSize: 'contain',
+                  WebkitMaskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskPosition: 'center',
+                }}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

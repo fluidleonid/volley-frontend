@@ -13,8 +13,10 @@ import { Play, Plus, Pause, Square, Users, CalendarClock } from 'lucide-react';
 import { PrivateSessionFlow } from '../../widgets/flows/PrivateSessionFlow';
 import { PublicAttendanceFlow } from '../../widgets/flows/PublicAttendanceFlow';
 import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
-import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
 import { SessionListItem } from '../../entities/session/ui/SessionListItem';
+import { CoachActiveSessionWidget } from './components/CoachActiveSessionWidget';
+import { CoachCourtsGrid } from './components/CoachCourtsGrid';
+import { TodaysPlayersList } from './components/TodaysPlayersList';
 interface PrivateSession {
   id: string;
   name: string;
@@ -74,183 +76,50 @@ export const CoachHomeView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-28 px-4 max-w-[480px] mx-auto select-none">
-      {/* 1. Session Status Banner for Coach */}
-      {!isSessionActive ? (
-        <ClosedSessionBanner>
-          <button
-            onClick={toggleSession}
-            className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
-          >
-            {t('home.startTraining')}
-          </button>
-          <button
-            onClick={() => setActiveTab('public_schedule')}
-            className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
-          >
-            {t('home.scheduleTraining')}
-          </button>
-        </ClosedSessionBanner>
-      ) : (
+      {/* 1. Session Status Banner & Dynamic Action Buttons */}
+      <CoachActiveSessionWidget
+        isSessionActive={isSessionActive}
+        playerState={playerState}
+        onToggleSession={toggleSession}
+        onScheduleTraining={() => setActiveTab('public_schedule')}
+        onStartTraining={startTraining}
+        onSitOut={sitOut}
+        onStopTraining={stopTraining}
+        onContinueToPlay={continueToPlay}
+        onInvite={handleInvite}
+      />
+
+      {isSessionActive && (
         <>
-          {/* Dynamic Action Buttons Container */}
-          <div className="flex flex-col items-center">
-            {/* STATE 1: Spectating ("Start training" mode) */}
-            {playerState === 'spectating' && (
-              <div className="w-full text-center">
-                <button
-                  onClick={startTraining}
-                  className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-[0.98] hover:bg-primary/90"
-                >
-                  <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
-                </button>
-                <span className="mt-2 block font-sans text-sm font-medium text-muted-foreground">
-                  {t('home.startTraining')}
-                </span>
-              </div>
-            )}
-
-            {/* STATE 2: Queued / Match Found mode for Coach */}
-            {(playerState === 'queued' || playerState === 'match_found') && (
-              <div className="grid grid-cols-2 gap-2.5 w-full text-center">
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={sitOut}
-                    className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
-                  >
-                    <Pause className="h-5 w-5 fill-white text-white" />
-                  </button>
-                  <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    {t('home.sitOut')}
-                  </span>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={handleInvite}
-                    className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
-                  >
-                    <Plus className="h-5 w-5 stroke-[3] text-primary-foreground" />
-                  </button>
-                  <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    {t('home.inviteToPlay')}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* STATE 3: Resting mode */}
-            {playerState === 'resting' && (
-              <div className="grid w-full grid-cols-2 gap-3 text-center">
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={stopTraining}
-                    className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
-                  >
-                    <Square className="h-5 w-5 fill-white text-white" />
-                  </button>
-                  <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    {t('home.stop')}
-                  </span>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={continueToPlay}
-                    className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
-                  >
-                    <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
-                  </button>
-                  <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                    {t('home.continueToPlay')}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* 2. Courts Horizontal Slider Section */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.courts')}</h2>
-                <span className="font-display text-lg font-normal text-muted-foreground">
-                  {activeCourtsCount}/6
-                </span>
-              </div>
-
-              <button
-                onClick={() => setIsEndSessionConfirmOpen(true)}
-                className="font-sans text-sm font-bold text-muted-foreground hover:text-white transition-colors cursor-pointer"
-              >
-                {t('home.endSession')}
-              </button>
-            </div>
-
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-              {courts.map((court) => (
-                <CourtCard
-                  key={court.id}
-                  court={court}
-                  showCoachToggle={role === 'coach'}
-                  onToggleAvailability={toggleCourtAvailability}
-                  onSelectCourt={(c) => setSelectedCourt(c)}
-                />
-              ))}
-            </div>
-          </div>
+          <CoachCourtsGrid
+            courts={courts}
+            todaysPlayers={todaysPlayers}
+            role={role}
+            onToggleAvailability={toggleCourtAvailability}
+            onSelectCourt={(c) => setSelectedCourt(c)}
+            onEndSession={() => setIsEndSessionConfirmOpen(true)}
+          />
 
           {/* 3. Today's Players Horizontal Row */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPlayers')}</h2>
-                <span className="font-display text-lg font-normal text-muted-foreground">
-                  {todaysPlayers.length}
-                </span>
-              </div>
-
-              <button 
-                onClick={() => setIsPublicFlowOpen(true)}
-                className="flex items-center gap-1 text-sm font-bold text-primary hover:opacity-80 transition-opacity"
-              >
-                <Plus className="h-4 w-4 stroke-[3]" /> {t('common.add', 'Add')}
-              </button>
-            </div>
-
-            {todaysPlayers.length > 0 ? (
-              <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-                {todaysPlayers.map((player) => (
-                  <div
-                    key={player.id}
-                    onClick={() => setSelectedPlayer(player)}
-                    className="cursor-pointer hover:opacity-90 active:scale-95 transition-all"
-                    title={`View ${player.name} details`}
-                  >
-                    <Avatar
-                      src={player.avatarUrl}
-                      alt={player.name}
-                      initials={player.name[0]}
-                      size="lg"
-                      hasBorder={false}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState message={t('home.noPlayers')} icon={Users} />
-            )}
-          </div>
+          <TodaysPlayersList
+            players={todaysPlayers}
+            onAddPlayer={() => setIsPublicFlowOpen(true)}
+            onSelectPlayer={(p) => setSelectedPlayer(p)}
+          />
         </>
       )}
 
       {/* 4. Today's Privates Section (Figma Node: 11562:13788) */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPrivates', "Today's privates")}</h2>
-            <span className="font-display text-lg font-normal text-muted-foreground">
-              {mockPrivateSessions.length}
-            </span>
+          <div className="flex items-start">
+            <h2 className="font-display text-lg font-bold text-white tracking-tight">
+              {t('home.todaysPrivates', "Today's privates")}
+              <span className="font-normal text-muted-foreground ml-1.5">
+                {mockPrivateSessions.length}
+              </span>
+            </h2>
           </div>
 
           <button 
@@ -288,11 +157,15 @@ export const CoachHomeView: React.FC = () => {
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
         hasParent={!!selectedPrivateSession}
+        onCloseAll={() => {
+          setSelectedPlayer(null);
+          setSelectedPrivateSession(null);
+        }}
       />
 
       {/* Session Details Sheet Modal */}
       <SessionDetailsSheet
-        isOpen={!!selectedPrivateSession}
+        isOpen={!!selectedPrivateSession && !selectedPlayer}
         onClose={() => setSelectedPrivateSession(null)}
         player={selectedPrivateSession ? {
           id: selectedPrivateSession.id,

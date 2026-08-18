@@ -21,7 +21,11 @@
     "cancelSession": "Cancel session",
     "cancelSessionTitle": "Cancel Session",
     "cancelSessionDesc": "Are you sure you want to cancel this private session? The player will be notified.",
-    "keepSession": "Keep Session"
+    "keepSession": "Keep Session",
+    "blacklist": "Blacklist",
+    "addToBlacklist": "Add to black list",
+    "removeFromBlacklist": "Remove from black list",
+    "blacklistEmpty": "No players in blacklist"
   },
   "language": {
     "title": "Language",
@@ -359,5 +363,48 @@
       "uncommon": "Uncommon",
       "rare": "Rare"
     }
+  },
+  "party": {
+    "title": "Party setup",
+    "players": "players",
+    "active": "Party active",
+    "activeDesc": "Matches you together before other players",
+    "playWithFriends": "Play with friends",
+    "groupUp": "Group up to prioritize matches together",
+    "teamPlacement": "Team placement",
+    "any": "Any",
+    "teammates": "Teammates",
+    "rivals": "Rivals",
+    "anyDesc": "Play with anyone in the lobby",
+    "teammatesDesc": "Prioritize playing on the same team",
+    "rivalsDesc": "Prioritize playing against each other",
+    "createParty": "Create party",
+    "options": "Party options",
+    "leave": "Leave",
+    "close": "Close party",
+    "selectPlayersTitle": "Select players",
+    "selectPlayersSubtitle": "Add friends to your party",
+    "leaveConfirmDesc": "Are you sure you want to leave the party?",
+    "closeConfirmDesc": "Are you sure you want to close the party? All members will be disconnected.",
+    "placementLockedHint": "Team placement is locked to Any when there are more than 2 players."
+  },
+  "profile": {
+    "title": "Profile",
+    "gamesPlayed": "Games",
+    "wins": "Wins",
+    "bp": "BP",
+    "achievements": "Achievements",
+    "publicSchedule": "Public schedule",
+    "privateSchedule": "Private schedule",
+    "publicGames": "Public games",
+    "trainingCosts": "Training costs",
+    "language": "Language",
+    "attendance": "Attendance",
+    "billing": "Billing",
+    "blacklist": "Blacklist",
+    "deleteAccount": "Delete account",
+    "deleteConfirmTitle": "Delete Account",
+    "deleteConfirmDesc": "Are you sure you want to delete your account? This action cannot be undone.",
+    "cancel": "Cancel"
   }
 }

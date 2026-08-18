@@ -3,6 +3,7 @@ import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/Input';
+import { SegmentedControl } from '../../shared/ui/SegmentedControl';
 
 interface CreateNewPlayerSheetProps {
   isOpen: boolean;
@@ -69,22 +70,14 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
 
 
           {/* Level Selector */}
-          <div className="flex gap-2 justify-between">
-            {levels.map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => setLevel(lvl)}
-                className={`flex-1 h-[52px] rounded-full text-base font-medium transition-all ${
-                  level === lvl
-                    ? 'border border-primary text-white'
-                    : 'bg-card text-muted-foreground hover:text-white border border-transparent'
-                }`}
-              >
-                {t(`levels.${lvl.toLowerCase()}`, lvl)}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            options={levels.map((lvl) => ({
+              value: lvl,
+              label: t(`levels.${lvl.toLowerCase()}`, lvl),
+            }))}
+            value={level}
+            onChange={(val) => setLevel(val as string)}
+          />
         </div>
 
         <Button

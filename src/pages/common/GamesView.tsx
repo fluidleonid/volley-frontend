@@ -8,7 +8,7 @@ import { useScroll } from '../../shared/hooks/useScroll';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
 export const GamesView: React.FC = () => {
-  const { recentMatches } = useAppStore();
+  const { recentMatches, role } = useAppStore();
   const scrolled = useScroll();
   const { t, i18n } = useTranslation();
 
@@ -35,11 +35,11 @@ export const GamesView: React.FC = () => {
       if (!groups[dateLabel]) {
         groups[dateLabel] = { matches: [], wins: 0, losses: 0, xp: 0, bp: 0 };
       }
-      
+
       groups[dateLabel].matches.push(match);
       if (match.isWin) groups[dateLabel].wins++;
       else groups[dateLabel].losses++;
-      
+
       groups[dateLabel].xp += (match.xpGained || 0);
       groups[dateLabel].bp += (match.bpGained || 0);
     });
@@ -51,9 +51,8 @@ export const GamesView: React.FC = () => {
     <div className="pb-32 select-none bg-background">
       <div className="relative z-10 px-4 max-w-[480px] mx-auto">
         {/* Sticky Header */}
-        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
-          scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
-        }`}>
+        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
+          }`}>
           <div className="flex items-center h-[44px]">
             <h1 className="text-[30px] font-bold text-white tracking-tight">{t('games.title')}</h1>
           </div>
@@ -65,16 +64,16 @@ export const GamesView: React.FC = () => {
             <div key={dateLabel} className="space-y-3">
               <ListGroupHeader
                 title={dateLabel}
-                subtitle={`${t('games.matchesCount', { count: stats.matches.length })} • ${stats.wins}${t('games.winsShort')} - ${stats.losses}${t('games.lossesShort')} • +${stats.xp} XP • +${stats.bp} BP`}
+                subtitle={role === 'coach' ? `${t('games.matchesCount', { count: stats.matches.length })}` : `${t('games.matchesCount', { count: stats.matches.length })} • ${stats.wins}${t('games.winsShort')} - ${stats.losses}${t('games.lossesShort')} • +${stats.xp} XP • +${stats.bp} BP`}
               />
               <div className="flex flex-col">
                 {stats.matches.map((match) => (
-                  <MatchHistoryCard key={match.id} match={match} />
+                  <MatchHistoryCard key={match.id} match={match} variant={role === 'coach' ? 'coach' : 'player'} />
                 ))}
               </div>
             </div>
           ))}
-          
+
           {Object.keys(groupedByDate).length === 0 && (
             <div className="text-center py-10">
               <Trophy className="w-12 h-12 text-secondary mx-auto mb-3" />

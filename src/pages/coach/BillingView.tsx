@@ -168,9 +168,9 @@ export const BillingView: React.FC = () => {
         {/* Top Cards & Segments */}
         <div className="pt-2">
           {role === 'coach' ? (
-            <div className={`grid gap-3 ${dateRange.label === t('coach.allTime', 'All time') ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-3 ${dateRange.label === 'All time' ? 'grid-cols-2' : 'grid-cols-1'}`}>
               <StatCard value="160K ֏" label={t('coach.total', 'Total')} />
-              {dateRange.label === t('coach.allTime', 'All time') && (
+              {dateRange.label === 'All time' && (
                 <StatCard value="16,000 ֏" label={t('coach.thisMonth', 'This month')} />
               )}
             </div>

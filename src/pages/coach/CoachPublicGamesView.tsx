@@ -78,7 +78,7 @@ export const CoachPublicGamesView: React.FC<CoachPublicGamesViewProps> = ({ onCl
             />
             <div className="flex flex-col gap-2">
               {stats.matches.map((match) => (
-                <MatchHistoryCard key={match.id} match={match} />
+                <MatchHistoryCard key={match.id} match={match} variant="coach" />
               ))}
             </div>
           </div>

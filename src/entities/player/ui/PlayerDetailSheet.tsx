@@ -2,7 +2,8 @@ import React from 'react';
 import { Player } from '../../../shared/types/index';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../app/store/appStore';
-import { Receipt, CalendarClock, Dumbbell, Box } from 'lucide-react';
+import { Receipt, CalendarClock, Dumbbell, Box, Ban } from 'lucide-react';
+import { Badge } from '../../../shared/ui/badge';
 import { MenuRowItem } from '../../menu/ui/MenuRowItem';
 import { ChangeLevelSheet } from './ChangeLevelSheet';
 import { PlayerCard } from './PlayerCard';
@@ -12,7 +13,6 @@ import { SelectPlayerForSessionSheet } from '../../../features/session/SelectPla
 import { SessionDetailsSheet } from '../../../features/session/SessionDetailsSheet';
 import { PrivateSessionFlow } from '../../../widgets/flows/PrivateSessionFlow';
 import { PlayerBillingSheet } from './PlayerBillingSheet';
-import { Badge } from '../../../shared/ui/badge';
 import { MessageCircle } from 'lucide-react';
 import { getPlayerTierInfo } from '../../../shared/lib/tier';
 
@@ -32,7 +32,7 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   hasParent,
 }) => {
   const { t } = useTranslation();
-  const { role, todaysPlayers, isSessionActive } = useAppStore();
+  const { role, todaysPlayers, isSessionActive, blacklistedPlayerIds, toggleBlacklist } = useAppStore();
   const [isChangeLevelOpen, setIsChangeLevelOpen] = React.useState(false);
   const [isLinkAccountOpen, setIsLinkAccountOpen] = React.useState(false);
   const [isSessionDetailsOpen, setIsSessionDetailsOpen] = React.useState(false);
@@ -45,7 +45,9 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
 
   const isTraining = player.status !== 'spectating';
   const isAdmin = role === 'coach';
+  const isPlayer = role === 'player';
   const isCheckedIn = todaysPlayers.some((p) => p.id === player.id);
+  const isBlacklisted = blacklistedPlayerIds.includes(player.id);
 
   const xpValue = player.xp || 9302;
   const xpTotal = 10000;
@@ -157,6 +159,18 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
               {t('coach.session.checkIn', 'Check-in')}
             </button>
           )}
+        </div>
+      )}
+      
+      {isPlayer && (
+        <div className="mt-[24px]">
+          <button
+            className={`w-full h-[52px] flex items-center justify-center rounded-full bg-card font-sans text-base font-bold transition-all active:scale-95 hover:bg-brand-surfaceElevated ${isBlacklisted ? 'text-white' : 'text-destructive'}`}
+            onClick={() => toggleBlacklist(player.id)}
+          >
+            <Ban className="w-5 h-5 mr-2" />
+            {isBlacklisted ? t('profile.removeFromBlacklist', 'Remove from black list') : t('profile.addToBlacklist', 'Add to black list')}
+          </button>
         </div>
       )}
       </BottomSheet>

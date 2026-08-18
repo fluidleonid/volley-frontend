@@ -14,6 +14,8 @@ import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
 
 import { Dialog } from '../../shared/ui/Dialog';
 import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
+import { SquadGameBanner } from '../../widgets/layout/SquadGameBanner';
+import { PartySetupView } from './PartySetupView';
 
 export const HomeView: React.FC = () => {
   const {
@@ -35,10 +37,13 @@ export const HomeView: React.FC = () => {
     isSessionActive,
     toggleSession,
     setActiveTab,
+    isPartyActive,
+    partyPlayers,
   } = useAppStore();
   const { t } = useTranslation();
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [isPartySetupOpen, setIsPartySetupOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [selectedGameCourt, setSelectedGameCourt] = useState<Court | null>(null);
@@ -101,10 +106,10 @@ export const HomeView: React.FC = () => {
           {(playerState === 'queued' || playerState === 'match_found' || playerState === 'playing') && (
             <div className="flex w-full items-center gap-2.5 text-center">
               {/* Sit out button */}
-              <div className="flex flex-[0.9] flex-col items-center">
+              <div className={`flex flex-col items-center ${isPartyActive ? 'flex-1' : 'flex-[0.9]'}`}>
                 <button
                   onClick={sitOut}
-                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
+                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-secondary text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
                 >
                   <Pause className="h-5 w-5 fill-current" />
                 </button>
@@ -114,25 +119,27 @@ export const HomeView: React.FC = () => {
               </div>
 
               {/* Invite to play button */}
-              <div className="flex flex-[1.6] flex-col items-center">
-                <button
-                  onClick={handleInvite}
-                  className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
-                >
-                  <Plus className="h-5 w-5 stroke-[3]" />
-                </button>
-                <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
-                  {t('home.inviteToPlay')}
-                </span>
-              </div>
+              {!isPartyActive && (
+                <div className="flex flex-[1.6] flex-col items-center">
+                  <button
+                    onClick={handleInvite}
+                    className="flex h-[44px] w-full items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
+                  >
+                    <Plus className="h-5 w-5 stroke-[3]" />
+                  </button>
+                  <span className="mt-2 font-sans text-sm font-medium text-muted-foreground">
+                    {t('home.inviteToPlay')}
+                  </span>
+                </div>
+              )}
 
               {/* Hard mode button */}
-              <div className="flex flex-[0.9] flex-col items-center">
+              <div className={`flex flex-col items-center ${isPartyActive ? 'flex-1' : 'flex-[0.9]'}`}>
                 <button
                   onClick={toggleHardmode}
                   className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${isHardmode
                       ? 'bg-primary/20 text-primary'
-                      : 'bg-card text-white hover:bg-brand-surfaceElevated'
+                      : 'bg-secondary text-white hover:bg-brand-surfaceElevated'
                     }`}
                 >
                   <Zap className="h-5 w-5" />
@@ -151,7 +158,7 @@ export const HomeView: React.FC = () => {
               <div className="flex flex-col items-center">
                 <button
                   onClick={stopTraining}
-                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-card text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
+                  className="flex h-[44px] w-full items-center justify-center rounded-[20px] bg-secondary text-white transition-all active:scale-95 hover:bg-brand-surfaceElevated"
                 >
                   <Square className="h-5 w-5 fill-current" />
                 </button>
@@ -175,6 +182,14 @@ export const HomeView: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+
+      {isSessionActive && role !== 'coach' && (
+        <SquadGameBanner 
+           isPartyActive={isPartyActive} 
+           partyPlayers={partyPlayers} 
+           onClick={() => setIsPartySetupOpen(true)} 
+        />
       )}
 
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
@@ -219,11 +234,13 @@ export const HomeView: React.FC = () => {
           {/* 3. Courts Horizontal Slider Section (Scrollbar Hidden, radius=24px) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.courts')}</h2>
-                <span className="font-display text-lg font-normal text-muted-foreground">
-                  {courts.filter((c) => c.isAvailable).length}/6
-                </span>
+              <div className="flex items-start">
+                <h2 className="font-display text-lg font-bold text-white tracking-tight">
+                  {t('home.courts')}
+                  <span className="font-normal text-muted-foreground ml-1.5">
+                    {courts.filter((c) => c.isAvailable).length}/6
+                  </span>
+                </h2>
               </div>
 
               {role === 'coach' && (
@@ -238,25 +255,33 @@ export const HomeView: React.FC = () => {
 
             {/* Horizontal Scrollable Courts with Invisible Scrollbar */}
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-              {courts.map((court) => (
-                <CourtCard
-                  key={court.id}
-                  court={court}
-                  showCoachToggle={role === 'coach'}
-                  onToggleAvailability={toggleCourtAvailability}
-                  onSelectCourt={(c) => setSelectedGameCourt(c)}
-                />
-              ))}
+              {courts.map((court) => {
+                const teamAPlayers = court.teamAIds.map(id => todaysPlayers.find(p => p.id === id)).filter(Boolean) as Player[];
+                const teamBPlayers = court.teamBIds.map(id => todaysPlayers.find(p => p.id === id)).filter(Boolean) as Player[];
+                return (
+                  <CourtCard
+                    key={court.id}
+                    court={court}
+                    teamAPlayers={teamAPlayers}
+                    teamBPlayers={teamBPlayers}
+                    showCoachToggle={role === 'coach'}
+                    onToggleAvailability={toggleCourtAvailability}
+                    onSelectCourt={(c) => setSelectedGameCourt(c)}
+                  />
+                );
+              })}
             </div>
           </div>
 
           {/* 4. Today's Players Horizontal Row */}
           <div className="space-y-3">
-            <div className="flex items-center gap-1.5">
-              <h2 className="font-display text-lg font-bold text-white tracking-tight">{t('home.todaysPlayers')}</h2>
-              <span className="font-display text-lg font-normal text-muted-foreground">
-                {todaysPlayers.length}
-              </span>
+            <div className="flex items-start">
+              <h2 className="font-display text-lg font-bold text-white tracking-tight">
+                {t('home.todaysPlayers')}
+                <span className="font-normal text-muted-foreground ml-1.5">
+                  {todaysPlayers.length}
+                </span>
+              </h2>
             </div>
 
             {todaysPlayers.length > 0 ? (
@@ -284,21 +309,19 @@ export const HomeView: React.FC = () => {
         </>
       )}
 
-      {/* Player Detail Sheet Modal */}
-      <PlayerDetailSheet
-        player={selectedPlayer}
-        isOpen={!!selectedPlayer}
-        onClose={() => setSelectedPlayer(null)}
+      <PlayerDetailSheet 
+        isOpen={!!selectedPlayer} 
+        onClose={() => setSelectedPlayer(null)} 
+        player={selectedPlayer} 
       />
-
-      {/* Active Game Detail Sheet Modal */}
-      <ActiveGameSheet
-        isOpen={isMatchDetailOpen || !!selectedGameCourt}
-        onClose={() => {
-          setMatchDetailOpen(false);
-          setSelectedGameCourt(null);
-        }}
+      <ActiveGameSheet 
+        isOpen={!!selectedGameCourt} 
+        onClose={() => setSelectedGameCourt(null)} 
+        court={selectedGameCourt!} 
       />
+      
+      {isInviteOpen && <InviteView onClose={() => setIsInviteOpen(false)} />}
+      {isPartySetupOpen && <PartySetupView onClose={() => setIsPartySetupOpen(false)} />}
 
       {/* 5. Recent Games Section */}
       <div className="space-y-3">

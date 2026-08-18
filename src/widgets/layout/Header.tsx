@@ -2,8 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { useAppStore } from '../../app/store/appStore';
-import { Shield, User, Coffee, Sparkles, Box, ChevronLeft, X } from 'lucide-react';
+import { User, Coffee, Sparkles, Box, ChevronLeft, X } from 'lucide-react';
 import { Avatar } from '../../shared/ui/Avatar';
+import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
 
 export interface HeaderProps {
   variant?: 'main' | 'page';
@@ -75,7 +76,11 @@ export const Header: React.FC<HeaderProps> = ({
           title="Open Profile"
         >
           <div className="relative">
-            <div className="rounded-full border-2 border-background shadow-[0_0_0_2px_#68BD44] transition-all duration-300 group-hover:shadow-[0_0_0_2px_#5AA739]">
+            <div className={`rounded-full border-2 border-background transition-all duration-300 ${
+              role === 'coach'
+                ? 'shadow-[0_0_0_2px_#3b82f6] group-hover:shadow-[0_0_0_2px_#2563eb]'
+                : 'shadow-[0_0_0_2px_#68BD44] group-hover:shadow-[0_0_0_2px_#5AA739]'
+            }`}>
               <Avatar
                 src={currentUser.avatarUrl}
                 alt={currentUser.name}
@@ -84,15 +89,15 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             {role === 'coach' && (
-              <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-black shadow-md" title="Coach">
-                ★
+              <span className="absolute -bottom-1.5 -right-1.5 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#3b82f6] shadow-md border-2 border-background" title="Coach">
+                <div className="w-3 h-3 bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
               </span>
             )}
           </div>
 
           <div className="flex flex-col h-[46px] justify-between">
             <div className="flex items-center leading-none">
-              <span className="font-display text-[30px] font-bold tracking-tight text-white leading-none group-hover:text-primary transition-colors">
+              <span className="font-display text-[30px] font-bold tracking-tight text-white leading-none">
                 {currentUser.name}
               </span>
             </div>
@@ -118,8 +123,8 @@ export const Header: React.FC<HeaderProps> = ({
               title="Switch Role for Testing"
             >
               {role === 'coach' ? (
-                <span className="text-primary font-bold flex items-center gap-1 leading-none">
-                  <Shield className="h-3 w-3 text-primary" /> {t('roles.admin')}
+                <span className="text-[#3b82f6] font-bold flex items-center gap-1 leading-none">
+                  <div className="h-3 w-3 bg-[#3b82f6]" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} /> {t('roles.admin')}
                 </span>
               ) : (
                 <User className="h-3 w-3 inline" />

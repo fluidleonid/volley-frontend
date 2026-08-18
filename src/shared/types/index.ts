@@ -2,9 +2,10 @@ export type UserRole = 'player' | 'coach';
 
 export type AppFlowState = 'splash' | 'onboarding' | 'app';
 
-export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements' | 'players' | 'public_schedule';
+export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements' | 'players' | 'public_schedule' | 'blacklist';
 
 export type PlayerState = 'spectating' | 'queued' | 'match_found' | 'resting' | 'playing';
+export type CourtStatus = 'matchmaking' | 'in_progress' | 'reserved';
 
 export interface Player {
   id: string;
@@ -15,23 +16,26 @@ export interface Player {
   status: PlayerState;
   isHardmode?: boolean;
   hasTelegram?: boolean;
+  isCoach?: boolean;
   gamesPlayed: number;
   wins: number;
   bpToday: number;
   winStreak: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Court {
   id: string;
   name: string;
   courtNumber: number;
-  statusText?: 'Matchmaking' | 'Matching...' | 'Matchmaking...' | 'In Progress' | 'Reserved...' | 'Reserved';
+  status: CourtStatus;
   isActive: boolean;
   isAvailable: boolean;
   isHardmode: boolean;
   timerSeconds: number;
-  teamA: Player[];
-  teamB: Player[];
+  teamAIds: string[];
+  teamBIds: string[];
   scoreA: number;
   scoreB: number;
 }
@@ -57,6 +61,13 @@ export interface LeaderboardEntry {
   wins: number;
   winRate: number;
   xp: number;
+}
+
+export interface BlacklistEntry {
+  id: string;
+  userId: string;
+  blockedId: string;
+  created_at?: string;
 }
 
 export type { AchievementRarity, AchievementData } from './achievement';

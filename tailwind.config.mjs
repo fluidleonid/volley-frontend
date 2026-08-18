@@ -64,6 +64,9 @@ export default {
           border: "#2C2C2E",
           hardmode: "#FF9500",
         },
+        coach: {
+          DEFAULT: "#3b82f6",
+        },
         level: {
           beginner: "var(--level-beginner)",
           amateur: "var(--level-amateur)",

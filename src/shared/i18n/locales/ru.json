@@ -21,7 +21,11 @@
     "cancelSession": "Отменить сессию",
     "cancelSessionTitle": "Отмена сессии",
     "cancelSessionDesc": "Вы уверены, что хотите отменить эту личную сессию? Игрок будет уведомлён.",
-    "keepSession": "Сохранить сессию"
+    "keepSession": "Сохранить сессию",
+    "blacklist": "Черный список",
+    "addToBlacklist": "В черный список",
+    "removeFromBlacklist": "Убрать из черного списка",
+    "blacklistEmpty": "В черном списке никого нет"
   },
   "language": {
     "title": "Язык",
@@ -359,5 +363,48 @@
       "uncommon": "Необычное",
       "rare": "Редкое"
     }
+  },
+  "party": {
+    "title": "Настройка группы",
+    "active": "Группа активна",
+    "activeDesc": "Подбирает матчи для вас в первую очередь",
+    "players": "игроков",
+    "playWithFriends": "Играй с друзьями",
+    "groupUp": "Объединяйтесь, чтобы играть вместе",
+    "teamPlacement": "Распределение",
+    "any": "Любое",
+    "teammates": "Вместе",
+    "rivals": "Соперники",
+    "anyDesc": "Играйте с любыми участниками",
+    "teammatesDesc": "В приоритете игра в одной команде",
+    "rivalsDesc": "В приоритете игра друг против друга",
+    "createParty": "Создать группу",
+    "options": "Опции группы",
+    "leave": "Покинуть",
+    "close": "Закрыть группу",
+    "selectPlayersTitle": "Выбор игроков",
+    "selectPlayersSubtitle": "Добавьте друзей в свою группу",
+    "leaveConfirmDesc": "Вы уверены, что хотите покинуть группу?",
+    "closeConfirmDesc": "Вы уверены, что хотите распустить группу? Все участники будут отключены.",
+    "placementLockedHint": "Когда в группе больше 2 игроков, подбор фиксируется на «Любой»."
+  },
+  "profile": {
+    "title": "Профиль",
+    "gamesPlayed": "Игры",
+    "wins": "Победы",
+    "bp": "BP",
+    "achievements": "Достижения",
+    "publicSchedule": "Расписание игр",
+    "privateSchedule": "Индивидуальные",
+    "publicGames": "Паблик матчи",
+    "trainingCosts": "Стоимость",
+    "language": "Язык",
+    "attendance": "Посещения",
+    "billing": "Оплата",
+    "blacklist": "Черный список",
+    "deleteAccount": "Удалить аккаунт",
+    "deleteConfirmTitle": "Удалить аккаунт",
+    "deleteConfirmDesc": "Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.",
+    "cancel": "Отмена"
   }
 }

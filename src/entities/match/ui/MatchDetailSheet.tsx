@@ -89,11 +89,13 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
     >
       <div className="-mx-4 px-[60px]">
         {/* Status Pill Badge */}
-        <div className="flex justify-center my-3 mb-8">
-          <Badge variant={match.isWin ? 'default' : 'destructive'} size="lg">
-            {match.isWin ? t('common.win', 'Win') : t('common.loss', 'Loss')}
-          </Badge>
-        </div>
+        {role !== 'coach' && (
+          <div className="flex justify-center my-3 mb-8">
+            <Badge variant={match.isWin ? 'default' : 'destructive'} size="lg">
+              {match.isWin ? t('common.win', 'Win') : t('common.loss', 'Loss')}
+            </Badge>
+          </div>
+        )}
 
         {/* Teams & Avatars & Scores */}
         {role === 'coach' ? (

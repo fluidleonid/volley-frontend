@@ -16,8 +16,10 @@ import { TrainingCostsView } from '../coach/TrainingCostsView';
 import { PrivateSessionsScheduleView } from '../coach/PrivateSessionsScheduleView';
 import { CoachPublicGamesView } from '../coach/CoachPublicGamesView';
 import { LanguageSelectView } from '../../features/language/LanguageSelectView';
-import { CalendarDays, CalendarClock, Activity, Globe } from 'lucide-react';
+import { CalendarDays, CalendarClock, Activity, Globe, Ban, BookOpen } from 'lucide-react';
 import { Dialog } from '../../shared/ui/Dialog';
+import { BlacklistView } from './BlacklistView';
+import coachCardImg from '../../shared/assets/images/coach-card.png';
 
 const topAchievements = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).slice(0, 5);
 
@@ -28,6 +30,7 @@ export const ProfileView: React.FC = () => {
   const [isPrivateScheduleOpen, setIsPrivateScheduleOpen] = useState(false);
   const [isPublicGamesOpen, setIsPublicGamesOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isBlacklistOpen, setIsBlacklistOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const { t } = useTranslation();
@@ -43,9 +46,11 @@ export const ProfileView: React.FC = () => {
       <PlayerCard 
         avatarUrl={currentUser.avatarUrl} 
         iconCount={tierInfo.iconCount}
-        accentColor={tierInfo.accentColor}
-        ringColor={tierInfo.ringColor}
-        glowColor={tierInfo.glowColor}
+        accentColor={role === 'coach' ? '#3b82f6' : tierInfo.accentColor}
+        ringColor={role === 'coach' ? '#3b82f6' : tierInfo.ringColor}
+        glowColor={role === 'coach' ? 'rgba(59,130,246,0.9)' : tierInfo.glowColor}
+        backgroundImage={role === 'coach' ? coachCardImg : undefined}
+        isCoachCard={role === 'coach'}
       />
 
       <div className="space-y-3 mt-6">
@@ -92,23 +97,28 @@ export const ProfileView: React.FC = () => {
         </>
       )}
 
-      <div className="space-y-[4px] pt-2 mt-6">
-        {role === 'coach' && (
-          <>
-            <MenuRowItem icon={Activity} label={t('profile.publicGames')} onClick={() => setIsPublicGamesOpen(true)} />
+      {role === 'coach' ? (
+        <>
+          <div className="space-y-[4px] pt-2 mt-6">
             <MenuRowItem icon={CalendarDays} label={t('profile.publicSchedule')} onClick={() => setActiveTab('public_schedule')} />
             <MenuRowItem icon={CalendarClock} label={t('profile.privateSchedule')} onClick={() => setIsPrivateScheduleOpen(true)} />
+          </div>
+          <div className="space-y-[4px] pt-2 mt-6">
+            <MenuRowItem icon={BookOpen} label={t('profile.publicGames')} onClick={() => setIsPublicGamesOpen(true)} />
+          </div>
+          <div className="space-y-[4px] pt-2 mt-6">
             <MenuRowItem icon={Banknote} label={t('profile.trainingCosts')} onClick={() => setIsTrainingCostsOpen(true)} />
-          </>
-        )}
-        {role === 'player' && (
-          <>
-            <MenuRowItem icon={Calendar} label={t('profile.attendance')} onClick={() => setActiveTab('attendance')} />
-            <MenuRowItem icon={Receipt} label={t('profile.billing')} onClick={() => setActiveTab('billing')} />
-          </>
-        )}
-        <MenuRowItem icon={Globe} label={t('profile.language')} onClick={() => setIsLanguageOpen(true)} />
-      </div>
+            <MenuRowItem icon={Globe} label={t('profile.language')} onClick={() => setIsLanguageOpen(true)} />
+          </div>
+        </>
+      ) : (
+        <div className="space-y-[4px] pt-2 mt-6">
+          <MenuRowItem icon={Calendar} label={t('profile.attendance')} onClick={() => setActiveTab('attendance')} />
+          <MenuRowItem icon={Receipt} label={t('profile.billing')} onClick={() => setActiveTab('billing')} />
+          <MenuRowItem icon={Ban} label={t('profile.blacklist', 'Blacklist')} onClick={() => setIsBlacklistOpen(true)} />
+          <MenuRowItem icon={Globe} label={t('profile.language')} onClick={() => setIsLanguageOpen(true)} />
+        </div>
+      )}
 
       {role === 'player' && (
         <div className="mt-8">
@@ -136,6 +146,9 @@ export const ProfileView: React.FC = () => {
       )}
       {isPublicGamesOpen && (
         <CoachPublicGamesView onClose={() => setIsPublicGamesOpen(false)} />
+      )}
+      {isBlacklistOpen && (
+        <BlacklistView onClose={() => setIsBlacklistOpen(false)} />
       )}
 
       {isLanguageOpen && (

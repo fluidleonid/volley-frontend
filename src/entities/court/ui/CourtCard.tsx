@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Court } from '../../../shared/types/index';
+import { Court, Player } from '../../../shared/types/index';
 import { Timer } from 'lucide-react';
 import { AvatarGroup } from '../../../shared/ui/AvatarGroup';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import courtSm from '../../../shared/assets/icons/court-sm.svg';
 
 export interface CourtCardProps {
   court: Court;
+  teamAPlayers: Player[];
+  teamBPlayers: Player[];
   showCoachToggle?: boolean;
   onToggleAvailability?: (courtId: string) => void;
   onSelectCourt?: (court: Court) => void;
@@ -14,12 +16,14 @@ export interface CourtCardProps {
 
 export const CourtCard: React.FC<CourtCardProps> = ({
   court,
+  teamAPlayers,
+  teamBPlayers,
   showCoachToggle = false,
   onToggleAvailability,
   onSelectCourt,
 }) => {
   const { t } = useTranslation();
-  const isPlaying = court.teamA.length > 0 || court.teamB.length > 0;
+  const isPlaying = teamAPlayers.length > 0 || teamBPlayers.length > 0;
   const isAvailable = court.isAvailable;
 
   // Real-time live match timer (seconds)
@@ -91,10 +95,10 @@ export const CourtCard: React.FC<CourtCardProps> = ({
         {isPlaying ? (
           <>
             {/* Team A Avatars */}
-            <AvatarGroup players={court.teamA} size="lg" stacked={true} />
+            <AvatarGroup players={teamAPlayers} size="lg" stacked={true} />
             
             {/* Team B Avatars */}
-            <AvatarGroup players={court.teamB} size="lg" stacked={true} />
+            <AvatarGroup players={teamBPlayers} size="lg" stacked={true} />
           </>
         ) : (
           <div className="h-10" />

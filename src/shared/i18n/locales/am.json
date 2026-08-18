@@ -21,7 +21,11 @@
     "cancelSession": "Չեղարկել նիստը",
     "cancelSessionTitle": "Չեղարկել նիստը",
     "cancelSessionDesc": "Վստա՞հ եք, որ ցանկանում եք չեղարկել անձնական նիստը: Խաղացողը կծանուցվի:",
-    "keepSession": "Պահել նիստը"
+    "keepSession": "Պահել նիստը",
+    "blacklist": "Սև ցուցակ",
+    "addToBlacklist": "Ավելացնել սև ցուցակում",
+    "removeFromBlacklist": "Հեռացնել սև ցուցակից",
+    "blacklistEmpty": "Սև ցուցակում խաղացողներ չկան"
   },
   "language": {
     "title": "Լեզու",
@@ -359,5 +363,48 @@
       "uncommon": "Ոչ սովորական",
       "rare": "Հազվադեպ"
     }
+  },
+  "party": {
+    "title": "Խմբի կարգավորում",
+    "active": "Խումբն ակտիվ է",
+    "activeDesc": "Նախ և առաջ ձեզ համար խաղեր է գտնում",
+    "players": "խաղացող",
+    "playWithFriends": "Խաղացեք ընկերների հետ",
+    "groupUp": "Միավորվեք՝ միասին խաղալու համար",
+    "teamPlacement": "Բաշխում",
+    "any": "Ցանկացած",
+    "teammates": "Թիմակիցներ",
+    "rivals": "Մրցակիցներ",
+    "anyDesc": "Խաղալ ցանկացած մասնակցի հետ",
+    "teammatesDesc": "Առաջնահերթությունը միևնույն թիմում խաղալն է",
+    "rivalsDesc": "Առաջնահերթությունը միմյանց դեմ խաղալն է",
+    "createParty": "Ստեղծել խումբ",
+    "options": "Խմբի կարգավորումներ",
+    "leave": "Լքել",
+    "close": "Փակել խումբը",
+    "selectPlayersTitle": "Ընտրել խաղացողներ",
+    "selectPlayersSubtitle": "Ավելացրեք ընկերներին ձեր խմբում",
+    "leaveConfirmDesc": "Համոզվա՞ծ եք, որ ցանկանում եք լքել խումբը:",
+    "closeConfirmDesc": "Համոզվա՞ծ եք, որ ցանկանում եք փակել խումբը: Բոլոր անդամները կանջատվեն:",
+    "placementLockedHint": "Երբ խմբում կա 2-ից ավելի խաղացող, բաշխումը ֆիքսվում է «Ցանկացած»:"
+  },
+  "profile": {
+    "title": "Անձնագիր",
+    "gamesPlayed": "Խաղեր",
+    "wins": "Հաղթանակներ",
+    "bp": "BP",
+    "achievements": "Ձեռքբերումներ",
+    "publicSchedule": "Հանրային խաղեր",
+    "privateSchedule": "Անհատական",
+    "publicGames": "Հանրային խաղեր",
+    "trainingCosts": "Արժեքներ",
+    "language": "Լեզու",
+    "attendance": "Հաճախումներ",
+    "billing": "Վճարումներ",
+    "blacklist": "Սև ցուցակ",
+    "deleteAccount": "Ջնջել հաշիվը",
+    "deleteConfirmTitle": "Ջնջել հաշիվը",
+    "deleteConfirmDesc": "Համոզվա՞ծ եք, որ ցանկանում եք ջնջել ձեր հաշիվը: Այս գործողությունը անդառնալի է:",
+    "cancel": "Չեղարկել"
   }
 }
