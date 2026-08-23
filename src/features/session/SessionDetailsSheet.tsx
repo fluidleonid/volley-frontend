@@ -30,7 +30,6 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
   onClose,
   onCloseAll,
   player,
-  onAvatarClick,
   hasParent,
   sessionDate = new Date().toISOString().split('T')[0],
   sessionTime = '18:00',

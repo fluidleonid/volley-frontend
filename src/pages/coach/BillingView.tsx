@@ -209,10 +209,6 @@ export const BillingView: React.FC = () => {
         <div className="mt-6 space-y-6">
           {role === 'coach' ? (
             coachGroups.length > 0 ? coachGroups.map((group) => {
-              const parseAmount = (amt: string) => parseInt(amt.replace(/[^\d]/g, ''), 10) || 0;
-              const formatAmount = (num: number) => num.toLocaleString('en-US') + ' ֏';
-              
-              const totalEarned = group.records.reduce((sum, r) => sum + parseAmount(r.amount), 0);
               const unpaidEarnedCount = group.records.filter(r => r.status === 'Settle').length;
 
               return (

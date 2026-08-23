@@ -33,8 +33,7 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
     acceptProgress,
     setUserAccepted,
     setBannerStage,
-    setAcceptedCount,
-    setPlayerState
+    setAcceptedCount
   } = useAppStore();
   const [isFinishSheetOpen, setIsFinishSheetOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Player } from '../../../shared/types/index';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../app/store/appStore';
-import { Receipt, CalendarClock, Dumbbell, Box, Ban, Radar, Popcorn, Armchair, MessageCircle } from 'lucide-react';
+import { Receipt, CalendarClock, Dumbbell, Ban, Radar, Popcorn, Armchair, MessageCircle } from 'lucide-react';
 import { Badge } from '../../../shared/ui/badge';
 import { MenuRowItem } from '../../menu/ui/MenuRowItem';
 import { ChangeLevelSheet } from './ChangeLevelSheet';
@@ -56,7 +56,6 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   const isAnySubSheetOpen = isChangeLevelOpen || isLinkAccountOpen || isSessionDetailsOpen || isPrivateSessionFlowOpen || isBillingOpen;
 
   const isSelf = player.id === currentUser.id || player.name === currentUser.name;
-  const isTraining = player.status !== 'spectating';
   const isAdmin = role === 'coach';
   const isPlayer = role === 'player';
   const isCheckedIn = todaysPlayers.some((p) => p.id === player.id);

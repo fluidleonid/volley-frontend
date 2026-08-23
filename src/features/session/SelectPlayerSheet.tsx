@@ -122,7 +122,6 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
     >
       {mockCandidates.map((player) => {
         const isSelected = selectedPlayerIds.includes(player.id);
-        const isOnCourt = player.status !== 'spectating';
         const isOtherTeam = otherTeamPlayerIds.includes(player.id);
 
         return (

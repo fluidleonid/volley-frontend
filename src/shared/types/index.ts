@@ -1,7 +1,7 @@
 export type UserRole = 'player' | 'coach';
 
 export type AppFlowState = 'splash' | 'onboarding' | 'app';
-export type BannerStage = 'searching' | 'waiting_user' | 'waiting_others' | 'all_accepted' | 'host_searching';
+export type BannerStage = 'searching' | 'waiting_user' | 'waiting_others' | 'all_accepted' | 'host_searching' | 'playing';
 
 export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements' | 'players' | 'public_schedule' | 'blacklist';
 

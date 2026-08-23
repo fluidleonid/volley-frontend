@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
-import { Player } from '../../shared/types/index';
-import { Badge } from '../../shared/ui/badge';
-import { Plus, Search, ChevronLeft, MessageSquare, Link2 } from 'lucide-react';
+import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
+import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { useScroll } from '../../shared/hooks/useScroll';
-import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
 import { SelectPlayerForSessionSheet } from '../../features/session/SelectPlayerForSessionSheet';
+import { Player } from '../../shared/types/index';
 import { Dialog } from '../../shared/ui/Dialog';
 import { Button } from '../../shared/ui/button';
 
@@ -192,10 +191,10 @@ export const PlayersView: React.FC = () => {
         subtitle={t('coach.players.selectPlayerToLink', 'Select a player to link')}
         mode="single"
         hideAddButtons
-        onSelectPlayer={(selectedPlayers) => {
+        onSelectPlayer={(selectedPlayer) => {
           setIsSelectPlayerOpen(false);
-          if (selectedPlayers.length > 0) {
-            setPlayerToMerge(selectedPlayers[0]);
+          if (selectedPlayer) {
+            setPlayerToMerge(selectedPlayer);
             setIsConfirmLinkOpen(true);
           }
         }}

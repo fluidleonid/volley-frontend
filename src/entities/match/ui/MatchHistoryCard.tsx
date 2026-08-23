@@ -32,11 +32,6 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
     }
   };
 
-  const handleEditClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsEditScoreOpen(true);
-  };
 
   // Convert match teams into Player-like objects for AvatarGroup
   const teamAPlayers = match.teamA.map((p, idx) => ({

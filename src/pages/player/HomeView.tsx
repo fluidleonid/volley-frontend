@@ -37,8 +37,6 @@ export const HomeView: React.FC = () => {
     setActiveTab,
     isPartyActive,
     partyPlayers,
-    isMatchDetailOpen,
-    setMatchDetailOpen,
   } = useAppStore();
   const { t } = useTranslation();
 
