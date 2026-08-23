@@ -6,6 +6,10 @@ import { Avatar } from '../../shared/ui/Avatar';
 import { Button } from '../../shared/ui/button';
 import { Dialog } from '../../shared/ui/Dialog';
 import { useState } from 'react';
+import { CalendarClock } from 'lucide-react';
+import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
+import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
+import { useAppStore } from '../../app/store/appStore';
 
 interface SessionDetailsSheetProps {
   isOpen: boolean;
@@ -24,6 +28,7 @@ interface SessionDetailsSheetProps {
 export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
   isOpen,
   onClose,
+  onCloseAll,
   player,
   onAvatarClick,
   hasParent,
@@ -34,27 +39,69 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
   isPast,
 }) => {
   const { t } = useTranslation();
+  const { role, currentUser } = useAppStore();
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+  const [isPlayerProfileOpen, setIsPlayerProfileOpen] = useState(false);
+  const [isCoachProfileOpen, setIsCoachProfileOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      setIsCancelConfirmOpen(false);
+      setIsPlayerProfileOpen(false);
+      setIsCoachProfileOpen(false);
+    }
+  }, [isOpen]);
 
   if (!isOpen || !player) return null;
 
+  const displayPlayer = role === 'player' ? currentUser : player;
+
+  const displayCoach: Player = role === 'coach' ? currentUser : {
+    id: player.id || 'coach-1',
+    name: player.name,
+    avatarUrl: player.avatarUrl,
+    level: 10,
+    xp: 0,
+    status: 'spectating',
+    gamesPlayed: 0,
+    wins: 0,
+    bpToday: 0,
+    winStreak: 0,
+    hasTelegram: true,
+  };
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={t('profile.sessionDetails', 'Session details')} hasParent={hasParent}>
+    <>
+    <BottomSheet isOpen={isOpen && !isPlayerProfileOpen && !isCoachProfileOpen} onClose={onClose} title={t('profile.sessionDetails', 'Session details')} hasParent={hasParent}>
       <div className="flex flex-col items-center mt-2 px-2 pb-2">
-        <div 
-          className="flex flex-col items-center cursor-pointer active:scale-95 transition-transform"
-          onClick={onAvatarClick}
-        >
-          <Avatar 
-            src={player.avatarUrl} 
-            alt={player.name} 
-            initials={player.name[0]} 
-            size="xl" 
-          />
-          <h2 className="font-display text-xl font-bold text-white mt-3">
-            {player.name}
-          </h2>
-        </div>
+          <div className="flex items-center justify-center gap-5">
+            {/* Player Avatar */}
+            <div className="relative cursor-pointer active:scale-95 transition-transform" onClick={() => setIsPlayerProfileOpen(true)}>
+              <Avatar 
+                src={displayPlayer.avatarUrl} 
+                alt={displayPlayer.name} 
+                initials={displayPlayer.name[0]} 
+                size="xl" 
+                className="border-0"
+              />
+            </div>
+            
+            <span className="font-display text-2xl font-bold text-muted-foreground">&</span>
+            
+            {/* Coach Avatar */}
+            <div className="relative cursor-pointer active:scale-95 transition-transform" onClick={() => setIsCoachProfileOpen(true)}>
+              <Avatar 
+                src={displayCoach.avatarUrl} 
+                alt={displayCoach.name} 
+                initials={displayCoach.name[0]} 
+                size="xl" 
+                className="border-0"
+              />
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#1d82f5] flex items-center justify-center border-2 border-background">
+                <div className="w-3 h-3 bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
+              </div>
+            </div>
+          </div>
 
         {/* Metrics Grid similar to MatchDetailSheet */}
         <div className="my-8 grid grid-cols-2 gap-y-6 gap-x-2 text-left pb-4 w-full px-4">
@@ -74,10 +121,11 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
 
         {!isPast && (
           <div className="w-full space-y-3 mt-4">
-            <Button fullWidth size="lg" variant="secondary" onClick={() => {
+            <Button fullWidth size="xl" variant="secondary" className="gap-2" onClick={() => {
               if (onReschedule) onReschedule();
               else onClose();
             }}>
+              <CalendarClock className="w-5 h-5" />
               {t('profile.reschedule', 'Reschedule')}
             </Button>
             <button 
@@ -93,17 +141,35 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
       <Dialog
         isOpen={isCancelConfirmOpen}
         onClose={() => setIsCancelConfirmOpen(false)}
-        title={t('profile.cancelSessionTitle', 'Cancel Session')}
-        description={t('profile.cancelSessionDesc', 'Are you sure you want to cancel this private session? The player will be notified.')}
-        primaryButtonText={t('profile.cancelSession', 'Cancel Session')}
+        title={t('profile.cancelConfirmTitle', 'Cancel session')}
+        description={t('profile.cancelConfirmDesc', 'Are you sure you want to cancel this session? this action cannot be undone.')}
+        primaryButtonText={t('profile.cancelSession', 'Cancel session')}
         primaryButtonOnClick={() => {
           setIsCancelConfirmOpen(false);
           if (onCancel) onCancel();
           else onClose();
         }}
-        secondaryButtonText={t('profile.keepSession', 'Keep Session')}
+        secondaryButtonText={t('common.keep', 'Keep')}
         secondaryButtonOnClick={() => setIsCancelConfirmOpen(false)}
       />
     </BottomSheet>
+    
+    <PlayerDetailSheet
+      isOpen={isPlayerProfileOpen}
+      onClose={() => setIsPlayerProfileOpen(false)}
+      onCloseAll={onCloseAll || onClose}
+      player={displayPlayer}
+      hasParent
+    />
+    
+    <PlayerDetailSheet
+      isOpen={isCoachProfileOpen}
+      onClose={() => setIsCoachProfileOpen(false)}
+      onCloseAll={onCloseAll || onClose}
+      player={displayCoach}
+      isCoachProfile={true}
+      hasParent
+    />
+    </>
   );
 };

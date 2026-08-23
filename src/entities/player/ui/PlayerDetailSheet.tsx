@@ -2,7 +2,7 @@ import React from 'react';
 import { Player } from '../../../shared/types/index';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../app/store/appStore';
-import { Receipt, CalendarClock, Dumbbell, Box, Ban } from 'lucide-react';
+import { Receipt, CalendarClock, Dumbbell, Box, Ban, Radar, Popcorn, Armchair, MessageCircle } from 'lucide-react';
 import { Badge } from '../../../shared/ui/badge';
 import { MenuRowItem } from '../../menu/ui/MenuRowItem';
 import { ChangeLevelSheet } from './ChangeLevelSheet';
@@ -13,8 +13,8 @@ import { SelectPlayerForSessionSheet } from '../../../features/session/SelectPla
 import { SessionDetailsSheet } from '../../../features/session/SessionDetailsSheet';
 import { PrivateSessionFlow } from '../../../widgets/flows/PrivateSessionFlow';
 import { PlayerBillingSheet } from './PlayerBillingSheet';
-import { MessageCircle } from 'lucide-react';
 import { getPlayerTierInfo } from '../../../shared/lib/tier';
+import coachCardImg from '../../../shared/assets/images/coach-card.png';
 
 export interface PlayerDetailSheetProps {
   player: Player | null;
@@ -22,6 +22,7 @@ export interface PlayerDetailSheetProps {
   onClose: () => void;
   onCloseAll?: () => void;
   hasParent?: boolean;
+  isCoachProfile?: boolean;
 }
 
 export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
@@ -30,19 +31,31 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
   onClose,
   onCloseAll,
   hasParent,
+  isCoachProfile = false,
 }) => {
   const { t } = useTranslation();
-  const { role, todaysPlayers, isSessionActive, blacklistedPlayerIds, toggleBlacklist } = useAppStore();
+  const { role, todaysPlayers, isSessionActive, blacklistedPlayerIds, toggleBlacklist, currentUser } = useAppStore();
   const [isChangeLevelOpen, setIsChangeLevelOpen] = React.useState(false);
   const [isLinkAccountOpen, setIsLinkAccountOpen] = React.useState(false);
   const [isSessionDetailsOpen, setIsSessionDetailsOpen] = React.useState(false);
   const [isPrivateSessionFlowOpen, setIsPrivateSessionFlowOpen] = React.useState(false);
   const [isBillingOpen, setIsBillingOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      setIsChangeLevelOpen(false);
+      setIsLinkAccountOpen(false);
+      setIsSessionDetailsOpen(false);
+      setIsPrivateSessionFlowOpen(false);
+      setIsBillingOpen(false);
+    }
+  }, [isOpen]);
+
   if (!isOpen || !player) return null;
 
   const isAnySubSheetOpen = isChangeLevelOpen || isLinkAccountOpen || isSessionDetailsOpen || isPrivateSessionFlowOpen || isBillingOpen;
 
+  const isSelf = player.id === currentUser.id || player.name === currentUser.name;
   const isTraining = player.status !== 'spectating';
   const isAdmin = role === 'coach';
   const isPlayer = role === 'player';
@@ -61,16 +74,18 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         onClose={onClose}
       onCloseAll={onCloseAll}
       hasParent={hasParent}
-      title={t('coach.players.playerDetails', 'Player details')}
+      title={isCoachProfile ? t('profile.coachDetails', 'Coach details') : t('coach.players.playerDetails', 'Player details')}
       zIndex={140}
     >
       {/* Hero Player Card Banner */}
       <PlayerCard 
         avatarUrl={player.avatarUrl} 
         iconCount={tierInfo.iconCount}
-        accentColor={tierInfo.accentColor}
-        ringColor={tierInfo.ringColor}
-        glowColor={tierInfo.glowColor}
+        accentColor={isCoachProfile ? 'var(--brand-coach)' : tierInfo.accentColor}
+        ringColor={isCoachProfile ? 'var(--brand-coach)' : tierInfo.ringColor}
+        glowColor={isCoachProfile ? 'rgba(59,130,246,0.9)' : tierInfo.glowColor}
+        backgroundImage={isCoachProfile ? coachCardImg : undefined}
+        isCoachCard={isCoachProfile}
       />
 
       {/* Player Name, Status & XpBar */}
@@ -81,68 +96,81 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
           </h2>
 
           <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mt-1">
-            {isTraining ? (
+            {player.status === 'playing' ? (
               <>
                 <Dumbbell className="h-3.5 w-3.5" />
                 <span>{t('home.training', 'Training')}</span>
               </>
+            ) : player.status === 'queued' || player.status === 'match_found' ? (
+              <>
+                <Radar className="h-3.5 w-3.5" />
+                <span>{t('home.queued', 'Searching')}</span>
+              </>
+            ) : player.status === 'resting' ? (
+              <>
+                <Armchair className="h-3.5 w-3.5" />
+                <span>{t('home.resting', 'Resting')}</span>
+              </>
             ) : (
               <>
-                <Box className="h-3.5 w-3.5" />
+                <Popcorn className="h-3.5 w-3.5" />
                 <span>{t('home.spectating', 'Spectating')}</span>
               </>
             )}
           </div>
         </div>
 
-        <XpBar 
-          current={xpValue} 
-          max={xpTotal} 
-          label={tierInfo.tierName} 
-          onLabelClick={isAdmin ? () => setIsChangeLevelOpen(true) : undefined}
-        />
-      </div>
-
-      <div className="space-y-[4px] pt-2 mt-6">
-        {/* Contact Row */}
-        <MenuRowItem
-          icon={MessageCircle}
-          label={t('common.contact', 'Contact')}
-          showChevron={false}
-          rightElement={
-            player.hasTelegram ? (
-              <Badge variant="neutral" className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
-                {t('common.message', 'Message')}
-              </Badge>
-            ) : isAdmin ? (
-              <Badge variant="neutral" onClick={() => setIsLinkAccountOpen(true)} className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
-                {t('coach.players.linkAccount', 'Link account')}
-              </Badge>
-            ) : (
-              <Badge variant="neutral">{t('coach.players.inPersonOnly', 'In person only')}</Badge>
-            )
-          }
-        />
-
-        {/* Admin Only Row Items & Buttons */}
-        {isAdmin && (
-          <>
-            {/* Billing row item */}
-            <MenuRowItem icon={Receipt} label={t('nav.billing', 'Billing')} onClick={() => setIsBillingOpen(true)} />
-
-            {/* Schedule private session row item */}
-            <MenuRowItem 
-              icon={CalendarClock} 
-              label={t('coach.players.schedulePrivate', 'Schedule private session')} 
-              onClick={() => setIsPrivateSessionFlowOpen(true)}
-            />
-
-          </>
+        {!isCoachProfile && (
+          <XpBar 
+            current={xpValue} 
+            max={xpTotal} 
+            label={tierInfo.tierName} 
+            onLabelClick={isAdmin ? () => setIsChangeLevelOpen(true) : undefined}
+          />
         )}
       </div>
 
+      {!isSelf && (
+        <div className="space-y-[4px] pt-2 mt-6">
+          {/* Contact Row */}
+          <MenuRowItem
+            icon={MessageCircle}
+            label={t('common.contact', 'Contact')}
+            showChevron={false}
+            rightElement={
+              player.hasTelegram ? (
+                <Badge variant="neutral" className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
+                  {t('common.message', 'Message')}
+                </Badge>
+              ) : isAdmin && !isCoachProfile ? (
+                <Badge variant="neutral" onClick={() => setIsLinkAccountOpen(true)} className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
+                  {t('coach.players.linkAccount', 'Link account')}
+                </Badge>
+              ) : (
+                <Badge variant="neutral">{t('coach.players.inPersonOnly', 'In person only')}</Badge>
+              )
+            }
+          />
+
+          {/* Admin Only Row Items & Buttons */}
+          {isAdmin && !isCoachProfile && (
+            <>
+              {/* Billing row item */}
+              <MenuRowItem icon={Receipt} label={t('nav.billing', 'Billing')} onClick={() => setIsBillingOpen(true)} />
+
+              {/* Schedule private session row item */}
+              <MenuRowItem 
+                icon={CalendarClock} 
+                label={t('coach.players.schedulePrivate', 'Schedule private session')} 
+                onClick={() => setIsPrivateSessionFlowOpen(true)}
+              />
+            </>
+          )}
+        </div>
+      )}
+
       {/* Action Button: Check-in (Green) when NOT on training, Check-out (Dark) when ON training (24px top margin) */}
-      {isAdmin && isSessionActive && (
+      {!isSelf && isAdmin && isSessionActive && !isCoachProfile && (
         <div className="mt-[24px]">
           {isCheckedIn ? (
             <button
@@ -162,7 +190,7 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
         </div>
       )}
       
-      {isPlayer && (
+      {!isSelf && isPlayer && !isCoachProfile && (
         <div className="mt-[24px]">
           <button
             className={`w-full h-[52px] flex items-center justify-center rounded-full bg-card font-sans text-base font-bold transition-all active:scale-95 hover:bg-brand-surfaceElevated ${isBlacklisted ? 'text-white' : 'text-destructive'}`}

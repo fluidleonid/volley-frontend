@@ -24,8 +24,8 @@ export const PlayerListItem: React.FC<PlayerListItemProps> = ({ player, onClick,
         <div className="relative">
           <Avatar src={player.avatarUrl} alt={player.name} initials={player.name[0]} size="md" hasBorder={false} />
           {player.isCoach && (
-            <span className="absolute -bottom-0.5 -right-0.5 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#3b82f6] shadow-sm border-[1.5px] border-background" title="Coach">
-              <div className="w-2.5 h-2.5 bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
+            <span className="absolute -bottom-0.5 -right-0.5 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-brand-coach shadow-sm border-[1.5px] border-background" title="Coach">
+              <div className="w-2 h-2 bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
             </span>
           )}
         </div>

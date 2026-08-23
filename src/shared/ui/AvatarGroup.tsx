@@ -43,21 +43,27 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   return (
     <div className={`flex items-center ${stacked ? '-space-x-2' : 'gap-1'} ${className}`}>
       {visiblePlayers.map((p, i) => (
-        <Avatar
-          key={p.id}
-          src={p.avatarUrl}
-          alt={p.name}
-          initials={p.name[0]}
-          size={size}
-          hasBorder={hasBorder}
-          onClick={(e) => {
-            if (onSelectPlayer) {
-              e.stopPropagation();
-              onSelectPlayer(p);
-            }
-          }}
-          className={stacked ? `relative ring-2 ${ringColor} z-[${players.length - i}]` : 'relative'}
-        />
+        <div key={p.id} className={stacked ? `relative ring-2 ${ringColor} z-[${players.length - i}] rounded-full bg-background` : 'relative rounded-full bg-background'}>
+          {p.isAccepted === false ? (
+            <div className={`flex items-center justify-center rounded-full bg-secondary font-bold text-muted-foreground animate-pulse ${getSizeClasses()}`}>
+              ?
+            </div>
+          ) : (
+            <Avatar
+              src={p.avatarUrl}
+              alt={p.name}
+              initials={p.name[0]}
+              size={size}
+              hasBorder={hasBorder}
+              onClick={(e) => {
+                if (onSelectPlayer) {
+                  e.stopPropagation();
+                  onSelectPlayer(p);
+                }
+              }}
+            />
+          )}
+        </div>
       ))}
       
       {showMoreBadge && (

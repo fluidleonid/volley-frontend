@@ -26,6 +26,12 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
   const { todaysPlayers, leaderboard, currentUser, role } = useAppStore();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      setSelectedPlayer(null);
+    }
+  }, [isOpen]);
+
   if (!isOpen || !match) return null;
 
   const formatDate = (dateStr: string) => {
@@ -87,7 +93,7 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
       title={t('home.matchDetails', 'Match details')}
       zIndex={100}
     >
-      <div className="-mx-4 px-[60px]">
+      <div className="w-full flex flex-col">
         {/* Status Pill Badge */}
         {role !== 'coach' && (
           <div className="flex justify-center my-3 mb-8">
@@ -135,7 +141,7 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
             </div>
           </div>
         ) : (
-          <div className="flex items-start justify-between my-6">
+          <div className="flex items-start justify-center gap-[20px] my-6">
             <div className="flex flex-col items-center">
               <AvatarGroup
                 players={teamAPlayers}
@@ -171,7 +177,7 @@ export const MatchDetailSheet: React.FC<MatchDetailSheetProps> = ({
         )}
 
         {/* 6 Metrics Grid (2 rows x 3 cols) */}
-        <div className="my-8 grid grid-cols-3 gap-y-6 gap-x-2 text-left pb-4">
+        <div className="my-8 grid grid-cols-[1fr_1fr_auto] gap-y-6 gap-x-2 text-left pb-4">
           <div>
             <div className="font-sans text-xs text-muted-foreground font-medium mb-1">{t('common.date', 'Date')}</div>
             <div className="font-sans text-sm font-semibold text-white">

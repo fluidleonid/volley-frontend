@@ -142,8 +142,8 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary" />
-              <span>{t('coach.schedule.regularWeeklySchedule', 'Regular Weekly Schedule')}</span>
+              <Clock className="h-5 w-5" />
+              <span>{t('coach.schedule.regularWeeklySchedule', 'Regular weekly schedule')}</span>
             </h2>
           </div>
 
@@ -209,8 +209,8 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              <span>{t('coach.schedule.specialDates', 'Special Dates')}</span>
+              <Calendar className="h-5 w-5" />
+              <span>{t('coach.schedule.specialDates', 'Special dates')}</span>
             </h2>
 
             <button
@@ -313,7 +313,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
               <Clock className="h-5 w-5" />
             </div>
             <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.startTime', 'Start Time')}</span>
+              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.startTime', 'Start time')}</span>
               <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {getFormattedTime(specialTimeVal)}
               </span>
@@ -322,7 +322,7 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
 
           <button
             onClick={handleAddSpecialDate}
-            className="w-full h-[48px] rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer mt-4"
+            className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer mt-4"
           >
             {t('coach.schedule.addSpecialSession', 'Add special session')}
           </button>

@@ -17,7 +17,7 @@ export const CoachView: React.FC = () => {
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-lg font-bold text-white">{t('coach.tools.title', 'Coach Tools')}</h1>
+              <h1 className="text-lg font-bold text-white">{t('coach.tools.title', 'Coach tools')}</h1>
               <p className="text-xs text-muted-foreground">{t('coach.tools.subtitle', 'Advanced training session management')}</p>
             </div>
           </div>
@@ -32,7 +32,7 @@ export const CoachView: React.FC = () => {
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-white">{t('coach.tools.playersDb', 'All Players Database')}</div>
+              <div className="text-xs font-bold text-white">{t('coach.tools.playersDb', 'All players database')}</div>
               <span className="text-[10px] text-muted-foreground">{t('coach.tools.playersDbDesc', 'Inspect player profiles, stats and levels')}</span>
             </div>
           </div>
@@ -44,7 +44,7 @@ export const CoachView: React.FC = () => {
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-white">{t('coach.tools.addGuest', 'Add New Guest')}</div>
+              <div className="text-xs font-bold text-white">{t('coach.tools.addGuest', 'Add new guest')}</div>
               <span className="text-[10px] text-muted-foreground">{t('coach.tools.addGuestDesc', 'Quick registration for session')}</span>
             </div>
           </div>
@@ -56,7 +56,7 @@ export const CoachView: React.FC = () => {
               <Calendar className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-white">{t('coach.tools.sessionSchedule', 'Session Schedule')}</div>
+              <div className="text-xs font-bold text-white">{t('coach.tools.sessionSchedule', 'Session schedule')}</div>
               <span className="text-[10px] text-muted-foreground">{t('coach.tools.sessionScheduleDesc', 'Manage court time slots and bookings')}</span>
             </div>
           </div>
@@ -68,7 +68,7 @@ export const CoachView: React.FC = () => {
               <DollarSign className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-white">{t('coach.tools.financialReports', 'Financial Reports')}</div>
+              <div className="text-xs font-bold text-white">{t('coach.tools.financialReports', 'Financial reports')}</div>
               <span className="text-[10px] text-muted-foreground">{t('coach.tools.financialReportsDesc', 'Track session payments and dues')}</span>
             </div>
           </div>

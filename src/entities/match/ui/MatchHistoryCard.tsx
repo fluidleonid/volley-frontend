@@ -5,6 +5,8 @@ import { MatchDetailSheet } from './MatchDetailSheet';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../shared/ui/badge';
 import { BpIcon } from '../../../shared/ui/icons/BpIcon';
+import { Pen } from 'lucide-react';
+import { EditMatchScoreSheet } from '../../../features/match/EditMatchScoreSheet';
 
 export interface MatchHistoryCardProps {
   match: Match;
@@ -15,6 +17,7 @@ export interface MatchHistoryCardProps {
 export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onClick, variant = 'player' }) => {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isEditScoreOpen, setIsEditScoreOpen] = useState(false);
   const isWin = match.isWin;
 
   const handleClick = (e: React.MouseEvent) => {
@@ -22,9 +25,17 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
     e.stopPropagation();
     if (onClick) {
       onClick();
+    } else if (match.isUnresolved) {
+      setIsEditScoreOpen(true);
     } else {
       setIsSheetOpen(true);
     }
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsEditScoreOpen(true);
   };
 
   // Convert match teams into Player-like objects for AvatarGroup
@@ -70,15 +81,25 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
             </div>
             
             <div className="flex items-center justify-center shrink-0 w-[100px]">
-              <span className="font-display text-[20px] font-bold text-white w-[30px] text-right">
-                {match.scoreA ?? 21}
-              </span>
-              <span className="font-sans text-[20px] font-bold text-muted-foreground mx-2">
-                :
-              </span>
-              <span className="font-display text-[20px] font-bold text-white w-[30px] text-left">
-                {match.scoreB ?? 18}
-              </span>
+              {match.isUnresolved ? (
+                <div
+                  className="w-10 h-10 rounded-full bg-card flex items-center justify-center transition-all shadow-md"
+                >
+                  <Pen className="w-5 h-5 text-white" />
+                </div>
+              ) : (
+                <>
+                  <span className="font-display text-[20px] font-bold text-white w-[30px] text-right">
+                    {match.scoreA ?? 21}
+                  </span>
+                  <span className="font-sans text-[20px] font-bold text-muted-foreground mx-2">
+                    :
+                  </span>
+                  <span className="font-display text-[20px] font-bold text-white w-[30px] text-left">
+                    {match.scoreB ?? 18}
+                  </span>
+                </>
+              )}
             </div>
 
             <div className="flex-1 flex justify-end pr-2">
@@ -93,9 +114,9 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
                 className="self-stretch w-[22px] min-w-[22px] max-w-[22px] rounded-[12px] flex items-center justify-center shrink-0 border-0 bg-brand-surfaceElevated"
               >
                 <span
-                  className={`font-display text-xs font-extrabold ${isWin ? 'text-primary' : 'text-[#FF3B30]'}`}
+                  className={`font-display text-xs font-extrabold ${match.isUnresolved ? 'text-muted-foreground' : isWin ? 'text-primary' : 'text-[#FF3B30]'}`}
                 >
-                  {isWin ? t('games.winsShort', 'W') : t('games.lossesShort', 'L')}
+                  {match.isUnresolved ? '?' : isWin ? t('games.winsShort', 'W') : t('games.lossesShort', 'L')}
                 </span>
               </div>
             </div>
@@ -105,28 +126,40 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
               {/* Team A Column (Fixed Width: 40px) */}
               <div className="w-[40px] shrink-0 flex flex-col items-center justify-center gap-1">
                 <AvatarGroup players={teamAPlayers} size="xs" stacked={true} hasBorder={false} ringColor="ring-[#121212]" />
-                <span
-                  className="font-display text-[20px] font-extrabold tracking-tight leading-none mt-0.5 text-white"
-                >
-                  {match.scoreA}
-                </span>
+                {!match.isUnresolved && (
+                  <span
+                    className="font-display text-[20px] font-extrabold tracking-tight leading-none mt-0.5 text-white"
+                  >
+                    {match.scoreA}
+                  </span>
+                )}
               </div>
 
-              {/* Colon Separator (Vertically Centered) */}
+              {/* Colon Separator (Vertically Centered) or Pen Button */}
               <div
-                className="font-display text-xl font-bold self-center flex items-center justify-center opacity-60 leading-none text-muted-foreground"
+                className="font-display text-xl font-bold self-center flex items-center justify-center opacity-100 leading-none"
               >
-                :
+                {match.isUnresolved ? (
+                  <div
+                    className="w-10 h-10 rounded-full bg-card flex items-center justify-center transition-all shadow-md z-10"
+                  >
+                    <Pen className="w-5 h-5 text-white" />
+                  </div>
+                ) : (
+                  <span className="opacity-60 text-muted-foreground">:</span>
+                )}
               </div>
 
               {/* Team B Column (Fixed Width: 40px) */}
               <div className="w-[40px] shrink-0 flex flex-col items-center justify-center gap-1">
                 <AvatarGroup players={teamBPlayers} size="xs" stacked={true} hasBorder={false} ringColor="ring-[#121212]" />
-                <span
-                  className="font-display text-[20px] font-extrabold tracking-tight leading-none mt-0.5 text-white"
-                >
-                  {match.scoreB}
-                </span>
+                {!match.isUnresolved && (
+                  <span
+                    className="font-display text-[20px] font-extrabold tracking-tight leading-none mt-0.5 text-white"
+                  >
+                    {match.scoreB}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -154,6 +187,20 @@ export const MatchHistoryCard: React.FC<MatchHistoryCardProps> = ({ match, onCli
         match={match}
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
+      />
+      
+      {/* Edit Match Score Sheet */}
+      <EditMatchScoreSheet
+        teamA={teamAPlayers}
+        teamB={teamBPlayers}
+        initialScoreA={match.scoreA}
+        initialScoreB={match.scoreB}
+        isOpen={isEditScoreOpen}
+        onClose={() => setIsEditScoreOpen(false)}
+        onSave={(a, b) => {
+          console.log('Saved score', a, b);
+          // Actual backend save goes here
+        }}
       />
     </>
   );

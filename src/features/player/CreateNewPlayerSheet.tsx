@@ -26,6 +26,14 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
 
   const [level, setLevel] = useState('Beginner');
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      setName('');
+      setPhone('');
+      setLevel('Beginner');
+    }
+  }, [isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
@@ -49,7 +57,7 @@ export const CreateNewPlayerSheet: React.FC<CreateNewPlayerSheetProps> = ({
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title={titleNode} zIndex={170} hasParent={hasParent}>
-      <form onSubmit={handleSubmit} className="space-y-6 pt-2">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <Input
             label={t('coach.players.playerName', 'Player name*')}

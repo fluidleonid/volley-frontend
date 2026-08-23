@@ -18,10 +18,10 @@ export interface PlayerCardProps {
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   avatarUrl,
-  accentColor = '#68BD44',
-  ringColor = '#68BD44',
+  accentColor = 'var(--brand-player)',
+  ringColor = 'var(--brand-player)',
   iconCount = 3,
-  glowColor = 'rgba(104,189,68,0.9)',
+  glowColor = 'var(--brand-coach)',
   className = '',
   backgroundImage = playerCardPng,
   isCoachCard = false,

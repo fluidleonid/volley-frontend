@@ -112,7 +112,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-36 scrollbar-none -mx-4 px-4">
+        <div className="flex-1 overflow-y-auto space-y-2 pb-36 scrollbar-none -mx-4 px-4">
           {/* Special Actions */}
           {!hideAddButtons && (
             <div className="space-y-1 pb-4 border-b border-border/60 mb-4">

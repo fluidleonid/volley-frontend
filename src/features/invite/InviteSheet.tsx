@@ -78,7 +78,7 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
             <QrCode className="h-32 w-32 text-black" />
           </div>
           <span className="font-sans text-xs text-muted-foreground">
-            {t('home.scanToJoin', 'Scan to join instantly in Telegram')}
+            {t('home.scanToJoin', 'Scan to join instantly in telegram')}
           </span>
         </div>
 
@@ -96,7 +96,7 @@ export const InviteSheet: React.FC<InviteSheetProps> = ({ isOpen, onClose }) => 
             ) : (
               <>
                 <Share2 className="h-5 w-5 stroke-[2.5]" />
-                <span>{t('home.shareLink', 'Share Link')}</span>
+                <span>{t('home.shareLink', 'Share link')}</span>
               </>
             )}
           </button>

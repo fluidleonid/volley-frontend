@@ -1,6 +1,7 @@
 export type UserRole = 'player' | 'coach';
 
 export type AppFlowState = 'splash' | 'onboarding' | 'app';
+export type BannerStage = 'searching' | 'waiting_user' | 'waiting_others' | 'all_accepted' | 'host_searching';
 
 export type NavigationTab = 'home' | 'leaderboard' | 'games' | 'profile' | 'coach' | 'attendance' | 'billing' | 'achievements' | 'players' | 'public_schedule' | 'blacklist';
 
@@ -17,6 +18,7 @@ export interface Player {
   isHardmode?: boolean;
   hasTelegram?: boolean;
   isCoach?: boolean;
+  isAccepted?: boolean;
   gamesPlayed: number;
   wins: number;
   bpToday: number;
@@ -53,6 +55,7 @@ export interface Match {
   isWin: boolean;
   xpGained: number;
   bpGained?: number;
+  isUnresolved?: boolean;
 }
 
 export interface LeaderboardEntry {

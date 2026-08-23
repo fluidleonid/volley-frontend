@@ -74,14 +74,18 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     inviteTeamB,
     invitedPlayers,
     role,
+    bannerStage,
+    setBannerStage,
+    userAccepted,
+    setUserAccepted,
+    acceptedCount,
+    setAcceptedCount,
+    acceptProgress: progress,
+    setAcceptProgress: setProgress,
   } = useAppStore();
   const { t } = useTranslation();
 
   const [dotCount, setDotCount] = useState(1);
-  const [bannerStage, setBannerStage] = useState<BannerStage>('searching');
-  const [userAccepted, setUserAccepted] = useState(false);
-  const [acceptedCount, setAcceptedCount] = useState(2);
-  const [progress, setProgress] = useState(0);
 
   // Sync banner state with playerState & host flag
   useEffect(() => {
@@ -96,7 +100,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
         setProgress(0);
       }
     }
-  }, [playerState, isInviteHost]);
+  }, [playerState, isInviteHost, setBannerStage, setUserAccepted, setAcceptedCount, setProgress]);
 
   // Dots animation for regular searching
   useEffect(() => {
@@ -116,7 +120,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
       }, 3500);
       return () => clearTimeout(t);
     }
-  }, [playerState, bannerStage, setPlayerState]);
+  }, [playerState, bannerStage, setPlayerState, setBannerStage, setProgress]);
 
   // Host: host_searching -> all_accepted (Playing) after 4s (court found)
   useEffect(() => {
@@ -127,7 +131,22 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
       }, 4000);
       return () => clearTimeout(t);
     }
-  }, [bannerStage]);
+  }, [bannerStage, setBannerStage, setUserAccepted]);
+
+  const handleBannerClick = () => {
+    // When playing, match found, or invite arrived, clicking opens Match Detail
+    if (playerState === 'playing' || bannerStage === 'all_accepted' || (!isInviteHost && bannerStage === 'waiting_user')) {
+      setMatchDetailOpen(true);
+    }
+    // When searching as host, click to open invite panel
+    else if (playerState === 'queued' && isInviteHost && bannerStage === 'searching') {
+      setBannerStage('host_searching');
+    }
+    // If waiting for others to accept, also allow opening match detail to see who accepted
+    else if (bannerStage === 'waiting_others') {
+      setMatchDetailOpen(true);
+    }
+  };
 
   // Radial timer for Accept button
   useEffect(() => {
@@ -152,7 +171,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     } else {
       setProgress(0);
     }
-  }, [bannerStage, userAccepted, setPlayerState]);
+  }, [bannerStage, userAccepted, setPlayerState, setBannerStage, setUserAccepted, setAcceptedCount, setProgress]);
 
   // Simulate others accepting
   useEffect(() => {
@@ -167,7 +186,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
         clearTimeout(t2);
       };
     }
-  }, [userAccepted, bannerStage, acceptedCount]);
+  }, [userAccepted, bannerStage, acceptedCount, setAcceptedCount, setBannerStage]);
 
   const hasInviteTeams = inviteTeamA.length > 0 || inviteTeamB.length > 0;
   const isInvited = invitedPlayers.length > 0 || hasInviteTeams;
@@ -192,9 +211,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     }
   };
 
-  const handleBannerClick = () => {
-    if (bannerStage === 'all_accepted' || playerState === 'playing') setMatchDetailOpen(true);
-  };
+
 
   const fillAngle = Math.min(360, Math.max(0, progress * 360));
   const mockTeamA: Player[] = [
@@ -294,7 +311,7 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
               style={{
                 background: `conic-gradient(from 0deg, #2C2C2E 0deg ${fillAngle}deg, #68BD44 ${fillAngle}deg 360deg)`,
               }}
-              className="relative flex h-[44px] w-[90px] items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform active:scale-95 overflow-hidden"
+              className="relative flex h-[44px] w-[90px] items-center justify-center rounded-full text-xs font-bold transition-transform active:scale-95 overflow-hidden"
             >
               <span className="relative z-10 font-extrabold text-primary-foreground">{t('banner.accept')}</span>
             </button>
@@ -304,8 +321,9 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     );
   };
 
-  // Render dual banner carousel whenever there are invited players / next game pool
-  const hasSecondBanner = invitedPlayers.length > 0 || (isInviteHost && hasInviteTeams);
+  // Render dual banner carousel ONLY if an invite arrived AND we are already playing/queued.
+  // "два банера могут быть только если инвайт пришел, в остальных случаях только один баннер"
+  const hasSecondBanner = !isInviteHost && isInvited && (playerState === 'playing' || playerState === 'queued');
 
   if (hasSecondBanner) {
     // Mock incoming invite players for visual demo

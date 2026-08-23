@@ -72,7 +72,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
             className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
               court.isAvailable ? 'bg-primary' : 'bg-secondary/80'
             }`}
-            title="Toggle Court Availability"
+            title="Toggle court availability"
           >
             <span
               className={`pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${

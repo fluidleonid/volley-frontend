@@ -46,7 +46,7 @@ export const TeamPlacementSheet: React.FC<TeamPlacementSheetProps> = ({
       onClose={onClose}
       title={t('party.teamPlacement', 'Team placement')}
     >
-      <div className="pb-8 pt-2">
+      <div className="pb-8">
         <SelectionList
           options={options}
           value={selected}

@@ -135,7 +135,7 @@ export const PartySetupView: React.FC<PartySetupViewProps> = ({ onClose }) => {
             </button>
             {isPlacementLocked && (
               <p className="text-xs text-muted-foreground text-center px-4 leading-tight">
-                {t('party.placementLockedHint', 'Team placement is locked to Any when there are more than 2 players.')}
+                {t('party.placementLockedHint', 'Team placement is locked to any when there are more than 2 players.')}
               </p>
             )}
           </div>

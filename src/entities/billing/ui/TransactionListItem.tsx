@@ -36,7 +36,7 @@ export const TransactionListItem: React.FC<TransactionListItemProps> = ({
     >
       <div className="flex items-center gap-3 pointer-events-none">
         {player && <Avatar src={player.avatarUrl} alt={player.name} initials={player.name[0]} size="sm" hasBorder={false} />}
-        <span className="font-bold text-white text-[16px]">{player ? player.name : (record.type ? t(`coach.${record.type.toLowerCase()}`, record.type) : t('coach.unknownPlayer', 'Unknown Player'))}</span>
+        <span className="font-bold text-white text-[16px]">{player ? player.name : (record.type ? t(`coach.${record.type.toLowerCase()}`, record.type) : t('coach.unknownPlayer', 'Unknown player'))}</span>
       </div>
       <div className="flex items-center gap-3 pointer-events-none">
         <span className="font-medium text-white text-[15px] text-right w-[75px] shrink-0 whitespace-nowrap">{record.amount}</span>

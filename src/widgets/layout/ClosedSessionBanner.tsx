@@ -4,10 +4,14 @@ import { CalendarClock } from 'lucide-react';
 import { Badge } from '../../shared/ui/badge';
 import publicSessionImg from '../../shared/assets/images/publicsession.png';
 
+import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
+
 interface ClosedSessionBannerProps {
   title?: string;
   description?: string;
   nextSessionTime?: string;
+  coachAvatar?: string;
+  onCoachClick?: () => void;
   children?: React.ReactNode;
 }
 
@@ -15,6 +19,8 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
   title,
   description,
   nextSessionTime,
+  coachAvatar,
+  onCoachClick,
   children
 }) => {
   const { t } = useTranslation();
@@ -45,10 +51,24 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
           {finalDescription}
         </p>
         {nextSessionTime && (
-          <Badge variant="secondary" className="w-fit mt-1">
-            <CalendarClock />
-            <span>{nextSessionTime}</span>
-          </Badge>
+          <div className="flex items-center gap-2 mt-1">
+            <Badge variant="secondary" className="w-fit">
+              <CalendarClock className="w-4 h-4 mr-1" />
+              <span>{nextSessionTime}</span>
+            </Badge>
+            {coachAvatar && (
+              <div className="relative cursor-pointer hover:scale-105 active:scale-95 transition-all" onClick={onCoachClick}>
+                <img 
+                  src={coachAvatar} 
+                  alt="Coach" 
+                  className="w-7 h-7 rounded-full border border-card/50"
+                />
+                <div className="absolute -bottom-1 -right-1 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-brand-coach border border-card">
+                  <div className="w-[7px] h-[7px] bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

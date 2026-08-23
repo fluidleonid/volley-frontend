@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 import { Player } from '../../shared/types/index';
 import { Badge } from '../../shared/ui/badge';
-import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
+import { Plus, Search, ChevronLeft, MessageSquare, Link2 } from 'lucide-react';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
+import { SelectPlayerForSessionSheet } from '../../features/session/SelectPlayerForSessionSheet';
+import { Dialog } from '../../shared/ui/Dialog';
+import { Button } from '../../shared/ui/button';
 
 type TabType = 'authorized' | 'manual';
 
@@ -20,6 +23,12 @@ export const PlayersView: React.FC = () => {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const scrolled = useScroll();
+
+  // Link Account Flow States
+  const [linkTargetPlayer, setLinkTargetPlayer] = useState<Player | null>(null);
+  const [isSelectPlayerOpen, setIsSelectPlayerOpen] = useState(false);
+  const [isConfirmLinkOpen, setIsConfirmLinkOpen] = useState(false);
+  const [playerToMerge, setPlayerToMerge] = useState<Player | null>(null);
 
   const authorizedPlayers = MOCK_PLAYERS.filter(p => p.hasTelegram);
   const manualPlayers = MOCK_PLAYERS.filter(p => !p.hasTelegram);
@@ -121,18 +130,34 @@ export const PlayersView: React.FC = () => {
                 player={player}
                 onClick={(p) => setSelectedPlayer(p)}
                 rightContent={
-                  player.hasTelegram && (
-                    <Badge 
-                      variant="neutral" 
+                  player.hasTelegram ? (
+                    <Button 
+                      variant="secondary"
+                      size="sm"
+                      fullWidth={false}
                       onClick={(e: React.MouseEvent) => { 
                         e.stopPropagation(); 
                         console.log('Message player', player.name); 
-                      }} 
-                      className="px-3 py-1 cursor-pointer text-white hover:bg-brand-surfaceElevated shadow-sm"
+                      }}
+                      className="shadow-sm font-semibold"
                     >
-                      <MessageSquare className="h-[14px] w-[14px] mr-1.5" />
+                      <MessageSquare />
                       {t('common.message', 'Message')}
-                    </Badge>
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="secondary"
+                      size="sm"
+                      fullWidth={false}
+                      onClick={(e: React.MouseEvent) => { 
+                        e.stopPropagation(); 
+                        setLinkTargetPlayer(player);
+                        setIsSelectPlayerOpen(true);
+                      }} 
+                      className="shadow-sm font-semibold"
+                    >
+                      {t('profile.linkAccount', 'Link account')}
+                    </Button>
                   )
                 }
               />
@@ -158,6 +183,36 @@ export const PlayersView: React.FC = () => {
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
         player={selectedPlayer}
+      />
+
+      <SelectPlayerForSessionSheet
+        isOpen={isSelectPlayerOpen}
+        onClose={() => setIsSelectPlayerOpen(false)}
+        title={t('coach.players.linkAccount', 'Link account')}
+        subtitle={t('coach.players.selectPlayerToLink', 'Select a player to link')}
+        mode="single"
+        hideAddButtons
+        onSelectPlayer={(selectedPlayers) => {
+          setIsSelectPlayerOpen(false);
+          if (selectedPlayers.length > 0) {
+            setPlayerToMerge(selectedPlayers[0]);
+            setIsConfirmLinkOpen(true);
+          }
+        }}
+      />
+
+      <Dialog
+        isOpen={isConfirmLinkOpen}
+        onClose={() => setIsConfirmLinkOpen(false)}
+        title={t('coach.players.confirmLinkTitle', 'Confirm merge')}
+        description={t('coach.players.confirmLinkDesc', 'Players will be merged. BP will be summed up, and the higher level and XP will be kept. the manual player will be removed.')}
+        primaryButtonText={t('common.confirm', 'Confirm')}
+        primaryButtonOnClick={() => {
+          console.log('Merging', linkTargetPlayer?.name, 'with', playerToMerge?.name);
+          setIsConfirmLinkOpen(false);
+        }}
+        secondaryButtonText={t('common.cancel', 'Cancel')}
+        secondaryButtonOnClick={() => setIsConfirmLinkOpen(false)}
       />
     </div>
   );

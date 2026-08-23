@@ -3,6 +3,7 @@ import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../shared/ui/badge';
 import { CreditCard, Banknote } from 'lucide-react';
+import { Button } from '../../shared/ui/button';
 import { useAppStore } from '../../app/store/appStore';
 
 import { Avatar } from '../../shared/ui/Avatar';
@@ -42,12 +43,11 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
       onClose={onClose}
       onCloseAll={onCloseAll}
       hasParent={hasParent}
-      title={isPaidAdmin ? t('billing.paymentDetails', 'Payment Details') : t('billing.settlePayment', 'Settle payment')}
+      title={isPaidAdmin ? t('billing.paymentDetails', 'Payment details') : t('billing.settlePayment', 'Settle payment')}
       zIndex={zIndex || 200}
     >
       <div className="flex flex-col h-full bg-background">
-        {/* Content with padding similar to match details */}
-        <div className="flex-1 px-[60px] pb-6 overflow-y-auto pt-2">
+        <div className="flex-1 pb-6 overflow-y-auto">
           {/* Badge & Amount */}
           <div className="flex flex-col items-center justify-center mt-2 mb-8">
             <Badge size="lg" variant={isPaidAdmin ? 'default' : 'neutral'} className="mb-6">
@@ -85,32 +85,36 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 mt-auto w-full pt-4">
             {isPaidAdmin ? (
               <button
                 onClick={onClose}
-                className="w-full h-[44px] rounded-full bg-card flex items-center justify-center text-[#FF453A] font-semibold hover:bg-secondary active:scale-95 transition-all"
+                className="w-full h-[52px] rounded-full bg-card flex items-center justify-center text-[#FF453A] font-semibold hover:bg-secondary active:scale-95 transition-all"
               >
-                {t('billing.markUnpaid', 'Mark as Unpaid')}
+                {t('billing.markUnpaid', 'Mark as unpaid')}
               </button>
-            ) : (
+            ) : record?.status !== 'Paid' ? (
               <>
-                <button
+                <Button
+                  size="xl"
+                  variant="secondary"
                   onClick={onClose}
-                  className="flex-1 h-[44px] rounded-full bg-card flex items-center justify-center gap-2 text-white font-semibold hover:bg-secondary active:scale-95 transition-all"
+                  className="flex-1 gap-2"
                 >
-                  <CreditCard className="w-5 h-5 text-muted-foreground" />
+                  <CreditCard className="w-5 h-5" />
                   {t('billing.card', 'Card')}
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="xl"
+                  variant="secondary"
                   onClick={onClose}
-                  className="flex-1 h-[44px] rounded-full bg-card flex items-center justify-center gap-2 text-white font-semibold hover:bg-secondary active:scale-95 transition-all"
+                  className="flex-1 gap-2"
                 >
-                  <Banknote className="w-5 h-5 text-muted-foreground" />
+                  <Banknote className="w-5 h-5" />
                   {t('billing.cash', 'Cash')}
-                </button>
+                </Button>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

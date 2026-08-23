@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from './store/appStore';
 import { Header } from '../widgets/layout/Header';
 import { BottomNav } from '../widgets/layout/BottomNav';
@@ -16,9 +16,10 @@ import { AchievementsView } from '../pages/player/AchievementsView';
 import { PlayersView } from '../pages/coach/PlayersView';
 import { ScheduleSessionView } from '../pages/coach/ScheduleSessionView';
 import { Smartphone } from 'lucide-react';
+import { ActiveGameSheet } from '../entities/match/ui/ActiveGameSheet';
 
 export function App() {
-  const { flowState, role, activeTab, previousTab, setActiveTab } = useAppStore();
+  const { flowState, role, activeTab, previousTab, setActiveTab, isMatchDetailOpen, setMatchDetailOpen } = useAppStore();
   const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
@@ -149,6 +150,13 @@ export function App() {
           <BottomNav />
         </>
       )}
+
+      {/* Global Modals */}
+      <ActiveGameSheet 
+        isOpen={isMatchDetailOpen} 
+        onClose={() => setMatchDetailOpen(false)} 
+        isMatchmaking={true}
+      />
     </div>
   );
 }

@@ -19,7 +19,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   title
 }) => {
   const { t, i18n } = useTranslation();
-  const defaultTitle = title || t('common.selectDate', 'Select Date');
+  const defaultTitle = title || t('common.selectDate', 'Select date');
   const [currentDate, setCurrentDate] = useState(() => {
     return initialDate ? new Date(initialDate) : new Date();
   });

@@ -27,7 +27,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   title
 }) => {
   const { t, i18n } = useTranslation();
-  const defaultTitle = title || t('common.selectPeriod', 'Select Period');
+  const defaultTitle = title || t('common.selectPeriod', 'Select period');
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [startDate, setStartDate] = useState<Date | null>(() => {
     return initialRange?.start ? new Date(initialRange.start) : null;

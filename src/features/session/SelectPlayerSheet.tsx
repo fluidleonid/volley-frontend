@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../shared/ui/Avatar';
 import { Player } from '../../shared/types/index';
 import { useAppStore } from '../../app/store/appStore';
-import { Plus, Check, Box, Dumbbell } from 'lucide-react';
+import { Plus, Check, Popcorn, Dumbbell, Radar, Armchair } from 'lucide-react';
 
 export interface SelectPlayerSheetProps {
   isOpen: boolean;
@@ -13,6 +13,8 @@ export interface SelectPlayerSheetProps {
   subtitle?: string;
   selectedPlayerIds: string[];
   onTogglePlayer: (player: Player) => void;
+  otherTeamPlayerIds?: string[];
+  opposingRole?: 'rival' | 'teammate';
 }
 
 export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
@@ -22,6 +24,8 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
   subtitle,
   selectedPlayerIds,
   onTogglePlayer,
+  otherTeamPlayerIds = [],
+  opposingRole,
 }) => {
   const { t } = useTranslation();
   const { todaysPlayers, currentUser } = useAppStore();
@@ -119,12 +123,16 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
       {mockCandidates.map((player) => {
         const isSelected = selectedPlayerIds.includes(player.id);
         const isOnCourt = player.status !== 'spectating';
+        const isOtherTeam = otherTeamPlayerIds.includes(player.id);
 
         return (
           <div
             key={player.id}
-            onClick={() => onTogglePlayer(player)}
-            className={`flex items-center justify-between p-3 rounded-[20px] transition-all cursor-pointer select-none ${isSelected
+            onClick={() => {
+              if (isOtherTeam) return;
+              onTogglePlayer(player);
+            }}
+            className={`flex items-center justify-between p-3 rounded-[20px] transition-all select-none ${isOtherTeam ? 'opacity-50 cursor-default' : 'cursor-pointer'} ${isSelected && !isOtherTeam
               ? 'bg-card border border-primary/40'
               : 'bg-card/60 hover:bg-card border border-transparent'
               }`}
@@ -145,37 +153,51 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
                 </h4>
 
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  {isOnCourt ? (
+                  {player.status === 'playing' ? (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <Dumbbell className="h-3 w-3" /> {t('home.onCourt', 'On court')}
+                      <Dumbbell className="h-3 w-3" /> {t('home.training', 'Training')}
+                    </span>
+                  ) : player.status === 'queued' || player.status === 'match_found' ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
+                      <Radar className="h-3 w-3" /> {t('home.queued', 'Searching')}
+                    </span>
+                  ) : player.status === 'resting' ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
+                      <Armchair className="h-3 w-3" /> {t('home.resting', 'Resting')}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <Box className="h-3 w-3" /> {t('home.spectating', 'Spectating')}
+                      <Popcorn className="h-3 w-3" /> {t('home.spectating', 'Spectating')}
                     </span>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Right: Plus / Check Circle Action Button */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onTogglePlayer(player);
-              }}
-              className={`flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-95 ${isSelected
-                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
-                : 'bg-secondary text-white hover:bg-secondary/80'
-                }`}
-            >
-              {isSelected ? (
-                <Check className="h-5 w-5 stroke-[3]" />
-              ) : (
-                <Plus className="h-5 w-5 stroke-[2.5]" />
-              )}
-            </button>
+            {/* Right: Plus / Check Circle Action Button OR Text */}
+            {isOtherTeam ? (
+              <span className="text-sm font-semibold text-muted-foreground mr-2">
+                {opposingRole === 'rival' ? t('party.rival', 'Rival') : t('party.teammate', 'Teammate')}
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTogglePlayer(player);
+                }}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-95 ${isSelected
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+                  : 'bg-secondary text-white hover:bg-secondary/80'
+                  }`}
+              >
+                {isSelected ? (
+                  <Check className="h-5 w-5 stroke-[3]" />
+                ) : (
+                  <Plus className="h-5 w-5 stroke-[2.5]" />
+                )}
+              </button>
+            )}
           </div>
         );
       })}

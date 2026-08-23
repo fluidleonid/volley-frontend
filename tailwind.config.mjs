@@ -58,6 +58,8 @@ export default {
         },
         brand: {
           lime: "#68BD44",
+          player: "#68BD44",
+          coach: "#3b82f6",
           dark: "#121212",
           surface: "#1C1C1E",
           surfaceElevated: "#242426",

@@ -45,7 +45,7 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
 
   return (
     <>
-      <BottomSheet isOpen={isOpen} onClose={onClose} title={t('coach.players.changeLevel', 'Change Level')} hasParent={hasParent} zIndex={150}>
+      <BottomSheet isOpen={isOpen} onClose={onClose} title={t('coach.players.changeLevel', 'Change level')} hasParent={hasParent} zIndex={150}>
         <div className="flex flex-col h-full mt-4">
           <div className="space-y-2.5 w-full mb-8">
             {skillLevels.map((level) => {

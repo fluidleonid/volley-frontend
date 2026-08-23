@@ -67,7 +67,7 @@ export const PartyOptionsSheet: React.FC<PartyOptionsSheetProps> = ({
         description={
           confirmAction === 'leave'
             ? t('party.leaveConfirmDesc', 'Are you sure you want to leave the party?')
-            : t('party.closeConfirmDesc', 'Are you sure you want to close the party? All members will be disconnected.')
+            : t('party.closeConfirmDesc', 'Are you sure you want to close the party? all members will be disconnected.')
         }
         primaryButtonText={t('common.confirm', 'Confirm')}
         primaryButtonOnClick={handleConfirm}

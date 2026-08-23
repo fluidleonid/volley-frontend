@@ -50,7 +50,7 @@ export const TrainingCostsView: React.FC<TrainingCostsViewProps> = ({ onClose })
           onClick={handleSave}
           className="w-full h-[56px] rounded-full bg-primary text-primary-foreground font-bold text-lg active:scale-95 transition-all hover:bg-primary/90"
         >
-          {t('common.saveChanges', 'Save Changes')}
+          {t('common.saveChanges', 'Save changes')}
         </button>
       </div>
     </div>

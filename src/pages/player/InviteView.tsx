@@ -226,6 +226,8 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
         }
         selectedPlayerIds={selectedPlayerIdsInActivePicker}
         onTogglePlayer={handleTogglePlayerInPicker}
+        otherTeamPlayerIds={activePicker === 'teamA' ? teamBPlayers.map(p => p.id) : teamAPlayers.map(p => p.id)}
+        opposingRole={activePicker === 'teamA' ? 'rival' : 'teammate'}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { Player } from '../../types/index';
+import { Player, LeaderboardEntry } from '../../types/index';
 
 export const MOCK_PLAYERS: Player[] = [
   {
@@ -157,4 +157,40 @@ export const MOCK_PLAYERS: Player[] = [
     winStreak: 1,
     hasTelegram: true,
   }
+];
+
+export const todaysPlayers12: Player[] = [
+  { id: 'p-me', name: 'John Doe (You)', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80', level: 12, xp: 9062, status: 'queued', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4, hasTelegram: true },
+  { id: 'tp-1', name: 'Coach Alex', isCoach: true, avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 25, xp: 18400, status: 'spectating', gamesPlayed: 380, wins: 255, bpToday: 8.4, winStreak: 12, hasTelegram: true },
+  { id: 'tp-2', name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 4, xp: 850, status: 'spectating', gamesPlayed: 15, wins: 4, bpToday: 0.2, winStreak: 0, hasTelegram: false },
+  { id: 'tp-3', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 19, xp: 12300, status: 'spectating', gamesPlayed: 210, wins: 148, bpToday: 4.1, winStreak: 7, hasTelegram: true },
+  { id: 'tp-4', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 7, xp: 1500, status: 'queued', gamesPlayed: 42, wins: 15, bpToday: 0.5, winStreak: 1, hasTelegram: false },
+  { id: 'tp-5', name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2900, status: 'spectating', gamesPlayed: 64, wins: 31, bpToday: 1.8, winStreak: 2, hasTelegram: true },
+  { id: 'tp-6', name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 31, xp: 26500, status: 'resting', gamesPlayed: 512, wins: 340, bpToday: 12.2, winStreak: 9, hasTelegram: true },
+  { id: 'tp-7', name: 'Michael B.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 2, xp: 300, status: 'spectating', gamesPlayed: 5, wins: 1, bpToday: 0.1, winStreak: 0, hasTelegram: false },
+  { id: 'tp-8', name: 'Anna S.', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80', level: 8, xp: 1750, status: 'spectating', gamesPlayed: 28, wins: 12, bpToday: 0.9, winStreak: 3, hasTelegram: true },
+  { id: 'tp-9', name: 'Dmitry V.', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80', level: 14, xp: 4800, status: 'queued', gamesPlayed: 95, wins: 56, bpToday: 2.8, winStreak: 5, hasTelegram: true },
+  { id: 'tp-10', name: 'Maria K.', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&auto=format&fit=crop&q=80', level: 6, xp: 1200, status: 'spectating', gamesPlayed: 22, wins: 8, bpToday: 0.4, winStreak: 1, hasTelegram: false },
+  { id: 'tp-11', name: 'Pavel N.', avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80', level: 22, xp: 15200, status: 'spectating', gamesPlayed: 280, wins: 182, bpToday: 6.1, winStreak: 4, hasTelegram: true },
+];
+
+export const mockLeaderboard: LeaderboardEntry[] = [
+  { rank: 1, player: { id: 'lb-1', name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 15, xp: 4200, status: 'spectating', gamesPlayed: 80, wins: 55, bpToday: 2.4, winStreak: 6, hasTelegram: true }, wins: 55, winRate: 68.7, xp: 4200 },
+  { rank: 2, player: { id: 'lb-2', name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 13, xp: 3500, status: 'resting', gamesPlayed: 60, wins: 38, bpToday: 4.2, winStreak: 5, hasTelegram: true }, wins: 38, winRate: 63.3, xp: 3500 },
+  { rank: 3, player: { id: 'p-me', name: 'John Doe (You)', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80', level: 12, xp: 9062, status: 'spectating', gamesPlayed: 122, wins: 70, bpToday: 0.0, winStreak: 4, hasTelegram: true }, wins: 70, winRate: 57.3, xp: 9062 },
+  { rank: 4, player: { id: 'lb-4', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3300, status: 'queued', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3, hasTelegram: true }, wins: 48, winRate: 64.0, xp: 3300 },
+  { rank: 5, player: { id: 'lb-5', name: 'Alex R.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 10, xp: 3100, status: 'spectating', gamesPlayed: 35, wins: 20, bpToday: 1.5, winStreak: 2, hasTelegram: false }, wins: 20, winRate: 57.1, xp: 3100 },
+  { rank: 6, player: { id: 'lb-6', name: 'Michael B.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2900, status: 'spectating', gamesPlayed: 32, wins: 19, bpToday: 1.1, winStreak: 1, hasTelegram: false }, wins: 19, winRate: 59.3, xp: 2900 },
+  { rank: 7, player: { id: 'lb-7', name: 'Anna S.', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80', level: 9, xp: 2750, status: 'spectating', gamesPlayed: 28, wins: 15, bpToday: 0.9, winStreak: 2, hasTelegram: true }, wins: 15, winRate: 53.5, xp: 2750 },
+  { rank: 8, player: { id: 'lb-8', name: 'Dmitry V.', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80', level: 12, xp: 2600, status: 'queued', gamesPlayed: 45, wins: 26, bpToday: 1.8, winStreak: 4, hasTelegram: true }, wins: 26, winRate: 57.7, xp: 2600 },
+  { rank: 9, player: { id: 'lb-9', name: 'Chris P.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2500, status: 'spectating', gamesPlayed: 40, wins: 22, bpToday: 1.2, winStreak: 2, hasTelegram: false }, wins: 22, winRate: 55.0, xp: 2500 },
+  { rank: 10, player: { id: 'lb-10', name: 'Jessica W.', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80', level: 11, xp: 2450, status: 'spectating', gamesPlayed: 39, wins: 21, bpToday: 1.0, winStreak: 1, hasTelegram: true }, wins: 21, winRate: 53.8, xp: 2450 },
+  { rank: 11, player: { id: 'lb-11', name: 'Mark T.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2400, status: 'spectating', gamesPlayed: 38, wins: 20, bpToday: 0.8, winStreak: 1, hasTelegram: false }, wins: 20, winRate: 52.6, xp: 2400 },
+  { rank: 12, player: { id: 'lb-12', name: 'Laura C.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 10, xp: 2350, status: 'spectating', gamesPlayed: 37, wins: 19, bpToday: 0.7, winStreak: 1, hasTelegram: true }, wins: 19, winRate: 51.4, xp: 2350 },
+  { rank: 13, player: { id: 'lb-13', name: 'Kevin H.', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80', level: 9, xp: 2300, status: 'spectating', gamesPlayed: 36, wins: 18, bpToday: 0.6, winStreak: 1, hasTelegram: false }, wins: 18, winRate: 50.0, xp: 2300 },
+  { rank: 14, player: { id: 'lb-14', name: 'Rachel G.', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80', level: 9, xp: 2250, status: 'spectating', gamesPlayed: 35, wins: 17, bpToday: 0.5, winStreak: 1, hasTelegram: true }, wins: 17, winRate: 48.6, xp: 2250 },
+  { rank: 15, player: { id: 'lb-15', name: 'Steven K.', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80', level: 8, xp: 2200, status: 'spectating', gamesPlayed: 34, wins: 16, bpToday: 0.4, winStreak: 1, hasTelegram: false }, wins: 16, winRate: 47.1, xp: 2200 },
+  { rank: 16, player: { id: 'lb-16', name: 'Amanda B.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', level: 8, xp: 2150, status: 'spectating', gamesPlayed: 33, wins: 15, bpToday: 0.3, winStreak: 1, hasTelegram: true }, wins: 15, winRate: 45.5, xp: 2150 },
+  { rank: 17, player: { id: 'lb-17', name: 'Justin N.', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80', level: 7, xp: 2100, status: 'spectating', gamesPlayed: 32, wins: 14, bpToday: 0.2, winStreak: 1, hasTelegram: false }, wins: 14, winRate: 43.8, xp: 2100 },
+  { rank: 18, player: { id: 'lb-18', name: 'Megan F.', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80', level: 7, xp: 2050, status: 'spectating', gamesPlayed: 31, wins: 13, bpToday: 0.1, winStreak: 1, hasTelegram: true }, wins: 13, winRate: 41.9, xp: 2050 }
 ];

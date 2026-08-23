@@ -11,6 +11,7 @@ import { Player } from '../../shared/types/index';
 
 interface PrivateSessionsScheduleViewProps {
   onClose: () => void;
+  role?: 'coach' | 'player';
 }
 
 interface PrivateSession {
@@ -52,7 +53,7 @@ const PAST_MOCK_GROUPS: SessionGroup[] = [
   }
 ];
 
-export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewProps> = ({ onClose }) => {
+export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewProps> = ({ onClose, role = 'coach' }) => {
   const { t } = useTranslation();
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
   const [isPrivateFlowOpen, setIsPrivateFlowOpen] = useState(false);
@@ -61,16 +62,39 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
 
   const groups = tab === 'upcoming' ? UPCOMING_MOCK_GROUPS : PAST_MOCK_GROUPS;
 
+  const coaches = [
+    {
+      name: 'Alexey S.',
+      avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80',
+    },
+    {
+      name: 'Ivan K.',
+      avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+    }
+  ];
+
+  const displayGroups = groups.map((group, groupIndex) => ({
+    ...group,
+    sessions: group.sessions.map((session, sessionIndex) => {
+      const coachData = coaches[(groupIndex + sessionIndex) % coaches.length];
+      return {
+        ...session,
+        name: role === 'player' ? coachData.name : session.name,
+        avatarUrl: role === 'player' ? coachData.avatarUrl : session.avatarUrl,
+      };
+    })
+  }));
+
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-right-full duration-300 max-w-[480px] mx-auto px-4">
       <Header 
         variant="page" 
         sticky 
         stickyClassName="-mx-4 px-4" 
-        title={t('profile.privateSchedule', 'Private schedule')} 
+        title={role === 'player' ? t('profile.privateSessions', 'Private sessions') : t('profile.privateSchedule', 'Private schedule')} 
         onBack={onClose} 
         rightContent={
-          tab === 'upcoming' && (
+          role === 'coach' && tab === 'upcoming' && (
             <button 
               onClick={() => setIsPrivateFlowOpen(true)}
               className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30 active:scale-95 transition-all"
@@ -105,8 +129,8 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
       </div>
 
       <div className="flex-1 overflow-y-auto pb-8 scrollbar-none">
-        {groups.length > 0 ? (
-          groups.map((group) => (
+        {displayGroups.length > 0 ? (
+          displayGroups.map((group) => (
             <div key={group.dateLabel}>
               <ListGroupHeader 
                 title={group.dateLabel}

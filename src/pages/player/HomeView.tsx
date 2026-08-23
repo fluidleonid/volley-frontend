@@ -37,6 +37,8 @@ export const HomeView: React.FC = () => {
     setActiveTab,
     isPartyActive,
     partyPlayers,
+    isMatchDetailOpen,
+    setMatchDetailOpen,
   } = useAppStore();
   const { t } = useTranslation();
 
@@ -194,17 +196,36 @@ export const HomeView: React.FC = () => {
       {!isSessionActive ? (
         (() => {
           const nextSession = `${t('player.leaderboard.today', 'Today')} 20:00`;
+          // const nextSession = null;
           return (
             <div className="space-y-4">
               <ClosedSessionBanner
                 nextSessionTime={nextSession}
-                  description={
+                description={
                   role === 'coach'
-                    ? undefined // Uses default universal coach text
+                    ? undefined
                     : nextSession
                       ? t('home.sessionScheduled')
                       : t('home.noSession')
                 }
+                coachAvatar={role === 'player' ? 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' : undefined}
+                onCoachClick={() => {
+                  setSelectedPlayer({
+                    id: 'coach-1',
+                    name: 'Ivan P.',
+                    avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&auto=format&fit=crop&q=80',
+                    level: 12,
+                    xp: 9062.0,
+                    status: 'spectating',
+                    isHardmode: false,
+                    gamesPlayed: 122,
+                    wins: 70,
+                    bpToday: 0.0,
+                    winStreak: 4,
+                    hasTelegram: true,
+                    isCoach: true
+                  });
+                }}
               >
             {/* Coach Actions */}
             {role === 'coach' && (
@@ -223,8 +244,8 @@ export const HomeView: React.FC = () => {
                 </button>
               </>
             )}
-          </ClosedSessionBanner>
-        </div>
+              </ClosedSessionBanner>
+            </div>
           );
         })()
       ) : (
@@ -308,9 +329,10 @@ export const HomeView: React.FC = () => {
       )}
 
       <PlayerDetailSheet 
-        isOpen={!!selectedPlayer} 
+        isOpen={selectedPlayer !== null} 
         onClose={() => setSelectedPlayer(null)} 
-        player={selectedPlayer} 
+        player={selectedPlayer}
+        isCoachProfile={selectedPlayer?.isCoach}
       />
       <ActiveGameSheet 
         isOpen={!!selectedGameCourt} 

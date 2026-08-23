@@ -130,12 +130,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           onTouchMove={handlePointerMove}
           onTouchEnd={handlePointerUp}
           style={{
-            transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
-            transition: isDragging ? 'none' : 'transform 0.2s ease-out, height 0.3s ease-out, max-height 0.3s ease-out',
+            top: dragY > 0 ? `${dragY}px` : '0px',
+            transition: isDragging ? 'none' : 'top 0.2s ease-out, height 0.3s ease-out, max-height 0.3s ease-out',
             ...(topOffset ? { height: `calc(100vh - ${topOffset}px)`, maxHeight: `calc(100vh - ${topOffset}px)` } : {}),
             ...(isScrollable && !topOffset ? { maxHeight: '90vh' } : {}),
           }}
-          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-background border-t border-border/60 px-4 pt-4 overflow-hidden ${(topOffset || isScrollable) ? 'pb-0 flex flex-col' : 'pb-8'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
+          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-background border-t border-border/60 px-4 pt-4 ${(topOffset || isScrollable) ? 'pb-0 flex flex-col' : 'pb-8'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
         >
           {/* Top Handle Pill Bar at exactly 8px from top (4px height, pixel-perfect centered, 6px top/bottom padding) */}
           <div className="absolute top-[8px] inset-x-0 flex justify-center items-center z-20 pointer-events-none">
@@ -167,7 +167,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
           <div className="relative flex-1 min-h-0 flex flex-col w-full">
             {isScrollable ? (
-              <div className={`flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-none ${footer ? 'pb-36' : 'pb-8'}`}>
+              <div className={`flex-1 overflow-y-auto space-y-2 scrollbar-none ${footer ? 'pb-36' : 'pb-8'}`}>
                 {children}
               </div>
             ) : (
@@ -176,15 +176,21 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
             {footer && (
               <>
-                <div className="absolute bottom-0 inset-x-0 h-[100px] z-[155] pointer-events-none">
-                  <div
-                    className="w-full h-full bg-gradient-to-t from-background via-background/85 to-transparent backdrop-blur-md"
-                    style={{
-                      WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
-                      maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
-                    }}
-                  />
-                </div>
+                <div className="absolute bottom-0 -left-4 -right-4 h-40 z-[155] pointer-events-none isolate">
+                {/* Progressive blur layer with Chrome GPU fixes */}
+                <div
+                  className="absolute inset-0 backdrop-blur-md"
+                  style={{
+                    WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
+                    maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%)',
+                    transform: 'translateZ(0)',
+                    willChange: 'backdrop-filter',
+                  }}
+                />
+                
+                {/* Dark gradient layer */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/40 to-transparent" />
+              </div>
                 <div className="absolute bottom-[48px] inset-x-0 px-4 z-[160] pointer-events-none">
                   <div className="w-full pointer-events-auto flex flex-col gap-3">
                     {footer}

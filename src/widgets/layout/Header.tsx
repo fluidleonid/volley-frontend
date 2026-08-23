@@ -2,8 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { useAppStore } from '../../app/store/appStore';
-import { User, Coffee, Sparkles, Box, ChevronLeft, X } from 'lucide-react';
+import { ChevronLeft, X, Popcorn, Radar, Dumbbell, Armchair, User } from 'lucide-react';
 import { Avatar } from '../../shared/ui/Avatar';
+import { getPlayerTierInfo } from '../../shared/lib/tier';
 import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
 
 export interface HeaderProps {
@@ -49,16 +50,16 @@ export const Header: React.FC<HeaderProps> = ({
   const getStatusDisplay = () => {
     switch (playerState) {
       case 'spectating':
-        return { label: t('status.spectating'), icon: Box, color: 'text-muted-foreground' };
+        return { label: t('status.spectating'), icon: Popcorn, color: 'text-muted-foreground' };
       case 'queued':
       case 'match_found':
-        return { label: t('status.queued'), icon: Sparkles, color: 'text-muted-foreground' };
+        return { label: t('status.queued'), icon: Radar, color: 'text-muted-foreground' };
       case 'playing':
-        return { label: t('status.training'), icon: Sparkles, color: 'text-muted-foreground' };
+        return { label: t('status.training'), icon: Dumbbell, color: 'text-muted-foreground' };
       case 'resting':
-        return { label: t('status.resting'), icon: Coffee, color: 'text-muted-foreground' };
+        return { label: t('status.resting'), icon: Armchair, color: 'text-muted-foreground' };
       default:
-        return { label: t('status.spectating'), icon: Box, color: 'text-muted-foreground' };
+        return { label: t('status.spectating'), icon: Popcorn, color: 'text-muted-foreground' };
     }
   };
 
@@ -73,14 +74,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div
           onClick={() => setActiveTab('profile')}
           className="flex items-center gap-3 cursor-pointer group transition-transform active:scale-95"
-          title="Open Profile"
+          title="Open profile"
         >
           <div className="relative">
-            <div className={`rounded-full border-2 border-background transition-all duration-300 ${
-              role === 'coach'
-                ? 'shadow-[0_0_0_2px_#3b82f6] group-hover:shadow-[0_0_0_2px_#2563eb]'
-                : 'shadow-[0_0_0_2px_#68BD44] group-hover:shadow-[0_0_0_2px_#5AA739]'
-            }`}>
+            <div 
+              className="rounded-full border-2 border-background transition-all duration-300"
+              style={{ boxShadow: `0 0 0 2px ${role === 'coach' ? 'var(--brand-coach)' : getPlayerTierInfo(currentUser.level).ringColor}` }}
+            >
               <Avatar
                 src={currentUser.avatarUrl}
                 alt={currentUser.name}
@@ -89,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             {role === 'coach' && (
-              <span className="absolute -bottom-1.5 -right-1.5 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#3b82f6] shadow-md border-2 border-background" title="Coach">
+              <span className="absolute -bottom-1.5 -right-1.5 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-brand-coach shadow-md border-2 border-background" title="Coach">
                 <div className="w-3 h-3 bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
               </span>
             )}
@@ -120,11 +120,11 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setRole(role === 'player' ? 'coach' : 'player')}
               className="rounded-full bg-card px-2 py-0.5 text-[10px] font-semibold text-muted-foreground hover:text-white transition-colors"
-              title="Switch Role for Testing"
+              title="Switch role for testing"
             >
               {role === 'coach' ? (
-                <span className="text-[#3b82f6] font-bold flex items-center gap-1 leading-none">
-                  <div className="h-3 w-3 bg-[#3b82f6]" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} /> {t('roles.admin')}
+                <span className="text-brand-coach font-bold flex items-center gap-1 leading-none">
+                  <div className="h-3 w-3 bg-brand-coach" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} /> {t('roles.admin')}
                 </span>
               ) : (
                 <User className="h-3 w-3 inline" />

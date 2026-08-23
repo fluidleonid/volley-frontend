@@ -141,7 +141,7 @@ export const BillingView: React.FC = () => {
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <h1 className="text-[28px] font-bold text-white tracking-tight">
-                  {t('player.billingHistory', 'Billing History')}
+                  {t('player.billingHistory', 'Billing history')}
                 </h1>
               </div>
             )}
@@ -219,10 +219,9 @@ export const BillingView: React.FC = () => {
                 <div key={group.date}>
                   <ListGroupHeader 
                     title={group.date}
-                    subtitle={`${formatAmount(totalEarned)} ${t('coach.total', 'total').toLowerCase()}`}
                     rightContent={
                       unpaidEarnedCount > 0 ? (
-                        <span className="text-[#FF453A]">• {unpaidEarnedCount} {unpaidEarnedCount === 1 ? t('coach.paymentToSettle', 'payment to settle') : t('coach.paymentsToSettle', 'payments to settle')}</span>
+                        <span className="text-[#FF453A]">{unpaidEarnedCount} {unpaidEarnedCount === 1 ? t('coach.paymentToSettle', 'payment to settle') : t('coach.paymentsToSettle', 'payments to settle')}</span>
                       ) : undefined
                     }
                   />
@@ -252,7 +251,11 @@ export const BillingView: React.FC = () => {
                 <h3 className="text-[12px] text-muted-foreground font-medium mb-2">{group.month}</h3>
                 <div className="flex flex-col">
                   {group.records.map((record, index) => (
-                    <div key={`${record.id}-${index}`} className="grid grid-cols-4 w-full items-center py-3 border-b border-border/60 last:border-0 bg-transparent">
+                    <button 
+                      key={`${record.id}-${index}`} 
+                      onClick={() => setSelectedRecord(record as any)}
+                      className="grid grid-cols-4 w-full items-center py-3 border-b border-border/60 last:border-0 bg-transparent active:scale-95 transition-all cursor-pointer text-left"
+                    >
                       <div className="col-span-1 text-left shrink-0 font-bold text-white text-[16px]">
                         {record.dateStr}
                       </div>
@@ -267,7 +270,7 @@ export const BillingView: React.FC = () => {
                           {t(`coach.${record.status.toLowerCase()}`, record.status)}
                         </Badge>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>

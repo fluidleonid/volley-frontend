@@ -46,8 +46,8 @@ export const ProfileView: React.FC = () => {
       <PlayerCard 
         avatarUrl={currentUser.avatarUrl} 
         iconCount={tierInfo.iconCount}
-        accentColor={role === 'coach' ? '#3b82f6' : tierInfo.accentColor}
-        ringColor={role === 'coach' ? '#3b82f6' : tierInfo.ringColor}
+        accentColor={role === 'coach' ? 'var(--brand-coach)' : tierInfo.accentColor}
+        ringColor={role === 'coach' ? 'var(--brand-coach)' : tierInfo.ringColor}
         glowColor={role === 'coach' ? 'rgba(59,130,246,0.9)' : tierInfo.glowColor}
         backgroundImage={role === 'coach' ? coachCardImg : undefined}
         isCoachCard={role === 'coach'}
@@ -113,6 +113,7 @@ export const ProfileView: React.FC = () => {
         </>
       ) : (
         <div className="space-y-[4px] pt-2 mt-6">
+          <MenuRowItem icon={CalendarClock} label={t('profile.privateSessions', 'Private sessions')} onClick={() => setIsPrivateScheduleOpen(true)} />
           <MenuRowItem icon={Calendar} label={t('profile.attendance')} onClick={() => setActiveTab('attendance')} />
           <MenuRowItem icon={Receipt} label={t('profile.billing')} onClick={() => setActiveTab('billing')} />
           <MenuRowItem icon={Ban} label={t('profile.blacklist', 'Blacklist')} onClick={() => setIsBlacklistOpen(true)} />
@@ -142,7 +143,7 @@ export const ProfileView: React.FC = () => {
         <TrainingCostsView onClose={() => setIsTrainingCostsOpen(false)} />
       )}
       {isPrivateScheduleOpen && (
-        <PrivateSessionsScheduleView onClose={() => setIsPrivateScheduleOpen(false)} />
+        <PrivateSessionsScheduleView onClose={() => setIsPrivateScheduleOpen(false)} role={role === 'player' ? 'player' : 'coach'} />
       )}
       {isPublicGamesOpen && (
         <CoachPublicGamesView onClose={() => setIsPublicGamesOpen(false)} />
