@@ -42,6 +42,7 @@ const mockPrivateSessions: PrivateSession[] = [
 export const CoachHomeView: React.FC = () => {
   const { t } = useTranslation();
   const {
+    isStaging,
     role,
     playerState,
     toggleCourtAvailability,
@@ -55,6 +56,8 @@ export const CoachHomeView: React.FC = () => {
     toggleSession,
     setActiveTab,
   } = useAppStore();
+
+  const privateSessionsList = isStaging ? mockPrivateSessions : [];
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
@@ -114,7 +117,7 @@ export const CoachHomeView: React.FC = () => {
             <h2 className="font-display text-lg font-bold text-white tracking-tight">
               {t('home.todaysPrivates', "Today's privates")}
               <span className="font-normal text-muted-foreground ml-1.5">
-                {mockPrivateSessions.length}
+                {privateSessionsList.length}
               </span>
             </h2>
           </div>
@@ -127,9 +130,9 @@ export const CoachHomeView: React.FC = () => {
           </button>
         </div>
 
-        {mockPrivateSessions.length > 0 ? (
+        {privateSessionsList.length > 0 ? (
           <div className="flex flex-col border-t border-border/60 pt-1">
-            {mockPrivateSessions.map((session) => (
+            {privateSessionsList.map((session) => (
               <SessionListItem
                 key={session.id}
                 session={session}

@@ -156,7 +156,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   role: 'player',
   coachId: null,
   activeSessionId: null,
-  flowState: 'onboarding',
+  flowState: IS_STAGING ? 'onboarding' : 'splash',
   activeTab: 'home',
   previousTab: null,
   playerState: 'spectating',
@@ -272,6 +272,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       // Even without Telegram container (e.g. direct browser preview on prod), load live public state (empty by default)
       const prodData = await fetchProductionState();
       set({
+        flowState: 'onboarding',
         activeSessionId: prodData.activeSessionId,
         isSessionActive: prodData.isSessionActive,
         courts: prodData.courts,

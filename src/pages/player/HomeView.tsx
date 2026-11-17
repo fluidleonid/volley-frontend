@@ -37,6 +37,7 @@ export const HomeView: React.FC = () => {
     setActiveTab,
     isPartyActive,
     partyPlayers,
+    isStaging,
   } = useAppStore();
   const { t } = useTranslation();
 
@@ -193,8 +194,7 @@ export const HomeView: React.FC = () => {
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
       {!isSessionActive ? (
         (() => {
-          const nextSession = `${t('player.leaderboard.today', 'Today')} 20:00`;
-          // const nextSession = null;
+          const nextSession = isStaging ? `${t('player.leaderboard.today', 'Today')} 20:00` : undefined;
           return (
             <div className="space-y-4">
               <ClosedSessionBanner
@@ -206,7 +206,7 @@ export const HomeView: React.FC = () => {
                       ? t('home.sessionScheduled')
                       : t('home.noSession')
                 }
-                coachAvatar={role === 'player' ? 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' : undefined}
+                coachAvatar={isStaging && role === 'player' ? 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' : undefined}
                 onCoachClick={() => {
                   setSelectedPlayer({
                     id: 'coach-1',

@@ -8,6 +8,7 @@ import { SessionListItem } from '../../entities/session/ui/SessionListItem';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 import { SessionDetailsSheet } from '../../features/session/SessionDetailsSheet';
 import { Player } from '../../shared/types/index';
+import { useAppStore } from '../../app/store/appStore';
 
 interface PrivateSessionsScheduleViewProps {
   onClose: () => void;
@@ -55,12 +56,13 @@ const PAST_MOCK_GROUPS: SessionGroup[] = [
 
 export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewProps> = ({ onClose, role = 'coach' }) => {
   const { t } = useTranslation();
+  const { isStaging } = useAppStore();
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
   const [isPrivateFlowOpen, setIsPrivateFlowOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<PrivateSession | null>(null);
 
-  const groups = tab === 'upcoming' ? UPCOMING_MOCK_GROUPS : PAST_MOCK_GROUPS;
+  const groups = isStaging ? (tab === 'upcoming' ? UPCOMING_MOCK_GROUPS : PAST_MOCK_GROUPS) : [];
 
   const coaches = [
     {
