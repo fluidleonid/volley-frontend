@@ -6,6 +6,7 @@ import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 import { Badge } from '../../shared/ui/badge';
 import { Ban } from 'lucide-react';
+import { EmptyState } from '../../shared/ui/EmptyState';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { Player } from '../../shared/types/index';
 
@@ -60,10 +61,12 @@ export const BlacklistView: React.FC<BlacklistViewProps> = ({ onClose }) => {
             />
           ))
         ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            <Ban className="w-12 h-12 mx-auto mb-3 opacity-20" />
-            <p>{t('profile.blacklistEmpty', 'No players in blacklist')}</p>
-          </div>
+          <EmptyState
+            variant="page"
+            icon={Ban}
+            message={t('profile.blacklistEmpty', 'No players in blacklist')}
+            description={t('profile.blacklistEmptyDesc', 'Blocked players will appear here')}
+          />
         )}
       </div>
 

@@ -155,7 +155,8 @@
     "matchesCount": "{{count}} matches",
     "winsShort": "W",
     "lossesShort": "L",
-    "noGames": "No games played yet"
+    "noGames": "No games played yet",
+    "noGamesDesc": "Completed matches and scores will appear here"
   },
   "onboarding": {
     "welcomeTitle": "Welcome to the Game!",
@@ -243,6 +244,7 @@
       "active7d": "Active 7D",
       "manual7d": "Manual 7D",
       "noPlayersFound": "No players found in this category.",
+    "noPlayersTitle": "No players yet",
       "levelSubtitles": {
         "beginner": "Wants to learn",
         "amateur": "Plays for fun",
@@ -294,6 +296,8 @@
     "paymentToSettle": "payment to settle",
     "paymentsToSettle": "payments to settle",
     "noRecordsFound": "No records found for this period.",
+    "noRecordsTitle": "No transactions yet",
+    "noAttendanceTitle": "No check-ins yet",
     "trainings": "Trainings",
     "games": "Games",
     "matches": "matches",

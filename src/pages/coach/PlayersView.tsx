@@ -3,7 +3,8 @@ import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
-import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
+import { Plus, Search, ChevronLeft, MessageSquare, Users } from 'lucide-react';
+import { EmptyState } from '../../shared/ui/EmptyState';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
 import { PlayerDetailSheet } from '../../entities/player/ui/PlayerDetailSheet';
 import { useScroll } from '../../shared/hooks/useScroll';
@@ -164,9 +165,12 @@ export const PlayersView: React.FC = () => {
             );
           })
         ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>{t('coach.players.noPlayersFound', 'No players found in this category.')}</p>
-          </div>
+          <EmptyState
+            variant="page"
+            icon={Users}
+            message={t('coach.players.noPlayersTitle', 'No players yet')}
+            description={t('coach.players.noPlayersFound', 'No players found in this category.')}
+          />
         )}
       </div>
 

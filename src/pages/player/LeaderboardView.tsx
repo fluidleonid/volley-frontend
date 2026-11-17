@@ -12,6 +12,8 @@ import place3Svg from '../../shared/assets/icons/place3.svg';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { Badge } from '../../shared/ui/badge';
 import { BpIcon } from '../../shared/ui/icons/BpIcon';
+import { EmptyState } from '../../shared/ui/EmptyState';
+import { ClipboardList } from 'lucide-react';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 
@@ -189,15 +191,12 @@ export const LeaderboardView: React.FC = () => {
 
         {/* List Content */}
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center mt-12 text-center">
-            <div className="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 16H17M7 11H13M8 4H16C17.1046 4 18 4.89543 18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6C6 4.89543 6.89543 4 8 4Z" stroke="currentColor" className="text-primary" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-white">{t('player.leaderboard.noRankings', 'No rankings yet')}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{t('player.leaderboard.noRankingsDesc', 'Players results will appear here')}</p>
-          </div>
+          <EmptyState
+            variant="page"
+            icon={ClipboardList}
+            message={t('player.leaderboard.noRankings', 'No rankings yet')}
+            description={t('player.leaderboard.noRankingsDesc', 'Players results will appear here')}
+          />
         ) : (
           <div className="flex flex-col relative z-20">
             {rest.map((entry) => (

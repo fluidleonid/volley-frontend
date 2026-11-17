@@ -2,6 +2,8 @@ import React from 'react';
 import { useAppStore } from '../../app/store/appStore';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../../widgets/layout/Header';
+import { EmptyState } from '../../shared/ui/EmptyState';
+import { CalendarCheck } from 'lucide-react';
 
 interface AttendanceRecord {
   id: string;
@@ -92,9 +94,12 @@ export const AttendanceView: React.FC = () => {
             </div>
           </div>
         )) : (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
-          </div>
+          <EmptyState
+            variant="page"
+            icon={CalendarCheck}
+            message={t('coach.noAttendanceTitle', 'No check-ins yet')}
+            description={t('coach.noRecordsFound', 'No records found for this period.')}
+          />
         )}
       </div>
     </div>

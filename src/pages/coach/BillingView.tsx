@@ -11,7 +11,8 @@ import { Player } from '../../shared/types/index';
 import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
 
 import { useScroll } from '../../shared/hooks/useScroll';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Receipt } from 'lucide-react';
+import { EmptyState } from '../../shared/ui/EmptyState';
 
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
 
@@ -240,9 +241,12 @@ export const BillingView: React.FC = () => {
                 </div>
               );
             }) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
-              </div>
+              <EmptyState
+                variant="page"
+                icon={Receipt}
+                message={t('coach.noRecordsTitle', 'No transactions yet')}
+                description={t('coach.noRecordsFound', 'No records found for this period.')}
+              />
             )
           ) : activePlayerBillingGroups.length > 0 ? (
             activePlayerBillingGroups.map((group) => (
@@ -275,9 +279,12 @@ export const BillingView: React.FC = () => {
               </div>
             ))
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
-            </div>
+            <EmptyState
+              variant="page"
+              icon={Receipt}
+              message={t('coach.noRecordsTitle', 'No transactions yet')}
+              description={t('coach.noRecordsFound', 'No records found for this period.')}
+            />
           )}
         </div>
       </div>

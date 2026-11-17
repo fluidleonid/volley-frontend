@@ -154,9 +154,12 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
             </div>
           ))
         ) : (
-          <div className="pt-10">
-            <EmptyState message={t(`coach.schedule.no${tab.charAt(0).toUpperCase() + tab.slice(1)}Sessions`, `No ${tab} sessions`)} icon={CalendarClock} />
-          </div>
+          <EmptyState
+            variant="page"
+            icon={CalendarClock}
+            message={t(`coach.schedule.no${tab.charAt(0).toUpperCase() + tab.slice(1)}Sessions`, `No ${tab} sessions`)}
+            description={t('coach.schedule.noSessionsDesc', 'Scheduled private sessions will appear here')}
+          />
         )}
       </div>
 
