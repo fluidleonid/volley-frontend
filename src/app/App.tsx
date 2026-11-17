@@ -19,8 +19,12 @@ import { Smartphone } from 'lucide-react';
 import { ActiveGameSheet } from '../entities/match/ui/ActiveGameSheet';
 
 export function App() {
-  const { flowState, role, activeTab, previousTab, setActiveTab, isMatchDetailOpen, setMatchDetailOpen } = useAppStore();
+  const { flowState, role, activeTab, previousTab, setActiveTab, isMatchDetailOpen, setMatchDetailOpen, initProductionSession } = useAppStore();
   const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    initProductionSession();
+  }, [initProductionSession]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });

@@ -403,8 +403,19 @@
     "billing": "Վճարումներ",
     "blacklist": "Սև ցուցակ",
     "deleteAccount": "Ջնջել հաշիվը",
+    "switchToPlayer": "Անցնել խաղացողի",
+    "switchToAdmin": "Անցնել ադմինի",
     "deleteConfirmTitle": "Ջնջել հաշիվը",
     "deleteConfirmDesc": "Համոզվա՞ծ եք, որ ցանկանում եք ջնջել ձեր հաշիվը: Այս գործողությունը անդառնալի է:",
-    "cancel": "Չեղարկել"
+    "cancel": "Չեղարկել",
+    "sessionDetails": "Նիստի մանրամասներ",
+    "reschedule": "Վերապլանավորել",
+    "cancelSession": "Չեղարկել նիստը",
+    "cancelSessionTitle": "Չեղարկել նիստը",
+    "cancelSessionDesc": "Վստա՞հ եք, որ ցանկանում եք չեղարկել անձնական նիստը: Խաղացողը կծանուցվի:",
+    "keepSession": "Պահել նիստը",
+    "addToBlacklist": "Ավելացնել սև ցուցակում",
+    "removeFromBlacklist": "Հեռացնել սև ցուցակից",
+    "blacklistEmpty": "Սև ցուցակում խաղացողներ չկան"
   }
 }

@@ -7,13 +7,14 @@ import { AchievementDetailsSheet } from '../../entities/achievement/ui/Achieveme
 import { Header } from '../../widgets/layout/Header';
 import { MOCK_ACHIEVEMENTS, TOTAL_ACHIEVEMENTS_COUNT } from '../../shared/api/mock/achievements';
 
-const earnedAchievements = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned);
-const lockedAchievements = MOCK_ACHIEVEMENTS.filter((a) => !a.isEarned);
-
 export const AchievementsView: React.FC = () => {
   const { t } = useTranslation();
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab, achievements } = useAppStore();
   const [selected, setSelected] = useState<AchievementData | null>(null);
+
+  const list = achievements || MOCK_ACHIEVEMENTS;
+  const earnedAchievements = list.filter((a) => a.isEarned);
+  const lockedAchievements = list.filter((a) => !a.isEarned);
 
   return (
     <div className="bg-background text-white pb-24 px-4 max-w-[480px] select-none mx-auto">

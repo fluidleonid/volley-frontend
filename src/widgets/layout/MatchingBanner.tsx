@@ -73,6 +73,8 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     inviteTeamA,
     inviteTeamB,
     invitedPlayers,
+    matchedTeamA,
+    matchedTeamB,
     role,
     bannerStage,
     setBannerStage,
@@ -223,8 +225,16 @@ export const MatchingBanner: React.FC<MatchingBannerProps> = ({ onAccept }) => {
     { id: 'p4', name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80', level: 14, xp: 3900, status: 'playing', gamesPlayed: 75, wins: 48, bpToday: 3.1, winStreak: 3 },
   ];
 
-  const displayTeamA = hasInviteTeams ? inviteTeamA : mockTeamA;
-  const displayTeamB = hasInviteTeams ? inviteTeamB : mockTeamB;
+  const displayTeamA = hasInviteTeams
+    ? inviteTeamA
+    : matchedTeamA && matchedTeamA.length > 0
+    ? matchedTeamA
+    : mockTeamA;
+  const displayTeamB = hasInviteTeams
+    ? inviteTeamB
+    : matchedTeamB && matchedTeamB.length > 0
+    ? matchedTeamB
+    : mockTeamB;
 
   const teamAWithAccepted = displayTeamA.map((p, i) => ({
     ...p,

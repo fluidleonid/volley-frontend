@@ -40,7 +40,7 @@ export const LeaderboardView: React.FC = () => {
     { id: 'total', label: t('player.leaderboard.total', 'Total') },
   ];
 
-  const isEmpty = tab === 'today';
+  const isEmpty = tab === 'today' || filteredLeaderboard.length === 0;
 
   return (
     <div className="relative pb-32 select-none bg-background">
@@ -74,7 +74,7 @@ export const LeaderboardView: React.FC = () => {
 
             {role !== 'coach' && (
               <Badge variant="neutral" size="lg" className="bg-primary/20 backdrop-blur-md text-primary font-bold tracking-tight border-0">
-                <span>{currentUser?.bpToday || 867}</span>
+                <span>{currentUser?.bpTotal ?? currentUser?.bpToday ?? 0}</span>
                 <BpIcon />
               </Badge>
             )}

@@ -403,8 +403,19 @@
     "billing": "Оплата",
     "blacklist": "Черный список",
     "deleteAccount": "Удалить аккаунт",
+    "switchToPlayer": "Переключиться на игрока",
+    "switchToAdmin": "Переключиться на админа",
     "deleteConfirmTitle": "Удалить аккаунт",
     "deleteConfirmDesc": "Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "sessionDetails": "Детали сессии",
+    "reschedule": "Перенести",
+    "cancelSession": "Отменить сессию",
+    "cancelSessionTitle": "Отмена сессии",
+    "cancelSessionDesc": "Вы уверены, что хотите отменить эту личную сессию? Игрок будет уведомлён.",
+    "keepSession": "Сохранить сессию",
+    "addToBlacklist": "В черный список",
+    "removeFromBlacklist": "Убрать из черного списка",
+    "blacklistEmpty": "В черном списке никого нет"
   }
 }

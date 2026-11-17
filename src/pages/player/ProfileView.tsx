@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
-import { ChevronRight, Calendar, Receipt, Banknote, Trash2 } from 'lucide-react';
+import { ChevronRight, Calendar, Receipt, Banknote, Trash2, ArrowLeftRight } from 'lucide-react';
 import { AchievementData } from '../../shared/types/achievement';
 import { PlayerCard } from '../../entities/player/ui/PlayerCard';
 import { MenuRowItem } from '../../entities/menu/ui/MenuRowItem';
@@ -21,10 +21,8 @@ import { Dialog } from '../../shared/ui/Dialog';
 import { BlacklistView } from './BlacklistView';
 import coachCardImg from '../../shared/assets/images/coach-card.png';
 
-const topAchievements = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).slice(0, 5);
-
 export const ProfileView: React.FC = () => {
-  const { currentUser, setActiveTab, setFlowState, role } = useAppStore();
+  const { currentUser, setActiveTab, setFlowState, role, setRole, isStaging, achievements } = useAppStore();
   const [selected, setSelected] = useState<AchievementData | null>(null);
   const [isTrainingCostsOpen, setIsTrainingCostsOpen] = useState(false);
   const [isPrivateScheduleOpen, setIsPrivateScheduleOpen] = useState(false);
@@ -35,7 +33,9 @@ export const ProfileView: React.FC = () => {
 
   const { t } = useTranslation();
 
-  const earnedCount = MOCK_ACHIEVEMENTS.filter((a) => a.isEarned).length;
+  const activeAchievements = achievements || MOCK_ACHIEVEMENTS;
+  const topAchievements = activeAchievements.filter((a) => a.isEarned).slice(0, 5);
+  const earnedCount = activeAchievements.filter((a) => a.isEarned).length;
   
   const tierInfo = getPlayerTierInfo(currentUser.level);
 
@@ -59,7 +59,7 @@ export const ProfileView: React.FC = () => {
         </h2>
 
         {role === 'player' && (
-          <XpBar current={9302} max={10000} label={tierInfo.tierName} />
+          <XpBar current={Math.round(currentUser.xp)} max={10000} label={tierInfo.tierName} />
         )}
       </div>
 
@@ -68,7 +68,7 @@ export const ProfileView: React.FC = () => {
           <div className="grid grid-cols-3 gap-3 mt-6">
             <StatCard value={currentUser.gamesPlayed} label={t('profile.gamesPlayed')} />
             <StatCard value={currentUser.wins} label={t('profile.wins')} />
-            <StatCard value={867} label={t('profile.bp')} />
+            <StatCard value={currentUser.bpTotal ?? (isStaging ? 867 : 0)} label={t('profile.bp')} />
           </div>
 
           <div className="space-y-3 pt-2 mt-6">
@@ -121,15 +121,25 @@ export const ProfileView: React.FC = () => {
         </div>
       )}
 
-      {role === 'player' && (
-        <div className="mt-8">
-          <MenuRowItem 
-            icon={Trash2} 
-            label={t('profile.deleteAccount')} 
-            showChevron={false} 
-            onClick={() => setIsDeleteConfirmOpen(true)} 
-            className="text-destructive hover:text-destructive/80"
-          />
+      {(isStaging || role === 'player') && (
+        <div className="space-y-[4px] mt-8">
+          {isStaging && (
+            <MenuRowItem
+              icon={ArrowLeftRight}
+              label={role === 'coach' ? t('profile.switchToPlayer', 'Switch to player') : t('profile.switchToAdmin', 'Switch to admin')}
+              showChevron={false}
+              onClick={() => setRole(role === 'player' ? 'coach' : 'player')}
+            />
+          )}
+          {role === 'player' && (
+            <MenuRowItem 
+              icon={Trash2} 
+              label={t('profile.deleteAccount')} 
+              showChevron={false} 
+              onClick={() => setIsDeleteConfirmOpen(true)} 
+              className="text-destructive hover:text-destructive/80"
+            />
+          )}
         </div>
       )}
 

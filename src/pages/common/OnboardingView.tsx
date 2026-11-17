@@ -57,6 +57,8 @@ export const skillLevels: SkillLevelOption[] = [
   },
 ];
 
+import { SkillTierId } from '../../shared/lib/rating-algorithm';
+
 export const OnboardingView: React.FC = () => {
   const { t } = useTranslation();
   const [selectedLevelId, setSelectedLevelId] = useState<string>('beginner');
@@ -65,7 +67,7 @@ export const OnboardingView: React.FC = () => {
   const activeLevel = skillLevels.find((l) => l.id === selectedLevelId) || skillLevels[0];
 
   const handleContinue = () => {
-    completeOnboarding('player');
+    completeOnboarding('player', selectedLevelId as SkillTierId);
   };
 
   // Exact vector contour path (rounded rectangle + bottom cutout notch)

@@ -6,6 +6,7 @@ import { CustomTimePicker } from '../../shared/ui/CustomTimePicker';
 import { CustomDatePicker } from '../../shared/ui/CustomDatePicker';
 import { Plus, Trash2, Calendar, Clock } from 'lucide-react';
 import { EmptyState } from '../../shared/ui/EmptyState';
+import { useAppStore } from '../../app/store/appStore';
 
 export interface ScheduleSessionViewProps {
   onClose: () => void;
@@ -24,7 +25,7 @@ interface SpecialDateSchedule {
   time: string;
 }
 
-const INITIAL_DAYS: DaySchedule[] = [
+const INITIAL_DAYS_STAGING: DaySchedule[] = [
   { id: 'mon', dayName: 'Monday', enabled: true, slots: ['10:00', '18:00'] },
   { id: 'tue', dayName: 'Tuesday', enabled: false, slots: ['12:00'] },
   { id: 'wed', dayName: 'Wednesday', enabled: true, slots: ['16:00'] },
@@ -34,12 +35,31 @@ const INITIAL_DAYS: DaySchedule[] = [
   { id: 'sun', dayName: 'Sunday', enabled: false, slots: [] },
 ];
 
+const EMPTY_DAYS_PROD: DaySchedule[] = [
+  { id: 'mon', dayName: 'Monday', enabled: false, slots: [] },
+  { id: 'tue', dayName: 'Tuesday', enabled: false, slots: [] },
+  { id: 'wed', dayName: 'Wednesday', enabled: false, slots: [] },
+  { id: 'thu', dayName: 'Thursday', enabled: false, slots: [] },
+  { id: 'fri', dayName: 'Friday', enabled: false, slots: [] },
+  { id: 'sat', dayName: 'Saturday', enabled: false, slots: [] },
+  { id: 'sun', dayName: 'Sunday', enabled: false, slots: [] },
+];
+
 const INITIAL_SPECIAL: SpecialDateSchedule[] = [];
 
 export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClose }) => {
   const { t, i18n } = useTranslation();
-  const [days, setDays] = useState<DaySchedule[]>(INITIAL_DAYS);
-  const [specialDates, setSpecialDates] = useState<SpecialDateSchedule[]>(INITIAL_SPECIAL);
+  const { isStaging, weeklySchedule, specialDates: storeSpecialDates, saveCoachSchedule } = useAppStore();
+  const [days, setDays] = useState<DaySchedule[]>(
+    weeklySchedule && weeklySchedule.length > 0
+      ? weeklySchedule
+      : isStaging
+      ? INITIAL_DAYS_STAGING
+      : EMPTY_DAYS_PROD
+  );
+  const [specialDates, setSpecialDates] = useState<SpecialDateSchedule[]>(
+    storeSpecialDates && storeSpecialDates.length > 0 ? storeSpecialDates : INITIAL_SPECIAL
+  );
 
   // Time Picker Sheet State
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
@@ -268,7 +288,10 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
       <div className="fixed bottom-0 inset-x-0 z-40 py-8 pointer-events-none">
         <div className="mx-auto max-w-[480px] px-4">
           <button
-            onClick={onClose}
+            onClick={async () => {
+              await saveCoachSchedule(days, specialDates);
+              onClose();
+            }}
             className="w-full h-[52px] rounded-full bg-primary text-primary-foreground font-sans text-base font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90 cursor-pointer pointer-events-auto"
           >
             {t('coach.schedule.saveSchedule', 'Save schedule')}

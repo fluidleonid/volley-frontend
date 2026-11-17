@@ -403,8 +403,19 @@
     "billing": "Billing",
     "blacklist": "Blacklist",
     "deleteAccount": "Delete account",
+    "switchToPlayer": "Switch to player",
+    "switchToAdmin": "Switch to admin",
     "deleteConfirmTitle": "Delete Account",
     "deleteConfirmDesc": "Are you sure you want to delete your account? This action cannot be undone.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "sessionDetails": "Session details",
+    "reschedule": "Reschedule",
+    "cancelSession": "Cancel session",
+    "cancelSessionTitle": "Cancel Session",
+    "cancelSessionDesc": "Are you sure you want to cancel this private session? The player will be notified.",
+    "keepSession": "Keep Session",
+    "addToBlacklist": "Add to black list",
+    "removeFromBlacklist": "Remove from black list",
+    "blacklistEmpty": "No players in blacklist"
   }
 }

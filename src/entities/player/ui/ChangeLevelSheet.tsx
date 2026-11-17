@@ -6,6 +6,8 @@ import { Dialog } from '../../../shared/ui/Dialog';
 import { Check } from 'lucide-react';
 import { Player } from '../../../shared/types/index';
 import { skillLevels } from '../../../pages/common/OnboardingView';
+import { useAppStore } from '../../../app/store/appStore';
+import { SkillTierId, getTierByLevel } from '../../../shared/lib/rating-algorithm';
 
 interface ChangeLevelSheetProps {
   isOpen: boolean;
@@ -22,21 +24,24 @@ export const ChangeLevelSheet: React.FC<ChangeLevelSheetProps> = ({
   hasParent = false,
 }) => {
   const { t } = useTranslation();
+  const { changePlayerLevel } = useAppStore();
   const [selectedLevelId, setSelectedLevelId] = useState<string>('beginner');
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  // When sheet opens, ideally we'd set selectedLevelId based on player's current tier
-  // but since we only have numeric level, we can just default to beginner or infer it.
-  // We'll leave it as default or let the coach just select.
+  React.useEffect(() => {
+    if (isOpen && player) {
+      setSelectedLevelId(getTierByLevel(player.level).id);
+    }
+  }, [isOpen, player]);
 
   const handleChangeClick = () => {
     setIsConfirmOpen(true);
   };
 
-  const handleConfirm = () => {
-    // In a real app, update player.level to the minimum level of the selected tier
-    // and reset XP to 0.
-    console.log(`Resetting ${player?.name} to tier ${selectedLevelId}`);
+  const handleConfirm = async () => {
+    if (player) {
+      await changePlayerLevel(player.id, selectedLevelId as SkillTierId);
+    }
     setIsConfirmOpen(false);
     onClose();
   };

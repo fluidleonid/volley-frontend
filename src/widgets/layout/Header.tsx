@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { useAppStore } from '../../app/store/appStore';
-import { ChevronLeft, X, Popcorn, Radar, Dumbbell, Armchair, User } from 'lucide-react';
+import { ChevronLeft, X, Popcorn, Radar, Dumbbell, Armchair } from 'lucide-react';
 import { Avatar } from '../../shared/ui/Avatar';
 import { getPlayerTierInfo } from '../../shared/lib/tier';
 import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const windowScrolled = useScroll();
   const scrolled = forceScrolled ?? windowScrolled;
-  const { role, setRole, currentUser, playerState, setActiveTab } = useAppStore();
+  const { role, currentUser, playerState, setActiveTab } = useAppStore();
   const { t } = useTranslation();
 
   const getStatusDisplay = () => {
@@ -109,30 +109,14 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right: XP Value & 10-Frame Level Tracker for Player role only */}
-        <div className="flex flex-col h-[46px] justify-between items-end">
-          <div className="flex items-center gap-2 leading-none mt-1">
-            {role === 'player' && (
+        {role === 'player' && (
+          <div className="flex flex-col h-[46px] justify-between items-end">
+            <div className="flex items-center gap-2 leading-none mt-1">
               <span className="font-display text-[18px] font-extrabold tracking-tight text-white leading-none">
                 {currentUser.xp.toFixed(1)} XP
               </span>
-            )}
+            </div>
 
-            <button
-              onClick={() => setRole(role === 'player' ? 'coach' : 'player')}
-              className="rounded-full bg-card px-2 py-0.5 text-[10px] font-semibold text-muted-foreground hover:text-white transition-colors"
-              title="Switch role for testing"
-            >
-              {role === 'coach' ? (
-                <span className="text-brand-coach font-bold flex items-center gap-1 leading-none">
-                  <div className="h-3 w-3 bg-brand-coach" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} /> {t('roles.admin')}
-                </span>
-              ) : (
-                <User className="h-3 w-3 inline" />
-              )}
-            </button>
-          </div>
-
-          {role === 'player' && (
             <div className="flex items-center gap-[4px] h-[18px]">
               {Array.from({ length: 10 }).map((_, idx) => (
                 <span
@@ -143,8 +127,8 @@ export const Header: React.FC<HeaderProps> = ({
                 />
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   };

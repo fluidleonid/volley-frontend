@@ -1,9 +1,42 @@
 import { create } from 'zustand';
-import { UserRole, AppFlowState, NavigationTab, PlayerState, Player, Court, Match, LeaderboardEntry, BannerStage } from '../../shared/types/index';
+import {
+  UserRole,
+  AppFlowState,
+  NavigationTab,
+  PlayerState,
+  Player,
+  Court,
+  Match,
+  LeaderboardEntry,
+  BannerStage,
+  AchievementData,
+} from '../../shared/types/index';
 import { initialCourts, joinedCourts } from '../../shared/api/mock/mockCourts';
+import { todaysPlayers12, mockLeaderboard, MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
+import { mockMatches } from '../../shared/api/mock/mockMatches';
+import { MOCK_ACHIEVEMENTS } from '../../shared/api/mock/achievements';
+import {
+  SkillTierId,
+  applyCoachTierOverride,
+  buildMatchmakingTeams,
+  calculatePlayerMatchReward,
+  getMinimumXpForTier,
+} from '../../shared/lib/rating-algorithm';
+import { IS_STAGING, supabase } from '../../shared/api/supabase/client';
+import {
+  authenticateWithTelegram,
+  evaluateAndSyncAchievements,
+  fetchProductionState,
+  isScheduleActiveNow,
+  saveOnboardingSkillTier,
+  updatePlayerTierByCoachInDb,
+} from '../../shared/api/supabase/volleyApi';
 
 interface AppState {
+  isStaging: boolean;
   role: UserRole;
+  coachId: string | null;
+  activeSessionId: string | null;
   flowState: AppFlowState;
   activeTab: NavigationTab;
   previousTab: NavigationTab | null;
@@ -12,23 +45,29 @@ interface AppState {
   currentUser: Player;
   courts: Court[];
   todaysPlayers: Player[];
+  allPlayers: Player[];
   recentMatches: Match[];
   leaderboard: LeaderboardEntry[];
+  achievements: AchievementData[];
   isMatchDetailOpen: boolean;
   invitedPlayers: Player[];
   inviteTeamA: Player[];
   inviteTeamB: Player[];
   isInviteHost: boolean;
-  
+
   // Global Matching States
   bannerStage: BannerStage;
   userAccepted: boolean;
   acceptedCount: number;
   acceptProgress: number;
+  matchedTeamA: Player[];
+  matchedTeamB: Player[];
 
   isSessionActive: boolean;
-  
+
   trainingCosts: { public: number; private: number };
+  weeklySchedule: any[];
+  specialDates: any[];
   blacklistedPlayerIds: string[];
 
   // Party State
@@ -37,11 +76,14 @@ interface AppState {
   isPartyActive: boolean;
 
   // Actions
+  initProductionSession: () => Promise<void>;
   setRole: (role: UserRole) => void;
   setFlowState: (flowState: AppFlowState) => void;
   setActiveTab: (tab: NavigationTab) => void;
   setPlayerState: (state: PlayerState) => void;
   setTrainingCosts: (costs: { public: number; private: number }) => void;
+  saveCoachSchedule: (weeklySchedule: any[], specialDates: any[]) => Promise<void>;
+  changePlayerLevel: (playerId: string, tierId: SkillTierId) => Promise<void>;
   toggleSession: () => void;
   toggleHardmode: () => void;
   toggleCourtAvailability: (courtId: string) => void;
@@ -50,7 +92,7 @@ interface AppState {
   stopTraining: () => void;
   continueToPlay: () => void;
   sendInvite: (teamA: Player[], teamB: Player[]) => void;
-  completeOnboarding: (asRole?: UserRole) => void;
+  completeOnboarding: (asRole?: UserRole, selectedTier?: SkillTierId) => void;
   finishMatch: (scoreA: number, scoreB: number) => void;
   setMatchDetailOpen: (open: boolean) => void;
   toggleBlacklist: (playerId: string) => void;
@@ -69,52 +111,86 @@ interface AppState {
   savedStates: Record<string, any>;
 }
 
-import { todaysPlayers12, mockLeaderboard } from '../../shared/api/mock/mockPlayers';
-import { mockMatches } from '../../shared/api/mock/mockMatches';
+const emptyProductionUser: Player = {
+  id: 'prod-user',
+  name: 'Player',
+  avatarUrl: undefined,
+  level: 1,
+  xp: 0.0,
+  status: 'spectating',
+  isHardmode: false,
+  gamesPlayed: 0,
+  wins: 0,
+  bpToday: 0.0,
+  bpTotal: 0.0,
+  winStreak: 0,
+  hasTelegram: true,
+};
 
-export const useAppStore = create<AppState>((set) => ({
+const stagingDefaultUser: Player = {
+  id: 'p-me',
+  name: 'Anna P.',
+  avatarUrl:
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  level: 12,
+  xp: 9062.0,
+  status: 'spectating',
+  isHardmode: false,
+  gamesPlayed: 122,
+  wins: 70,
+  bpToday: 0.0,
+  bpTotal: 867.0,
+  winStreak: 4,
+  hasTelegram: true,
+};
+
+const emptyAchievements: AchievementData[] = MOCK_ACHIEVEMENTS.map((a) => ({
+  ...a,
+  isEarned: false,
+  progress: 0,
+  earnedDate: undefined,
+}));
+
+export const useAppStore = create<AppState>((set, get) => ({
+  isStaging: IS_STAGING,
   role: 'player',
+  coachId: null,
+  activeSessionId: null,
   flowState: 'onboarding',
   activeTab: 'home',
   previousTab: null,
-  playerState: 'spectating', // Initial default state: 'spectating' (Unjoined / Start training mode)
+  playerState: 'spectating',
   isHardmode: false,
   isMatchDetailOpen: false,
   isInviteHost: false,
-  
+
   bannerStage: 'searching',
   userAccepted: false,
   acceptedCount: 2,
   acceptProgress: 0,
-  
-  currentUser: {
-    id: 'p-me',
-    name: 'Anna P.',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    level: 12,
-    xp: 9062.0,
-    status: 'spectating',
-    isHardmode: false,
-    gamesPlayed: 122,
-    wins: 70,
-    bpToday: 0.0,
-    winStreak: 4,
-    hasTelegram: true,
-  },
-  
+  matchedTeamA: [],
+  matchedTeamB: [],
+
+  currentUser: IS_STAGING ? stagingDefaultUser : emptyProductionUser,
+
   partyPlayers: [],
   partyPlacement: 'any',
   isPartyActive: false,
 
-  courts: initialCourts,
-  todaysPlayers: [],
-  recentMatches: mockMatches,
-  leaderboard: mockLeaderboard,
-  
+  // Staging has mock data and active session by default; Production starts completely empty
+  courts: IS_STAGING ? joinedCourts : [],
+  todaysPlayers: IS_STAGING ? todaysPlayers12 : [],
+  allPlayers: IS_STAGING ? MOCK_PLAYERS : [],
+  recentMatches: IS_STAGING ? mockMatches : [],
+  leaderboard: IS_STAGING ? mockLeaderboard : [],
+  achievements: IS_STAGING ? MOCK_ACHIEVEMENTS : emptyAchievements,
+
   trainingCosts: { public: 4000, private: 10000 },
-  
-  isSessionActive: false,
-  blacklistedPlayerIds: ['p3', 'p4'],
+  weeklySchedule: [],
+  specialDates: [],
+
+  isSessionActive: IS_STAGING ? true : false,
+  blacklistedPlayerIds: IS_STAGING ? ['p3', 'p4'] : [],
 
   savedStates: {
     coach: {
@@ -126,7 +202,8 @@ export const useAppStore = create<AppState>((set) => ({
       currentUser: {
         id: 'p-me',
         name: 'Alexey S.',
-        avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
+        avatarUrl:
+          'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
         level: 12,
         xp: 9062.0,
         status: 'spectating',
@@ -134,254 +211,580 @@ export const useAppStore = create<AppState>((set) => ({
         gamesPlayed: 122,
         wins: 70,
         bpToday: 0.0,
+        bpTotal: 867.0,
         winStreak: 4,
         hasTelegram: true,
       },
+    },
+  },
+
+  initProductionSession: async () => {
+    if (IS_STAGING) return;
+
+    const authResult = await authenticateWithTelegram();
+    if (authResult) {
+      const isCoach = authResult.role === 'coach';
+      const prodData = await fetchProductionState(
+        isCoach ? authResult.coachId : undefined,
+        !isCoach ? authResult.user.id : undefined
+      );
+
+      const { data: dbPlayers } = await supabase
+        .from('players')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const mappedAllPlayers: Player[] = (dbPlayers || []).map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        avatarUrl: row.avatar_url || undefined,
+        level: Number(row.level ?? 1),
+        xp: Number(row.xp ?? 0),
+        bpToday: Number(row.bp_today ?? 0),
+        bpTotal: Number(row.bp_total ?? 0),
+        status: row.status || 'spectating',
+        isHardmode: Boolean(row.is_hardmode),
+        hasTelegram: Boolean(row.has_telegram),
+        gamesPlayed: Number(row.games_played ?? 0),
+        wins: Number(row.wins ?? 0),
+        winStreak: Number(row.win_streak ?? 0),
+      }));
+
+      set({
+        role: authResult.role,
+        coachId: authResult.coachId || null,
+        currentUser: authResult.user,
+        flowState: authResult.onboardingCompleted ? 'app' : 'onboarding',
+        trainingCosts: authResult.trainingCosts || { public: 4000, private: 10000 },
+        weeklySchedule: authResult.weeklySchedule || [],
+        specialDates: authResult.specialDates || [],
+        activeSessionId: prodData.activeSessionId,
+        isSessionActive: prodData.isSessionActive,
+        courts: prodData.courts,
+        todaysPlayers: prodData.todaysPlayers,
+        allPlayers: mappedAllPlayers,
+        leaderboard: prodData.leaderboard,
+        recentMatches: prodData.recentMatches,
+        achievements: prodData.achievements,
+        blacklistedPlayerIds: prodData.blacklistedPlayerIds,
+      });
+    } else {
+      // Even without Telegram container (e.g. direct browser preview on prod), load live public state (empty by default)
+      const prodData = await fetchProductionState();
+      set({
+        activeSessionId: prodData.activeSessionId,
+        isSessionActive: prodData.isSessionActive,
+        courts: prodData.courts,
+        todaysPlayers: prodData.todaysPlayers,
+        leaderboard: prodData.leaderboard,
+        recentMatches: prodData.recentMatches,
+        achievements: prodData.achievements,
+      });
     }
   },
 
-  setRole: (newRole) => set((state) => {
-    if (state.role === newRole) return {};
+  setRole: (newRole) =>
+    set((state) => {
+      // Role switching is only permitted in Staging environment
+      if (!state.isStaging) return {};
+      if (state.role === newRole) return {};
 
-    const oldRole = state.role;
-    const currentStateToSave = {
-      playerState: state.playerState,
-      bannerStage: state.bannerStage,
-      userAccepted: state.userAccepted,
-      acceptedCount: state.acceptedCount,
-      acceptProgress: state.acceptProgress,
-      currentUser: state.currentUser,
-    };
+      const oldRole = state.role;
+      const currentStateToSave = {
+        playerState: state.playerState,
+        bannerStage: state.bannerStage,
+        userAccepted: state.userAccepted,
+        acceptedCount: state.acceptedCount,
+        acceptProgress: state.acceptProgress,
+        currentUser: state.currentUser,
+      };
 
-    const savedStates = {
-      ...state.savedStates,
-      [oldRole]: currentStateToSave,
-    };
+      const savedStates = {
+        ...state.savedStates,
+        [oldRole]: currentStateToSave,
+      };
 
-    const newStateData = savedStates[newRole] || {
-      // Default player state if missing
-      playerState: 'spectating',
-      bannerStage: 'searching',
-      userAccepted: false,
-      acceptedCount: 2,
-      acceptProgress: 0,
-      currentUser: {
-        id: 'p-me',
-        name: 'Anna P.',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-        level: 12,
-        xp: 9062.0,
-        status: 'spectating',
-        isHardmode: false,
-        gamesPlayed: 122,
-        wins: 70,
-        bpToday: 0.0,
-        winStreak: 4,
-        hasTelegram: true,
-      },
-    };
+      const newStateData = savedStates[newRole] || {
+        playerState: 'spectating',
+        bannerStage: 'searching',
+        userAccepted: false,
+        acceptedCount: 2,
+        acceptProgress: 0,
+        currentUser: stagingDefaultUser,
+      };
 
-    return {
-      role: newRole,
-      savedStates,
-      ...newStateData,
-    };
-  }),
+      return {
+        role: newRole,
+        savedStates,
+        ...newStateData,
+      };
+    }),
+
   setFlowState: (flowState) => set({ flowState }),
   setActiveTab: (tab) => set((state) => ({ previousTab: state.activeTab, activeTab: tab })),
   setPlayerState: (playerState) => set({ playerState }),
-  setTrainingCosts: (costs) => set({ trainingCosts: costs }),
-  toggleSession: () => set((state) => {
+
+  setTrainingCosts: (costs) => {
+    set({ trainingCosts: costs });
+    const { isStaging, coachId } = get();
+    if (!isStaging && coachId) {
+      supabase
+        .from('coaches')
+        .update({
+          public_training_cost: costs.public,
+          private_training_cost: costs.private,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', coachId)
+        .then(() => {});
+    }
+  },
+
+  saveCoachSchedule: async (weeklySchedule, specialDates) => {
+    const { isStaging, coachId, activeSessionId } = get();
+    const schedState = isScheduleActiveNow(weeklySchedule, specialDates);
+    set((state) => ({
+      weeklySchedule,
+      specialDates,
+      isSessionActive: Boolean(activeSessionId) || schedState.isActive || state.isSessionActive,
+    }));
+
+    if (!isStaging && coachId) {
+      await supabase
+        .from('coaches')
+        .update({
+          weekly_schedule: weeklySchedule,
+          special_dates: specialDates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', coachId);
+    }
+  },
+
+  changePlayerLevel: async (playerId, tierId) => {
+    set((state) => {
+      const updateList = (list: Player[]) =>
+        list.map((p) => (p.id === playerId ? applyCoachTierOverride(p, tierId) : p));
+
+      const updatedUser =
+        state.currentUser.id === playerId
+          ? applyCoachTierOverride(state.currentUser, tierId)
+          : state.currentUser;
+
+      return {
+        currentUser: updatedUser,
+        todaysPlayers: updateList(state.todaysPlayers),
+        allPlayers: updateList(state.allPlayers),
+        leaderboard: state.leaderboard.map((entry) =>
+          entry.player.id === playerId
+            ? { ...entry, player: applyCoachTierOverride(entry.player, tierId) }
+            : entry
+        ),
+      };
+    });
+
+    if (!IS_STAGING) {
+      await updatePlayerTierByCoachInDb(playerId, tierId);
+    }
+  },
+
+  toggleSession: () => {
+    const state = get();
     const nextSession = !state.isSessionActive;
-    return {
+
+    if (state.isStaging) {
+      set({
+        isSessionActive: nextSession,
+        courts: nextSession ? joinedCourts : initialCourts,
+        todaysPlayers: nextSession ? todaysPlayers12 : [],
+      });
+      return;
+    }
+
+    // Production: create or end training_session in Supabase for this coach
+    const nextCourts = nextSession ? initialCourts : [];
+    set({
       isSessionActive: nextSession,
-      courts: nextSession ? joinedCourts : initialCourts,
-      todaysPlayers: nextSession ? todaysPlayers12 : [],
-    };
-  }),
-  
-  toggleHardmode: () => set((state) => ({ 
-    isHardmode: !state.isHardmode,
-    currentUser: { ...state.currentUser, isHardmode: !state.isHardmode } 
-  })),
+      courts: nextCourts,
+      todaysPlayers: nextSession ? state.todaysPlayers : [],
+    });
 
-  toggleCourtAvailability: (courtId: string) => set((state) => ({
-    courts: state.courts.map((court) =>
-      court.id === courtId
-        ? {
-            ...court,
-            isAvailable: !court.isAvailable,
-            statusText: !court.isAvailable ? 'Matching...' : 'Reserved',
-          }
-        : court
-    ),
-  })),
-  
-  startTraining: () => set((state) => ({
-    isSessionActive: true,
-    playerState: 'queued',
-    currentUser: { ...state.currentUser, status: 'queued' },
-    courts: joinedCourts,
-    todaysPlayers: todaysPlayers12,
-    recentMatches: [
-      {
-        id: 'm1',
-        date: 'Today',
-        time: '14:30',
-        courtName: '#1',
-        isHardmode: true,
-        teamA: [
-          { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
-          { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' }
-        ],
-        teamB: [
-          { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
-          { name: 'Jessica P.', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80' }
-        ],
-        scoreA: 15,
-        scoreB: 12,
-        isWin: true,
-        xpGained: 54,
-        bpGained: 12
-      },
-      {
-        id: 'm2',
-        date: 'Today',
-        time: '12:00',
-        courtName: '#2',
-        isHardmode: false,
-        teamA: [
-          { name: 'David L.', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80' }
-        ],
-        teamB: [
-          { name: 'John Doe', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' }
-        ],
-        scoreA: 8,
-        scoreB: 15,
-        isWin: false,
-        xpGained: 12,
-        bpGained: 0
-      },
-      {
-        id: 'm3',
-        date: 'Today',
-        time: '11:15',
-        courtName: '#3',
-        isHardmode: true,
-        teamA: [
-          { name: 'Alex M.', avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&auto=format&fit=crop&q=80' },
-          { name: 'Max T.', avatarUrl: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&auto=format&fit=crop&q=80' }
-        ],
-        teamB: [
-          { name: 'Anna P.', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' },
-          { name: 'Chris W.', avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80' }
-        ],
-        scoreA: 11,
-        scoreB: 11,
-        isWin: false,
-        isUnresolved: true,
-        xpGained: 0,
-        bpGained: 0
+    if (state.coachId) {
+      if (nextSession) {
+        supabase
+          .from('training_sessions')
+          .insert({
+            coach_id: state.coachId,
+            status: 'active',
+            started_at: new Date().toISOString(),
+            courts: initialCourts,
+          })
+          .select('*')
+          .single()
+          .then(({ data }) => {
+            if (data) set({ activeSessionId: data.id });
+          });
+      } else if (state.activeSessionId) {
+        supabase
+          .from('training_sessions')
+          .update({
+            status: 'ended',
+            ended_at: new Date().toISOString(),
+          })
+          .eq('id', state.activeSessionId)
+          .then(() => {
+            set({ activeSessionId: null });
+          });
       }
-    ]
-  })),
+    }
+  },
 
-  sitOut: () => set((state) => ({
-    playerState: 'resting',
-    currentUser: { ...state.currentUser, status: 'resting' }
-  })),
+  toggleHardmode: () =>
+    set((state) => {
+      const nextHard = !state.isHardmode;
+      const candidatePool =
+        state.todaysPlayers.length >= 4 ? state.todaysPlayers : state.allPlayers;
+      const mm = buildMatchmakingTeams({
+        anchorPlayer: state.currentUser,
+        candidatePool,
+        isHardmode: nextHard,
+        blacklistedIds: state.blacklistedPlayerIds,
+        partyPlayers: state.isPartyActive ? state.partyPlayers : [],
+        partyPlacement: state.partyPlacement,
+      });
 
-  stopTraining: () => set((state) => ({
-    playerState: 'spectating',
-    isInviteHost: false,
-    currentUser: { ...state.currentUser, status: 'spectating' },
-    courts: initialCourts,
-    todaysPlayers: [],
-    recentMatches: []
-  })),
+      if (!state.isStaging && state.currentUser.id !== 'prod-user') {
+        supabase
+          .from('players')
+          .update({ is_hardmode: nextHard, updated_at: new Date().toISOString() })
+          .eq('id', state.currentUser.id)
+          .then(() => {});
+      }
+
+      return {
+        isHardmode: nextHard,
+        currentUser: { ...state.currentUser, isHardmode: nextHard },
+        matchedTeamA: mm ? mm.teamA : state.matchedTeamA,
+        matchedTeamB: mm ? mm.teamB : state.matchedTeamB,
+      };
+    }),
+
+  toggleCourtAvailability: (courtId: string) =>
+    set((state) => {
+      const nextCourts = state.courts.map((court) =>
+        court.id === courtId
+          ? {
+              ...court,
+              isAvailable: !court.isAvailable,
+              statusText: !court.isAvailable ? 'Matching...' : 'Reserved',
+            }
+          : court
+      );
+
+      if (!state.isStaging && state.activeSessionId) {
+        supabase
+          .from('training_sessions')
+          .update({ courts: nextCourts })
+          .eq('id', state.activeSessionId)
+          .then(() => {});
+      }
+
+      return { courts: nextCourts };
+    }),
+
+  startTraining: () =>
+    set((state) => {
+      const candidatePool =
+        state.todaysPlayers.length >= 4
+          ? state.todaysPlayers
+          : state.isStaging
+          ? todaysPlayers12
+          : state.allPlayers;
+
+      const mm = buildMatchmakingTeams({
+        anchorPlayer: state.currentUser,
+        candidatePool,
+        isHardmode: state.isHardmode,
+        blacklistedIds: state.blacklistedPlayerIds,
+        partyPlayers: state.isPartyActive ? state.partyPlayers : [],
+        partyPlacement: state.partyPlacement,
+      });
+
+      if (!state.isStaging && state.currentUser.id !== 'prod-user') {
+        supabase
+          .from('players')
+          .update({ status: 'queued', updated_at: new Date().toISOString() })
+          .eq('id', state.currentUser.id)
+          .then(() => {});
+      }
+
+      return {
+        isSessionActive: true,
+        playerState: 'queued',
+        currentUser: { ...state.currentUser, status: 'queued' },
+        courts: state.isStaging ? joinedCourts : state.courts.length > 0 ? state.courts : initialCourts,
+        todaysPlayers: state.isStaging ? todaysPlayers12 : state.todaysPlayers,
+        matchedTeamA: mm ? mm.teamA : [],
+        matchedTeamB: mm ? mm.teamB : [],
+      };
+    }),
+
+  sitOut: () =>
+    set((state) => ({
+      playerState: 'resting',
+      currentUser: { ...state.currentUser, status: 'resting' },
+    })),
+
+  stopTraining: () =>
+    set((state) => ({
+      playerState: 'spectating',
+      isInviteHost: false,
+      currentUser: { ...state.currentUser, status: 'spectating' },
+    })),
 
   invitedPlayers: [],
   inviteTeamA: [],
   inviteTeamB: [],
 
-  continueToPlay: () => set((state) => ({
-    playerState: 'queued',
-    currentUser: { ...state.currentUser, status: 'queued' }
-  })),
-
-  sendInvite: (teamA: Player[], teamB: Player[]) => set((state) => {
-    const allInvited = [...teamA.filter(p => p.id !== state.currentUser.id), ...teamB];
-
-    return {
-      invitedPlayers: allInvited,
-      inviteTeamA: teamA,
-      inviteTeamB: teamB,
+  continueToPlay: () =>
+    set((state) => ({
       playerState: 'queued',
-      isInviteHost: true,
       currentUser: { ...state.currentUser, status: 'queued' },
+    })),
+
+  sendInvite: (teamA: Player[], teamB: Player[]) =>
+    set((state) => {
+      const allInvited = [...teamA.filter((p) => p.id !== state.currentUser.id), ...teamB];
+
+      return {
+        invitedPlayers: allInvited,
+        inviteTeamA: teamA,
+        inviteTeamB: teamB,
+        playerState: 'queued',
+        isInviteHost: true,
+        currentUser: { ...state.currentUser, status: 'queued' },
+      };
+    }),
+
+  completeOnboarding: (asRole = 'player', selectedTier: SkillTierId = 'beginner') => {
+    const state = get();
+    if (state.isStaging) {
+      set({
+        role: asRole,
+        flowState: 'app',
+        activeTab: 'home',
+      });
+      return;
+    }
+
+    const { level, xp } = getMinimumXpForTier(selectedTier);
+    const updatedUser: Player = {
+      ...state.currentUser,
+      level,
+      xp,
     };
-  }),
 
-  completeOnboarding: (asRole = 'player') => set({
-    role: asRole,
-    flowState: 'app',
-    activeTab: 'home'
-  }),
+    set({
+      role: asRole,
+      currentUser: updatedUser,
+      flowState: 'app',
+      activeTab: 'home',
+    });
 
-  finishMatch: (scoreA: number, scoreB: number) => set((state) => {
-    const isWin = scoreA > scoreB;
+    if (state.currentUser.id && state.currentUser.id !== 'prod-user') {
+      saveOnboardingSkillTier(state.currentUser.id, selectedTier);
+    }
+  },
+
+  finishMatch: (scoreA: number, scoreB: number) => {
+    const state = get();
+    const teamAPlayers =
+      state.inviteTeamA.length > 0
+        ? state.inviteTeamA
+        : state.matchedTeamA.length > 0
+        ? state.matchedTeamA
+        : [
+            state.currentUser,
+            ...(state.todaysPlayers.filter((p) => p.id !== state.currentUser.id).slice(0, 1)),
+          ];
+
+    const teamBPlayers =
+      state.inviteTeamB.length > 0
+        ? state.inviteTeamB
+        : state.matchedTeamB.length > 0
+        ? state.matchedTeamB
+        : state.todaysPlayers
+            .filter((p) => !teamAPlayers.some((a) => a.id === p.id))
+            .slice(0, 2);
+
+    // Calculate realistic ELO-based XP (can decrease on loss!) & strictly additive BP
+    const reward = calculatePlayerMatchReward({
+      player: state.currentUser,
+      teammates: teamAPlayers,
+      opponents: teamBPlayers,
+      teamScore: scoreA,
+      opponentScore: scoreB,
+      isHardmode: state.isHardmode,
+    });
+
+    const isWin = reward.isWin;
+    const newGamesPlayed = state.currentUser.gamesPlayed + 1;
+    const newWins = isWin ? state.currentUser.wins + 1 : state.currentUser.wins;
+    const newWinStreak = isWin ? state.currentUser.winStreak + 1 : 0;
+    const newBpToday = Number((state.currentUser.bpToday + reward.bpGained).toFixed(1));
+    const newBpTotal = Number(((state.currentUser.bpTotal ?? 0) + reward.bpGained).toFixed(1));
+
     const newMatch: Match = {
       id: `m-${Date.now()}`,
       date: 'Today',
-      time: 'Just now',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
       courtName: '#2',
       isHardmode: state.isHardmode,
-      teamA: [
-        { name: state.currentUser.name, avatarUrl: state.currentUser.avatarUrl },
-        { name: 'Sarah M.', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
-      ],
-      teamB: [
-        { name: 'Marcus K.', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' },
-        { name: 'Elena T.', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
-      ],
+      teamA: teamAPlayers.map((p) => ({ name: p.name, avatarUrl: p.avatarUrl })),
+      teamB: teamBPlayers.map((p) => ({ name: p.name, avatarUrl: p.avatarUrl })),
       scoreA,
       scoreB,
       isWin,
-      xpGained: isWin ? 65 : 20,
-      bpGained: isWin ? 1.5 : 0.5,
+      xpGained: reward.xpDelta,
+      bpGained: reward.bpGained,
     };
 
-    // If there is an accepted invited game pending, immediately show the invited game banner ('match_found')!
-    // Otherwise, place the player directly back into the matchmaking queue.
-    const nextPlayerState: PlayerState = state.invitedPlayers.length > 0 ? 'match_found' : 'queued';
+    const nextPlayerState: PlayerState =
+      state.invitedPlayers.length > 0 ? 'match_found' : 'queued';
 
-    return {
+    const updatedUser: Player = {
+      ...state.currentUser,
+      status: nextPlayerState === 'match_found' ? 'queued' : nextPlayerState,
+      level: reward.newLevel,
+      xp: reward.newXp,
+      gamesPlayed: newGamesPlayed,
+      wins: newWins,
+      bpToday: newBpToday,
+      bpTotal: newBpTotal,
+      winStreak: newWinStreak,
+    };
+
+    // Update Leaderboard sorted by BP (strictly additive)
+    const existingIdx = state.leaderboard.findIndex((e) => e.player.id === updatedUser.id);
+    let nextLeaderboard = [...state.leaderboard];
+    const winRate = Number(((newWins / Math.max(1, newGamesPlayed)) * 100).toFixed(1));
+    if (existingIdx >= 0) {
+      nextLeaderboard[existingIdx] = {
+        ...nextLeaderboard[existingIdx],
+        player: updatedUser,
+        wins: newWins,
+        winRate,
+        xp: newBpTotal,
+      };
+    } else if (newBpTotal > 0) {
+      nextLeaderboard.push({
+        rank: nextLeaderboard.length + 1,
+        player: updatedUser,
+        wins: newWins,
+        winRate,
+        xp: newBpTotal,
+      });
+    }
+    nextLeaderboard = nextLeaderboard
+      .sort((a, b) => b.xp - a.xp)
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+
+    set({
       playerState: nextPlayerState,
       bannerStage: nextPlayerState === 'queued' ? 'searching' : state.bannerStage,
-      currentUser: {
-        ...state.currentUser,
-        status: nextPlayerState === 'match_found' ? 'queued' : nextPlayerState,
-        gamesPlayed: state.currentUser.gamesPlayed + 1,
-        wins: isWin ? state.currentUser.wins + 1 : state.currentUser.wins,
-        xp: state.currentUser.xp + (isWin ? 65 : 20),
-        bpToday: state.currentUser.bpToday + (isWin ? 1.5 : 0.5),
-        winStreak: isWin ? state.currentUser.winStreak + 1 : 0,
-      },
+      currentUser: updatedUser,
       recentMatches: [newMatch, ...state.recentMatches],
+      leaderboard: nextLeaderboard,
       isMatchDetailOpen: false,
-    };
-  }),
+    });
+
+    // Persist to Supabase in Production
+    if (!state.isStaging && state.currentUser.id !== 'prod-user') {
+      const userId = state.currentUser.id;
+      supabase
+        .from('players')
+        .update({
+          level: reward.newLevel,
+          xp: reward.newXp,
+          bp_today: newBpToday,
+          bp_total: newBpTotal,
+          games_played: newGamesPlayed,
+          wins: newWins,
+          win_streak: newWinStreak,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', userId)
+        .then(() => {});
+
+      supabase
+        .from('matches')
+        .insert({
+          session_id: state.activeSessionId,
+          coach_id: state.coachId,
+          court_name: '#2',
+          is_hardmode: state.isHardmode,
+          team_a_ids: teamAPlayers.map((p) => p.id).filter((id) => id.length === 36),
+          team_b_ids: teamBPlayers.map((p) => p.id).filter((id) => id.length === 36),
+          team_a_snapshot: newMatch.teamA,
+          team_b_snapshot: newMatch.teamB,
+          score_a: scoreA,
+          score_b: scoreB,
+          winner_team: scoreA > scoreB ? 'A' : 'B',
+          xp_deltas: { [userId]: reward.xpDelta },
+          bp_deltas: { [userId]: reward.bpGained },
+          played_date: new Date().toISOString().split('T')[0],
+          played_time: newMatch.time,
+        })
+        .then(() => {});
+
+      const matchesTodayCount =
+        state.recentMatches.filter((m) => m.date === 'Today').length + 1;
+      const hardmodeWinsCount =
+        state.recentMatches.filter((m) => m.isHardmode && m.isWin).length +
+        (state.isHardmode && isWin ? 1 : 0);
+
+      evaluateAndSyncAchievements({
+        playerId: userId,
+        gamesPlayed: newGamesPlayed,
+        matchesToday: matchesTodayCount,
+        hardmodeWins: hardmodeWinsCount,
+        winStreak: newWinStreak,
+        partyMatchesPlayed: state.isPartyActive ? 1 : 0,
+        sessionsAttended: 1,
+      });
+    }
+  },
 
   setMatchDetailOpen: (open: boolean) => set({ isMatchDetailOpen: open }),
 
-  toggleBlacklist: (playerId) => set((state) => {
-    const isBlacklisted = state.blacklistedPlayerIds.includes(playerId);
-    return {
-      blacklistedPlayerIds: isBlacklisted
-        ? state.blacklistedPlayerIds.filter(id => id !== playerId)
-        : [...state.blacklistedPlayerIds, playerId]
-    };
-  }),
+  toggleBlacklist: (playerId) =>
+    set((state) => {
+      const isBlacklisted = state.blacklistedPlayerIds.includes(playerId);
+      const nextList = isBlacklisted
+        ? state.blacklistedPlayerIds.filter((id) => id !== playerId)
+        : [...state.blacklistedPlayerIds, playerId];
+
+      if (!state.isStaging && state.currentUser.id !== 'prod-user') {
+        if (isBlacklisted) {
+          supabase
+            .from('player_blacklist')
+            .delete()
+            .eq('player_id', state.currentUser.id)
+            .eq('blocked_player_id', playerId)
+            .then(() => {});
+        } else {
+          supabase
+            .from('player_blacklist')
+            .insert({
+              player_id: state.currentUser.id,
+              blocked_player_id: playerId,
+            })
+            .then(() => {});
+        }
+      }
+
+      return { blacklistedPlayerIds: nextList };
+    }),
 
   setPartyPlayers: (players) => set({ partyPlayers: players }),
   setPartyPlacement: (placement) => set({ partyPlacement: placement }),

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
-import { MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
+import { useAppStore } from '../../app/store/appStore';
 import { PlayerListItem } from '../../entities/player/ui/PlayerListItem';
 import { Plus, Search, ChevronLeft, MessageSquare } from 'lucide-react';
 import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet';
@@ -16,6 +16,7 @@ type TabType = 'authorized' | 'manual';
 
 export const PlayersView: React.FC = () => {
   const { t } = useTranslation();
+  const { allPlayers } = useAppStore();
   const [tab, setTab] = useState<TabType>('authorized');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -29,11 +30,11 @@ export const PlayersView: React.FC = () => {
   const [isConfirmLinkOpen, setIsConfirmLinkOpen] = useState(false);
   const [playerToMerge, setPlayerToMerge] = useState<Player | null>(null);
 
-  const authorizedPlayers = MOCK_PLAYERS.filter(p => p.hasTelegram);
-  const manualPlayers = MOCK_PLAYERS.filter(p => !p.hasTelegram);
+  const authorizedPlayers = allPlayers.filter(p => p.hasTelegram);
+  const manualPlayers = allPlayers.filter(p => !p.hasTelegram);
 
   const displayedPlayers = isSearchMode 
-    ? MOCK_PLAYERS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? allPlayers.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : (tab === 'authorized' ? authorizedPlayers : manualPlayers);
 
   const tabs: { id: TabType; label: string }[] = [
@@ -89,8 +90,8 @@ export const PlayersView: React.FC = () => {
       {!isSearchMode && (
         <>
           <div className="grid grid-cols-3 gap-3 my-6 animate-fade-in">
-            <StatCard value={MOCK_PLAYERS.length} label={t('coach.players.totalPlayers', 'Total players')} />
-            <StatCard value={Math.max(1, Math.floor(MOCK_PLAYERS.length * 0.7))} label={t('coach.players.active7d', 'Active 7D')} />
+            <StatCard value={allPlayers.length} label={t('coach.players.totalPlayers', 'Total players')} />
+            <StatCard value={allPlayers.length > 0 ? Math.max(1, Math.floor(allPlayers.length * 0.7)) : 0} label={t('coach.players.active7d', 'Active 7D')} />
             <StatCard value={manualPlayers.length} label={t('coach.players.manual7d', 'Manual 7D')} />
           </div>
 

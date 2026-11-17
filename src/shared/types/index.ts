@@ -22,6 +22,7 @@ export interface Player {
   gamesPlayed: number;
   wins: number;
   bpToday: number;
+  bpTotal?: number;
   winStreak: number;
   created_at?: string;
   updated_at?: string;

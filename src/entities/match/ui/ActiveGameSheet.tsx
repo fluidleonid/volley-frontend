@@ -33,7 +33,9 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
     acceptProgress,
     setUserAccepted,
     setBannerStage,
-    setAcceptedCount
+    setAcceptedCount,
+    matchedTeamA,
+    matchedTeamB,
   } = useAppStore();
   const [isFinishSheetOpen, setIsFinishSheetOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -55,23 +57,27 @@ export const ActiveGameSheet: React.FC<ActiveGameSheetProps> = ({
     }
   };
 
-  const rawTeamAPlayers: Player[] = [
-    {
-      id: currentUser.id,
-      name: currentUser.name,
-      avatarUrl: currentUser.avatarUrl,
-      level: currentUser.level,
-      xp: currentUser.xp,
-      status: 'queued',
-      gamesPlayed: currentUser.gamesPlayed,
-      wins: currentUser.wins,
-      bpToday: currentUser.bpToday,
-      winStreak: currentUser.winStreak,
-    },
-    MOCK_PLAYERS[0],
-  ];
+  const rawTeamAPlayers: Player[] =
+    matchedTeamA && matchedTeamA.length > 0
+      ? matchedTeamA
+      : [
+          {
+            id: currentUser.id,
+            name: currentUser.name,
+            avatarUrl: currentUser.avatarUrl,
+            level: currentUser.level,
+            xp: currentUser.xp,
+            status: 'queued',
+            gamesPlayed: currentUser.gamesPlayed,
+            wins: currentUser.wins,
+            bpToday: currentUser.bpToday,
+            winStreak: currentUser.winStreak,
+          },
+          MOCK_PLAYERS[0],
+        ];
 
-  const rawTeamBPlayers: Player[] = [MOCK_PLAYERS[1], MOCK_PLAYERS[2]];
+  const rawTeamBPlayers: Player[] =
+    matchedTeamB && matchedTeamB.length > 0 ? matchedTeamB : [MOCK_PLAYERS[1], MOCK_PLAYERS[2]];
 
   const teamAPlayers: Player[] = rawTeamAPlayers.map((p, i) => ({
     ...p,
