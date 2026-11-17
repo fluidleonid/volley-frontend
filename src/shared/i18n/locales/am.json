@@ -135,6 +135,7 @@
     "noPlayers": "Դեռ խաղացողներ չկան",
     "recentGames": "Վերջին խաղերը",
     "noGames": "Դեռ խաղեր չկան",
+    "noGamesDesc": "Ավարտված խաղերը և արդյունքները կհայտնվեն այստեղ",
     "endSessionTitle": "Ավարտե՞լ հանրային մարզումը",
     "endSessionDesc": "Վստա՞հ եք, որ ցանկանում եք ավարտել ակտիվ մարզումը: Խաղերի ընտրությունը և գրանցումը կփակվեն:",
     "confirmEnd": "Հաստատել ավարտը",
@@ -155,7 +156,8 @@
     "matchesCount": "{{count}} խաղ",
     "winsShort": "Հ",
     "lossesShort": "Պ",
-    "noGames": "Դեռ խաղեր չկան"
+    "noGames": "Դեռ խաղեր չկան",
+    "noGamesDesc": "Ավարտված խաղերը և արդյունքները կհայտնվեն այստեղ"
   },
   "onboarding": {
     "welcomeTitle": "Բարի գալուստ խաղ:",
@@ -243,6 +245,7 @@
       "active7d": "Ակտիվ 7 օր",
       "manual7d": "Ձեռքով 7 օր",
       "noPlayersFound": "Այս կատեգորիայում խաղացողներ չգտնվեցին",
+    "noPlayersTitle": "Դեռ խաղացողներ չկան",
       "levelSubtitles": {
         "beginner": "Ուզում է սովորել",
         "amateur": "Խաղում է հաճույքի համար",
@@ -294,6 +297,8 @@
     "paymentToSettle": "վճարում մնացել է",
     "paymentsToSettle": "վճարում մնացել է",
     "noRecordsFound": "Գրառումներ այս զտիչների համար չկան",
+    "noRecordsTitle": "Դեռ գործարքներ չկան",
+    "noAttendanceTitle": "Դեռ հաճախումներ չկան",
     "trainings": "Մարզումներ",
     "games": "Խաղեր",
     "matches": "Խաղեր",

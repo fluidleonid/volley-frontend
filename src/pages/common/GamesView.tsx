@@ -6,6 +6,7 @@ import { Trophy } from 'lucide-react';
 import { Match } from '../../shared/types/index';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { ListGroupHeader } from '../../shared/ui/ListGroupHeader';
+import { EmptyState } from '../../shared/ui/EmptyState';
 
 export const GamesView: React.FC = () => {
   const { recentMatches, role } = useAppStore();
@@ -75,10 +76,12 @@ export const GamesView: React.FC = () => {
           ))}
 
           {Object.keys(groupedByDate).length === 0 && (
-            <div className="text-center py-10">
-              <Trophy className="w-12 h-12 text-secondary mx-auto mb-3" />
-              <p className="text-muted-foreground text-sm font-medium">{t('games.noGames')}</p>
-            </div>
+            <EmptyState
+              variant="page"
+              icon={Trophy}
+              message={t('games.noGames', 'No games played yet')}
+              description={t('games.noGamesDesc', 'Completed matches and scores will appear here')}
+            />
           )}
         </div>
       </div>
