@@ -37,10 +37,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
   hideAddButtons = false,
 }) => {
   const { t } = useTranslation();
-  const { leaderboard } = useAppStore(); // Assuming leaderboard has all players
-  
-  // Extract Player objects from leaderboard entries
-  const allPlayers = useMemo(() => leaderboard.map(entry => entry.player), [leaderboard]);
+  const { allPlayers } = useAppStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [localSelectedIds, setLocalSelectedIds] = useState<string[]>(selectedPlayerIds);

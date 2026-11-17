@@ -16,7 +16,7 @@ type TabType = 'authorized' | 'manual';
 
 export const PlayersView: React.FC = () => {
   const { t } = useTranslation();
-  const { allPlayers } = useAppStore();
+  const { allPlayers, createManualPlayer } = useAppStore();
   const [tab, setTab] = useState<TabType>('authorized');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -173,8 +173,8 @@ export const PlayersView: React.FC = () => {
       <CreateNewPlayerSheet
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        onCreatePlayer={(data) => {
-          console.log('Created new player', data);
+        onCreatePlayer={async (data) => {
+          await createManualPlayer({ name: data.name, phone: data.phone, level: data.level });
           setIsCreateOpen(false);
         }}
       />

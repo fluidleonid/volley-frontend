@@ -88,7 +88,7 @@ const coachMockBillingRaw: CoachBillingRecord[] = [
 
 export const BillingView: React.FC = () => {
   const { t } = useTranslation();
-  const { setActiveTab, role } = useAppStore();
+  const { setActiveTab, role, isStaging, allPlayers } = useAppStore();
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
   const scrolled = useScroll();
   
@@ -101,7 +101,10 @@ export const BillingView: React.FC = () => {
   });
   const [selectedBillingPlayer, setSelectedBillingPlayer] = useState<Player | null>(null);
 
-  const filteredCoachRecords = coachMockBillingRaw.filter(r => r.isPublic === (coachTab === 'public'));
+  const activeCoachBillingRaw = isStaging ? coachMockBillingRaw : [];
+  const activePlayerBillingGroups = isStaging ? playerMockBilling : [];
+
+  const filteredCoachRecords = activeCoachBillingRaw.filter(r => r.isPublic === (coachTab === 'public'));
   const coachGroups = filteredCoachRecords.reduce((acc, record) => {
     let group = acc.find(g => g.date === record.dateStr);
     if (!group) {
@@ -117,7 +120,7 @@ export const BillingView: React.FC = () => {
     setIsDatePickerOpen(false);
   };
 
-  const getPlayer = (id: string) => MOCK_PLAYERS.find(p => p.id === id);
+  const getPlayer = (id: string) => (isStaging ? MOCK_PLAYERS : allPlayers).find(p => p.id === id);
 
   return (
     <div className="relative pb-32 select-none">
@@ -169,15 +172,15 @@ export const BillingView: React.FC = () => {
         <div className="pt-2">
           {role === 'coach' ? (
             <div className={`grid gap-3 ${dateRange.label === 'All time' ? 'grid-cols-2' : 'grid-cols-1'}`}>
-              <StatCard value="160K ֏" label={t('coach.total', 'Total')} />
+              <StatCard value={isStaging ? "160K ֏" : "0 ֏"} label={t('coach.total', 'Total')} />
               {dateRange.label === 'All time' && (
-                <StatCard value="16,000 ֏" label={t('coach.thisMonth', 'This month')} />
+                <StatCard value={isStaging ? "16,000 ֏" : "0 ֏"} label={t('coach.thisMonth', 'This month')} />
               )}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              <StatCard value="160K ֏" label={t('coach.total', 'Total')} />
-              <StatCard value="16,000 ֏" label={t('coach.thisMonth', 'This month')} />
+              <StatCard value={isStaging ? "160K ֏" : "0 ֏"} label={t('coach.total', 'Total')} />
+              <StatCard value={isStaging ? "16,000 ֏" : "0 ֏"} label={t('coach.thisMonth', 'This month')} />
             </div>
           )}
 
@@ -241,8 +244,8 @@ export const BillingView: React.FC = () => {
                 <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
               </div>
             )
-          ) : (
-            playerMockBilling.map((group) => (
+          ) : activePlayerBillingGroups.length > 0 ? (
+            activePlayerBillingGroups.map((group) => (
               <div key={group.month}>
                 <h3 className="text-[12px] text-muted-foreground font-medium mb-2">{group.month}</h3>
                 <div className="flex flex-col">
@@ -271,6 +274,10 @@ export const BillingView: React.FC = () => {
                 </div>
               </div>
             ))
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
+            </div>
           )}
         </div>
       </div>

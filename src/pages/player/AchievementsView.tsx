@@ -33,7 +33,7 @@ export const AchievementsView: React.FC = () => {
 
       <div className="flex items-center gap-2 mb-4">
         <span className="font-display text-lg font-bold text-white tracking-tight">{t('player.achievements.locked', 'Locked')}</span>
-        <span className="font-display text-lg font-normal text-muted-foreground">{TOTAL_ACHIEVEMENTS_COUNT}</span>
+        <span className="font-display text-lg font-normal text-muted-foreground">{lockedAchievements.length || TOTAL_ACHIEVEMENTS_COUNT}</span>
       </div>
 
       <div className="grid grid-cols-3 gap-3">

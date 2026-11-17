@@ -4,6 +4,7 @@ import { BottomSheet } from '../../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { TransactionListItem } from '../../billing/ui/TransactionListItem';
 import { SettlePaymentSheet } from '../../../features/payment/SettlePaymentSheet';
+import { useAppStore } from '../../../app/store/appStore';
 
 interface PlayerBillingSheetProps {
   player: Player | null;
@@ -40,9 +41,12 @@ export const PlayerBillingSheet: React.FC<PlayerBillingSheetProps> = ({
   onCloseAll,
 }) => {
   const { t } = useTranslation();
+  const { isStaging } = useAppStore();
   const [tab, setTab] = useState<'public' | 'private'>('private');
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const records = isStaging ? mockPlayerBilling : [];
 
   useEffect(() => {
     if (isOpen) {
@@ -100,14 +104,18 @@ export const PlayerBillingSheet: React.FC<PlayerBillingSheetProps> = ({
           onTouchMove={() => { if (!isExpanded) setIsExpanded(true); }}
           onWheel={() => { if (!isExpanded) setIsExpanded(true); }}
         >
-          {mockPlayerBilling.map((record, index) => (
+          {records.length > 0 ? records.map((record, index) => (
             <TransactionListItem
               key={`${record.id}-${index}`}
               record={record as any}
               player={player}
               onClick={(r) => setSelectedRecord(r)}
             />
-          ))}
+          )) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
+            </div>
+          )}
         </div>
       </BottomSheet>
 

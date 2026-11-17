@@ -28,15 +28,15 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
   opposingRole,
 }) => {
   const { t } = useTranslation();
-  const { todaysPlayers, currentUser } = useAppStore();
+  const { todaysPlayers, currentUser, isStaging } = useAppStore();
 
   if (!isOpen) return null;
 
   // Available candidate players today (excluding current logged-in user who is already in Team A)
   const candidatePlayers = todaysPlayers.filter((p) => p.id !== currentUser.id);
 
-  // Fallback mock players if todaysPlayers has few items
-  const mockCandidates: Player[] = candidatePlayers.length > 0 ? candidatePlayers : [
+  // Fallback mock players only in staging if todaysPlayers has few items
+  const mockCandidates: Player[] = candidatePlayers.length > 0 ? candidatePlayers : isStaging ? [
     {
       id: 'p-101',
       name: 'Alexander V.',
@@ -85,7 +85,7 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
       bpToday: 1.1,
       winStreak: 1,
     },
-  ];
+  ] : [];
 
   const headerTitle = (
     <div className="text-center space-y-0.5">

@@ -46,7 +46,8 @@ const mockAttendance: MonthGroup[] = [
 
 export const AttendanceView: React.FC = () => {
   const { t } = useTranslation();
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab, isStaging, currentUser } = useAppStore();
+  const attendanceGroups = isStaging ? mockAttendance : [];
 
   return (
     <div className="space-y-4 pb-24 max-w-[480px] mx-auto select-none px-4">
@@ -61,17 +62,17 @@ export const AttendanceView: React.FC = () => {
 
       <div className="flex gap-3">
         <div className="flex-1 bg-card rounded-2xl p-4 border-none">
-          <div className="font-display text-[24px] font-bold text-white leading-tight">40</div>
+          <div className="font-display text-[24px] font-bold text-white leading-tight">{isStaging ? 40 : 0}</div>
           <div className="text-sm text-muted-foreground mt-1">{t('coach.trainings', 'Trainings')}</div>
         </div>
         <div className="flex-1 bg-card rounded-2xl p-4 border-none">
-          <div className="font-display text-[24px] font-bold text-white leading-tight">122</div>
+          <div className="font-display text-[24px] font-bold text-white leading-tight">{currentUser.gamesPlayed}</div>
           <div className="text-sm text-muted-foreground mt-1">{t('coach.games', 'Games')}</div>
         </div>
       </div>
 
       <div className="mt-6 space-y-6">
-        {mockAttendance.map((group) => (
+        {attendanceGroups.length > 0 ? attendanceGroups.map((group) => (
           <div key={group.month}>
             <h3 className="text-[12px] text-muted-foreground font-medium mb-2">{group.month}</h3>
             <div className="flex flex-col">
@@ -90,7 +91,11 @@ export const AttendanceView: React.FC = () => {
               ))}
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>{t('coach.noRecordsFound', 'No records found for this period.')}</p>
+          </div>
+        )}
       </div>
     </div>
   );

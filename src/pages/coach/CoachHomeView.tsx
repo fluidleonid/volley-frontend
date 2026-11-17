@@ -42,6 +42,7 @@ const mockPrivateSessions: PrivateSession[] = [
 export const CoachHomeView: React.FC = () => {
   const { t } = useTranslation();
   const {
+    isStaging,
     role,
     playerState,
     toggleCourtAvailability,
@@ -54,7 +55,11 @@ export const CoachHomeView: React.FC = () => {
     isSessionActive,
     toggleSession,
     setActiveTab,
+    createManualPlayer,
+    checkInPlayersToday,
   } = useAppStore();
+
+  const privateSessionsList = isStaging ? mockPrivateSessions : [];
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isEndSessionConfirmOpen, setIsEndSessionConfirmOpen] = useState(false);
@@ -114,7 +119,7 @@ export const CoachHomeView: React.FC = () => {
             <h2 className="font-display text-lg font-bold text-white tracking-tight">
               {t('home.todaysPrivates', "Today's privates")}
               <span className="font-normal text-muted-foreground ml-1.5">
-                {mockPrivateSessions.length}
+                {privateSessionsList.length}
               </span>
             </h2>
           </div>
@@ -127,9 +132,9 @@ export const CoachHomeView: React.FC = () => {
           </button>
         </div>
 
-        {mockPrivateSessions.length > 0 ? (
+        {privateSessionsList.length > 0 ? (
           <div className="flex flex-col border-t border-border/60 pt-1">
-            {mockPrivateSessions.map((session) => (
+            {privateSessionsList.map((session) => (
               <SessionListItem
                 key={session.id}
                 session={session}
@@ -264,14 +269,14 @@ export const CoachHomeView: React.FC = () => {
       <PublicAttendanceFlow 
         isOpen={isPublicFlowOpen}
         onClose={() => setIsPublicFlowOpen(false)}
-        onAddPlayers={(players) => {
-          console.log('Added players to public session', players);
+        onAddPlayers={async (players) => {
+          await checkInPlayersToday(players);
         }}
-        onAddGuest={(data) => {
-          console.log('Added guest to public session', data);
+        onAddGuest={async (data) => {
+          await createManualPlayer({ name: data.name, level: data.level, checkInToday: true });
         }}
-        onCreatePlayer={(data) => {
-          console.log('Created player in public session', data);
+        onCreatePlayer={async (data) => {
+          await createManualPlayer({ name: data.name, phone: data.phone, level: data.level, checkInToday: true });
         }}
       />
     </div>

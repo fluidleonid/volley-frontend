@@ -3,20 +3,23 @@ import { useAppStore } from '../../app/store/appStore';
 import logoSvg from '../../shared/assets/icons/logo.svg';
 
 export const SplashScreen: React.FC = () => {
-  const { setFlowState } = useAppStore();
+  const { setFlowState, isStaging } = useAppStore();
 
   useEffect(() => {
-    // Automatically transition to onboarding after 2.2 seconds
+    if (!isStaging) return;
+    // In staging mode, automatically transition to onboarding after 2.2 seconds
     const timer = setTimeout(() => {
       setFlowState('onboarding');
     }, 2200);
 
     return () => clearTimeout(timer);
-  }, [setFlowState]);
+  }, [setFlowState, isStaging]);
 
   return (
     <div
-      onClick={() => setFlowState('onboarding')}
+      onClick={() => {
+        if (isStaging) setFlowState('onboarding');
+      }}
       className="fixed inset-0 z-50 flex h-full w-full cursor-pointer flex-col items-center justify-center bg-primary px-6 text-white transition-opacity duration-500 select-none overflow-hidden"
     >
       {/* Centered Full Brand Logo (Figma Node: 11404:11369, w=140px visually centered) */}

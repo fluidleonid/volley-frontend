@@ -15,7 +15,7 @@ interface BlacklistViewProps {
 
 export const BlacklistView: React.FC<BlacklistViewProps> = ({ onClose }) => {
   const { t } = useTranslation();
-  const { blacklistedPlayerIds, toggleBlacklist, setActiveTab, previousTab } = useAppStore();
+  const { blacklistedPlayerIds, toggleBlacklist, setActiveTab, previousTab, isStaging, allPlayers } = useAppStore();
   const [selectedPlayer, setSelectedPlayer] = React.useState<Player | null>(null);
 
   const handleBack = () => {
@@ -26,7 +26,7 @@ export const BlacklistView: React.FC<BlacklistViewProps> = ({ onClose }) => {
     }
   };
 
-  const blacklistedPlayers = MOCK_PLAYERS.filter(p => blacklistedPlayerIds.includes(p.id));
+  const blacklistedPlayers = (isStaging ? MOCK_PLAYERS : allPlayers).filter(p => blacklistedPlayerIds.includes(p.id));
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-right-full duration-300 max-w-[480px] mx-auto px-4">

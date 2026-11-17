@@ -27,9 +27,9 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tg = (window as any).Telegram?.WebApp;
-    if (tg?.initData && tg?.initDataUnsafe?.user) {
+    if (tg?.initDataUnsafe?.user) {
       return {
-        initDataRaw: tg.initData,
+        initDataRaw: tg.initData || '',
         user: tg.initDataUnsafe.user as TelegramUserPayload,
       };
     }
@@ -48,6 +48,25 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
     }
   } catch {
     // Not inside Telegram WebApp container
+  }
+
+  // Fallback: check URL hash/search for tgWebAppData
+  try {
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const searchParams = new URLSearchParams(window.location.search);
+    const tgWebAppData = hashParams.get('tgWebAppData') || searchParams.get('tgWebAppData');
+    if (tgWebAppData) {
+      const innerParams = new URLSearchParams(tgWebAppData);
+      const userJson = innerParams.get('user');
+      if (userJson) {
+        return {
+          initDataRaw: tgWebAppData,
+          user: JSON.parse(userJson) as TelegramUserPayload,
+        };
+      }
+    }
+  } catch {
+    // ignore
   }
 
   return { initDataRaw: '', user: null };
