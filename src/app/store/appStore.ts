@@ -84,6 +84,8 @@ interface AppState {
   setTrainingCosts: (costs: { public: number; private: number }) => void;
   saveCoachSchedule: (weeklySchedule: any[], specialDates: any[]) => Promise<void>;
   changePlayerLevel: (playerId: string, tierId: SkillTierId) => Promise<void>;
+  createManualPlayer: (data: { name: string; phone?: string; level?: string; checkInToday?: boolean }) => Promise<Player>;
+  checkInPlayersToday: (players: Player[]) => Promise<void>;
   toggleSession: () => void;
   toggleHardmode: () => void;
   toggleCourtAvailability: (courtId: string) => void;
@@ -386,6 +388,105 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     if (!IS_STAGING) {
       await updatePlayerTierByCoachInDb(playerId, tierId);
+    }
+  },
+
+  createManualPlayer: async ({ name, phone, level = 'Beginner', checkInToday = false }) => {
+    const tierId = (level.toLowerCase() as SkillTierId) || 'beginner';
+    const { level: numLevel, xp } = getMinimumXpForTier(tierId);
+    const state = get();
+
+    let newPlayer: Player = {
+      id: `manual-${Date.now()}`,
+      name,
+      level: numLevel,
+      xp,
+      status: checkInToday ? 'spectating' : 'spectating',
+      hasTelegram: false,
+      gamesPlayed: 0,
+      wins: 0,
+      bpToday: 0,
+      bpTotal: 0,
+      winStreak: 0,
+    };
+
+    if (!state.isStaging) {
+      const { data: inserted } = await supabase
+        .from('players')
+        .insert({
+          name,
+          phone: phone || null,
+          level: numLevel,
+          xp,
+          bp_total: 0,
+          bp_today: 0,
+          status: 'spectating',
+          has_telegram: false,
+          is_guest: !phone,
+          created_by_coach_id: state.coachId,
+          onboarding_completed: true,
+        })
+        .select('*')
+        .single();
+
+      if (inserted) {
+        newPlayer = {
+          ...newPlayer,
+          id: inserted.id,
+        };
+        if (state.coachId) {
+          await supabase.from('coach_players').upsert(
+            {
+              coach_id: state.coachId,
+              player_id: inserted.id,
+            },
+            { onConflict: 'coach_id,player_id' }
+          );
+        }
+        if (checkInToday && state.activeSessionId && state.coachId) {
+          await supabase.from('session_attendances').upsert(
+            {
+              session_id: state.activeSessionId,
+              coach_id: state.coachId,
+              player_id: inserted.id,
+              is_active: true,
+            },
+            { onConflict: 'session_id,player_id' }
+          );
+        }
+      }
+    }
+
+    set((s) => ({
+      allPlayers: [newPlayer, ...s.allPlayers],
+      todaysPlayers: checkInToday ? [...s.todaysPlayers, newPlayer] : s.todaysPlayers,
+    }));
+
+    return newPlayer;
+  },
+
+  checkInPlayersToday: async (players) => {
+    const state = get();
+    set((s) => {
+      const existingIds = new Set(s.todaysPlayers.map((p) => p.id));
+      const added = players.filter((p) => !existingIds.has(p.id));
+      return {
+        todaysPlayers: [...s.todaysPlayers, ...added],
+      };
+    });
+
+    if (!state.isStaging && state.activeSessionId && state.coachId) {
+      for (const p of players) {
+        await supabase.from('session_attendances').upsert(
+          {
+            session_id: state.activeSessionId,
+            coach_id: state.coachId,
+            player_id: p.id,
+            is_active: true,
+          },
+          { onConflict: 'session_id,player_id' }
+        );
+      }
     }
   },
 

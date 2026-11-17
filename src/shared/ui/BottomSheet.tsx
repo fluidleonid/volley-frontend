@@ -50,8 +50,39 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const [visualHeight, setVisualHeight] = useState<number | null>(null);
   const startYRef = useRef<number | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+
+  // Track visualViewport to lift BottomSheet above mobile/Telegram virtual keyboard
+  useEffect(() => {
+    if (!isOpen) {
+      setKeyboardOffset(0);
+      setVisualHeight(null);
+      return;
+    }
+
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const updateViewport = () => {
+      const kbHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+      setKeyboardOffset(kbHeight > 40 ? kbHeight : 0);
+      setVisualHeight(vv.height);
+    };
+
+    updateViewport();
+    vv.addEventListener('resize', updateViewport);
+    vv.addEventListener('scroll', updateViewport);
+    window.addEventListener('resize', updateViewport);
+
+    return () => {
+      vv.removeEventListener('resize', updateViewport);
+      vv.removeEventListener('scroll', updateViewport);
+      window.removeEventListener('resize', updateViewport);
+    };
+  }, [isOpen]);
 
   // Lock body scroll when any sheet is open
   useEffect(() => {
@@ -116,8 +147,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   return createPortal(
     <SheetContext.Provider value={currentContextValue}>
       <div
-        className="fixed inset-0 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 !mt-0"
-        style={{ zIndex: computedZIndex }}
+        className="fixed inset-x-0 top-0 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 !mt-0"
+        style={{
+          zIndex: computedZIndex,
+          bottom: keyboardOffset > 0 ? `${keyboardOffset}px` : '0px',
+          transition: 'bottom 0.2s ease-out',
+        }}
       >
         {/* Backdrop overlay */}
         <div className="absolute inset-0" onClick={onClose} />
@@ -131,11 +166,17 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           onTouchEnd={handlePointerUp}
           style={{
             top: dragY > 0 ? `${dragY}px` : '0px',
-            transition: isDragging ? 'none' : 'top 0.2s ease-out, height 0.3s ease-out, max-height 0.3s ease-out',
-            ...(topOffset ? { height: `calc(100vh - ${topOffset}px)`, maxHeight: `calc(100vh - ${topOffset}px)` } : {}),
-            ...(isScrollable && !topOffset ? { maxHeight: '90vh' } : {}),
+            transition: isDragging ? 'none' : 'top 0.2s ease-out, height 0.25s ease-out, max-height 0.25s ease-out',
+            ...(topOffset
+              ? {
+                  height: visualHeight ? `${Math.max(260, visualHeight - topOffset)}px` : `calc(100dvh - ${topOffset}px)`,
+                  maxHeight: visualHeight ? `${Math.max(260, visualHeight - topOffset)}px` : `calc(100dvh - ${topOffset}px)`,
+                }
+              : {
+                  maxHeight: visualHeight ? `${Math.max(260, visualHeight - 16)}px` : '92dvh',
+                }),
           }}
-          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-background border-t border-border/60 px-4 pt-4 ${(topOffset || isScrollable) ? 'pb-0 flex flex-col' : 'pb-8'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
+          className={`relative w-full max-w-[480px] rounded-t-[32px] bg-background border-t border-border/60 px-4 pt-4 ${(topOffset || isScrollable) ? 'pb-0 flex flex-col' : 'pb-8 overflow-y-auto'} text-white shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 ${className}`}
         >
           {/* Top Handle Pill Bar at exactly 8px from top (4px height, pixel-perfect centered, 6px top/bottom padding) */}
           <div className="absolute top-[8px] inset-x-0 flex justify-center items-center z-20 pointer-events-none">

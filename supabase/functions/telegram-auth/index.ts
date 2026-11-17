@@ -52,6 +52,32 @@ async function verifyTelegramWebAppData(initData: string, botToken: string): Pro
   }
 }
 
+async function fetchBotApiProfilePhoto(telegramId: number, botToken?: string): Promise<string | null> {
+  if (!botToken) return null;
+  try {
+    const photosRes = await fetch(
+      `https://api.telegram.org/bot${botToken}/getUserProfilePhotos?user_id=${telegramId}&limit=1`
+    );
+    const photosData = await photosRes.json();
+    const firstPhotoSizes = photosData?.result?.photos?.[0];
+    if (Array.isArray(firstPhotoSizes) && firstPhotoSizes.length > 0) {
+      const bestSize = firstPhotoSizes[firstPhotoSizes.length - 1];
+      const fileId = bestSize.file_id;
+      const fileRes = await fetch(
+        `https://api.telegram.org/bot${botToken}/getFile?file_id=${encodeURIComponent(fileId)}`
+      );
+      const fileData = await fileRes.json();
+      const filePath = fileData?.result?.file_path;
+      if (filePath) {
+        return `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -102,7 +128,14 @@ Deno.serve(async (req: Request) => {
     const telegramId = Number(tgUser.id);
     const username = tgUser.username ? String(tgUser.username).toLowerCase().replace(/^@/, "") : null;
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || tgUser.username || `Player #${telegramId}`;
-    const avatarUrl = tgUser.photo_url || null;
+    let avatarUrl: string | null = tgUser.photo_url || null;
+
+    if (!avatarUrl || avatarUrl.endsWith(".svg")) {
+      const botPhotoUrl = await fetchBotApiProfilePhoto(telegramId, botToken);
+      if (botPhotoUrl) {
+        avatarUrl = botPhotoUrl;
+      }
+    }
 
     // 1. Check if this Telegram user is a Coach (Admin) in public.coaches
     let { data: coach } = await supabase.from("coaches").select("*").eq("telegram_id", telegramId).maybeSingle();
@@ -113,28 +146,28 @@ Deno.serve(async (req: Request) => {
         .select("*")
         .ilike("telegram_username", username)
         .maybeSingle();
-      if (coachByUsername) {
-        const { data: updatedCoach } = await supabase
-          .from("coaches")
-          .update({
-            telegram_id: telegramId,
-            name: coachByUsername.name || fullName,
-            avatar_url: avatarUrl || coachByUsername.avatar_url,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", coachByUsername.id)
-          .select("*")
-          .single();
-        coach = updatedCoach || coachByUsername;
-      }
+      coach = coachByUsername;
     }
 
     if (coach) {
+      const { data: updatedCoach } = await supabase
+        .from("coaches")
+        .update({
+          telegram_id: telegramId,
+          telegram_username: username || coach.telegram_username,
+          name: fullName || coach.name,
+          avatar_url: avatarUrl || coach.avatar_url,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", coach.id)
+        .select("*")
+        .single();
+
       return new Response(
         JSON.stringify({
           role: "coach",
           isVerified,
-          coach,
+          coach: updatedCoach || coach,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -177,10 +210,15 @@ Deno.serve(async (req: Request) => {
         );
       }
       player = newPlayer;
-    } else if (avatarUrl && player.avatar_url !== avatarUrl) {
+    } else {
       const { data: updatedPlayer } = await supabase
         .from("players")
-        .update({ avatar_url: avatarUrl, telegram_username: username, updated_at: new Date().toISOString() })
+        .update({
+          name: fullName || player.name,
+          avatar_url: avatarUrl || player.avatar_url,
+          telegram_username: username,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", player.id)
         .select("*")
         .single();

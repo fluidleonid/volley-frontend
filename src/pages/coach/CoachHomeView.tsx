@@ -55,6 +55,8 @@ export const CoachHomeView: React.FC = () => {
     isSessionActive,
     toggleSession,
     setActiveTab,
+    createManualPlayer,
+    checkInPlayersToday,
   } = useAppStore();
 
   const privateSessionsList = isStaging ? mockPrivateSessions : [];
@@ -267,14 +269,14 @@ export const CoachHomeView: React.FC = () => {
       <PublicAttendanceFlow 
         isOpen={isPublicFlowOpen}
         onClose={() => setIsPublicFlowOpen(false)}
-        onAddPlayers={(players) => {
-          console.log('Added players to public session', players);
+        onAddPlayers={async (players) => {
+          await checkInPlayersToday(players);
         }}
-        onAddGuest={(data) => {
-          console.log('Added guest to public session', data);
+        onAddGuest={async (data) => {
+          await createManualPlayer({ name: data.name, level: data.level, checkInToday: true });
         }}
-        onCreatePlayer={(data) => {
-          console.log('Created player in public session', data);
+        onCreatePlayer={async (data) => {
+          await createManualPlayer({ name: data.name, phone: data.phone, level: data.level, checkInToday: true });
         }}
       />
     </div>
