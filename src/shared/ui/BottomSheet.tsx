@@ -54,33 +54,119 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const [visualHeight, setVisualHeight] = useState<number | null>(null);
   const startYRef = useRef<number | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const baseHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 800);
+  const isInputFocusedRef = useRef<boolean>(false);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Track visualViewport to lift BottomSheet above mobile/Telegram virtual keyboard
+  // Track visualViewport, Telegram.WebApp viewportChanged, and input focus to lift BottomSheet above keyboard
   useEffect(() => {
     if (!isOpen) {
       setKeyboardOffset(0);
       setVisualHeight(null);
+      isInputFocusedRef.current = false;
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tg = (window as any).Telegram?.WebApp;
     const vv = window.visualViewport;
-    if (!vv) return;
 
-    const updateViewport = () => {
-      const kbHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-      setKeyboardOffset(kbHeight > 40 ? kbHeight : 0);
-      setVisualHeight(vv.height);
+    baseHeightRef.current = Math.max(
+      window.innerHeight,
+      vv?.height || 0,
+      tg?.viewportStableHeight || 0
+    );
+
+    const computeKeyboard = () => {
+      const currentInner = window.innerHeight;
+      const vvHeight = vv ? vv.height : currentInner;
+      const vvTop = vv ? vv.offsetTop : 0;
+
+      // 1. Standard visualViewport delta (iOS Safari / mobile browsers)
+      const vvDiff = Math.max(0, currentInner - (vvHeight + vvTop));
+      // 2. Telegram WebApp viewport delta
+      const tgDiff =
+        tg?.viewportStableHeight && tg?.viewportHeight
+          ? Math.max(0, tg.viewportStableHeight - tg.viewportHeight)
+          : 0;
+      // 3. How much the layout viewport itself shrank
+      const layoutShrank = Math.max(0, baseHeightRef.current - currentInner);
+
+      const measuredKb = Math.max(vvDiff, tgDiff);
+
+      if (measuredKb > 60) {
+        const effectiveOffset = Math.max(0, measuredKb - layoutShrank);
+        setKeyboardOffset(effectiveOffset);
+        setVisualHeight(vvHeight);
+      } else if (isInputFocusedRef.current && window.innerWidth <= 1024 && layoutShrank < 60) {
+        // Fallback for Telegram iOS fullscreen WebView where neither innerHeight nor visualViewport shrinks on keyboard open
+        const estimatedKb = Math.min(330, Math.round(baseHeightRef.current * 0.38));
+        setKeyboardOffset(estimatedKb);
+        setVisualHeight(baseHeightRef.current - estimatedKb);
+      } else {
+        setKeyboardOffset(0);
+        setVisualHeight(vvHeight);
+      }
     };
 
-    updateViewport();
-    vv.addEventListener('resize', updateViewport);
-    vv.addEventListener('scroll', updateViewport);
-    window.addEventListener('resize', updateViewport);
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        if (blurTimeoutRef.current) {
+          clearTimeout(blurTimeoutRef.current);
+          blurTimeoutRef.current = null;
+        }
+        isInputFocusedRef.current = true;
+        computeKeyboard();
+        setTimeout(computeKeyboard, 100);
+        setTimeout(computeKeyboard, 300);
+      }
+    };
+
+    const handleFocusOut = (e: FocusEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        blurTimeoutRef.current = setTimeout(() => {
+          isInputFocusedRef.current = false;
+          computeKeyboard();
+        }, 120);
+      }
+    };
+
+    const el = sheetRef.current;
+    if (el) {
+      el.addEventListener('focusin', handleFocusIn);
+      el.addEventListener('focusout', handleFocusOut);
+      const active = document.activeElement as HTMLElement | null;
+      if (active && el.contains(active) && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+        isInputFocusedRef.current = true;
+      }
+    }
+
+    computeKeyboard();
+    vv?.addEventListener('resize', computeKeyboard);
+    vv?.addEventListener('scroll', computeKeyboard);
+    window.addEventListener('resize', computeKeyboard);
+    try {
+      tg?.onEvent?.('viewportChanged', computeKeyboard);
+    } catch {
+      // ignore
+    }
 
     return () => {
-      vv.removeEventListener('resize', updateViewport);
-      vv.removeEventListener('scroll', updateViewport);
-      window.removeEventListener('resize', updateViewport);
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+      if (el) {
+        el.removeEventListener('focusin', handleFocusIn);
+        el.removeEventListener('focusout', handleFocusOut);
+      }
+      vv?.removeEventListener('resize', computeKeyboard);
+      vv?.removeEventListener('scroll', computeKeyboard);
+      window.removeEventListener('resize', computeKeyboard);
+      try {
+        tg?.offEvent?.('viewportChanged', computeKeyboard);
+      } catch {
+        // ignore
+      }
     };
   }, [isOpen]);
 
@@ -218,7 +304,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             {footer && (
               <>
                 <div className="absolute bottom-0 -left-4 -right-4 h-40 z-[155] pointer-events-none isolate">
-                {/* Progressive blur layer with Chrome GPU fixes */}
                 <div
                   className="absolute inset-0 backdrop-blur-md"
                   style={{
@@ -229,7 +314,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   }}
                 />
                 
-                {/* Dark gradient layer */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/40 to-transparent" />
               </div>
                 <div className="absolute bottom-[48px] inset-x-0 px-4 z-[160] pointer-events-none">
