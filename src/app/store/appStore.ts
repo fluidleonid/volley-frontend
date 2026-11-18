@@ -30,6 +30,7 @@ import {
   evaluateAndSyncAchievements,
   fetchAllPlayersFromDb,
   fetchProductionState,
+  getCachedAuthSession,
   findNextScheduledSession,
   saveOnboardingSkillTier,
   updatePlayerTierByCoachInDb,
@@ -237,52 +238,87 @@ export const useAppStore = create<AppState>((set, get) => ({
   initProductionSession: async () => {
     if (IS_STAGING) return;
 
-    const authResult = await authenticateWithTelegram();
+    // 1. Instant boot from local cache (0ms splash delay for returning users)
+    const cachedAuth = getCachedAuthSession();
+    if (cachedAuth) {
+      const isOnboardingDone =
+        cachedAuth.onboardingCompleted ||
+        (typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true');
+      set({
+        role: cachedAuth.role,
+        coachId: cachedAuth.coachId || null,
+        currentUser: cachedAuth.user,
+        flowState: isOnboardingDone ? 'app' : 'onboarding',
+        trainingCosts: cachedAuth.trainingCosts || { public: 4000, private: 10000 },
+        weeklySchedule: cachedAuth.weeklySchedule || [],
+        specialDates: cachedAuth.specialDates || [],
+      });
+    }
+
+    // 2. Run Telegram Auth & Production State fetch in parallel
+    const [authResult, prodData] = await Promise.all([
+      authenticateWithTelegram(),
+      fetchProductionState(
+        cachedAuth?.role === 'coach' ? cachedAuth.coachId : undefined,
+        cachedAuth?.role === 'player' ? cachedAuth.user.id : undefined
+      ),
+    ]);
+
     if (authResult) {
       if (authResult.onboardingCompleted) {
         try { localStorage.setItem('volley_onboarding_done', 'true'); } catch {}
       }
       const isCoach = authResult.role === 'coach';
-      const prodData = await fetchProductionState(
-        isCoach ? authResult.coachId : undefined,
-        !isCoach ? authResult.user.id : undefined
-      );
 
-      const mappedAllPlayers: Player[] = (authResult.allPlayers && authResult.allPlayers.length > 0)
-        ? authResult.allPlayers
-        : prodData.allPlayers;
+      let finalProdData = prodData;
+      if (!cachedAuth) {
+        finalProdData = await fetchProductionState(
+          isCoach ? authResult.coachId : undefined,
+          !isCoach ? authResult.user.id : undefined
+        );
+      }
+
+      const mappedAllPlayers: Player[] =
+        authResult.allPlayers && authResult.allPlayers.length > 0
+          ? authResult.allPlayers
+          : finalProdData.allPlayers;
 
       set({
         role: authResult.role,
         coachId: authResult.coachId || null,
         currentUser: authResult.user,
-        flowState: (authResult.onboardingCompleted || (typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true')) ? 'app' : 'onboarding',
+        flowState:
+          authResult.onboardingCompleted ||
+          (typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true')
+            ? 'app'
+            : 'onboarding',
         trainingCosts: authResult.trainingCosts || { public: 4000, private: 10000 },
         weeklySchedule: authResult.weeklySchedule || [],
         specialDates: authResult.specialDates || [],
-        activeSessionId: prodData.activeSessionId,
-        isSessionActive: prodData.isSessionActive,
-        nextScheduledSession: prodData.nextScheduledSession,
-        coachesList: prodData.coachesList,
-        courts: prodData.courts,
-        todaysPlayers: prodData.todaysPlayers,
+        activeSessionId: finalProdData.activeSessionId,
+        isSessionActive: finalProdData.isSessionActive,
+        nextScheduledSession: finalProdData.nextScheduledSession,
+        coachesList: finalProdData.coachesList,
+        courts: finalProdData.courts,
+        todaysPlayers: finalProdData.todaysPlayers,
         allPlayers: mappedAllPlayers,
-        leaderboard: prodData.leaderboard,
-        recentMatches: prodData.recentMatches,
-        achievements: prodData.achievements,
-        blacklistedPlayerIds: prodData.blacklistedPlayerIds,
+        leaderboard: finalProdData.leaderboard,
+        recentMatches: finalProdData.recentMatches,
+        achievements: finalProdData.achievements,
+        blacklistedPlayerIds: finalProdData.blacklistedPlayerIds,
       });
-    } else {
-      // Even without Telegram container (e.g. direct browser preview on prod), load live public state
-      const prodData = await fetchProductionState();
+    } else if (!cachedAuth) {
+      const isDoneLocally =
+        typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true';
       set({
-        flowState: 'onboarding',
+        flowState: isDoneLocally ? 'app' : 'onboarding',
         activeSessionId: prodData.activeSessionId,
         isSessionActive: prodData.isSessionActive,
         nextScheduledSession: prodData.nextScheduledSession,
         coachesList: prodData.coachesList,
         courts: prodData.courts,
         todaysPlayers: prodData.todaysPlayers,
+        allPlayers: prodData.allPlayers,
         leaderboard: prodData.leaderboard,
         recentMatches: prodData.recentMatches,
         achievements: prodData.achievements,

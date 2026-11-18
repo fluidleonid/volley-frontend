@@ -82,7 +82,6 @@ async function fetchAndStoreCompactAvatar(
     const photosData = await photosRes.json();
     const firstPhotoSizes = photosData?.result?.photos?.[0];
     if (Array.isArray(firstPhotoSizes) && firstPhotoSizes.length > 0) {
-      // Smallest 160x160 thumbnail (~8-10 KB) since max UI avatar is 80x80px (2x retina = 160px)
       const compactSize = firstPhotoSizes[0];
       const fileId = compactSize.file_id;
       const fileRes = await fetch(
@@ -148,8 +147,23 @@ async function issueSupabaseSession(params: {
     player_id: playerId,
   };
 
-  let authUserId = existingAuthUserId;
+  const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 
+  // Fast path: if auth_user_id already exists, sign in directly in 1 call (skip redundant updateUserById)
+  if (existingAuthUserId) {
+    const { data: fastSession } = await anonClient.auth.signInWithPassword({ email, password });
+    if (fastSession?.session) {
+      return {
+        access_token: fastSession.session.access_token,
+        refresh_token: fastSession.session.refresh_token,
+      };
+    }
+  }
+
+  // Fallback / first-time creation path
+  let authUserId = existingAuthUserId;
   if (authUserId) {
     const { error } = await supabaseAdmin.auth.admin.updateUserById(authUserId, {
       email,
@@ -157,9 +171,7 @@ async function issueSupabaseSession(params: {
       email_confirm: true,
       app_metadata: appMetadata,
     });
-    if (error) {
-      authUserId = null;
-    }
+    if (error) authUserId = null;
   }
 
   if (!authUserId) {
@@ -173,10 +185,7 @@ async function issueSupabaseSession(params: {
     if (created?.user?.id) {
       authUserId = created.user.id;
     } else if (createError) {
-      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: { persistSession: false, autoRefreshToken: false },
-      });
-      const { data: signInData } = await tempClient.auth.signInWithPassword({ email, password });
+      const { data: signInData } = await anonClient.auth.signInWithPassword({ email, password });
       if (signInData?.user?.id) {
         authUserId = signInData.user.id;
         await supabaseAdmin.auth.admin.updateUserById(authUserId, {
@@ -194,9 +203,6 @@ async function issueSupabaseSession(params: {
     }
   }
 
-  const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
   const { data: sessionData, error: sessionErr } = await anonClient.auth.signInWithPassword({
     email,
     password,
@@ -219,7 +225,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { initData, fallbackUser, action, playerId, level, xp } = body || {};
+    const { initData, fallbackUser, action, playerId, level, xp, skipSession } = body || {};
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -228,7 +234,6 @@ Deno.serve(async (req: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Support direct onboarding completion via service role so it never fails
     if (action === "complete_onboarding" && playerId) {
       const { data: updated } = await supabase
         .from("players")
@@ -258,14 +263,10 @@ Deno.serve(async (req: Request) => {
         try {
           tgUser = JSON.parse(userJson);
         } catch {
-          // ignore parse error
+          // ignore
         }
       }
-      if (botToken) {
-        isVerified = await verifyTelegramWebAppData(initData, botToken);
-      } else {
-        isVerified = true;
-      }
+      isVerified = botToken ? await verifyTelegramWebAppData(initData, botToken) : true;
     }
 
     if (!tgUser || !tgUser.id) {
@@ -281,32 +282,21 @@ Deno.serve(async (req: Request) => {
       [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") ||
       tgUser.username ||
       `Player #${telegramId}`;
-    let avatarUrl: string | null = tgUser.photo_url || null;
-
-    // 1. If Telegram WebApp already gave a real public CDN image (not .svg initials), use it directly (0 bytes in Supabase)
+    const rawPhotoUrl: string | null = tgUser.photo_url || null;
     const isRealWebAppPhoto =
-      avatarUrl &&
-      !avatarUrl.endsWith(".svg") &&
-      !avatarUrl.includes("api.telegram.org/file/bot");
+      Boolean(rawPhotoUrl) &&
+      !rawPhotoUrl!.endsWith(".svg") &&
+      !rawPhotoUrl!.includes("api.telegram.org/file/bot");
 
-    if (!isRealWebAppPhoto) {
-      const storedPhotoUrl = await fetchAndStoreCompactAvatar(
-        telegramId,
-        botToken,
-        supabase,
-        supabaseUrl,
-        supabaseServiceKey
-      );
-      avatarUrl = storedPhotoUrl;
-    }
+    const webAppAvatarUrl: string | null = isRealWebAppPhoto ? rawPhotoUrl : null;
 
-    // 2. Check if this Telegram user is a Coach (Admin) in public.coaches
-    let { data: coach } = await supabase
-      .from("coaches")
-      .select("*")
-      .eq("telegram_id", telegramId)
-      .maybeSingle();
+    // 1. Check Coach & Player in parallel for speed
+    const [{ data: coachById }, { data: existingPlayer }] = await Promise.all([
+      supabase.from("coaches").select("*").eq("telegram_id", telegramId).maybeSingle(),
+      supabase.from("players").select("*").eq("telegram_id", telegramId).maybeSingle(),
+    ]);
 
+    let coach = coachById;
     if (!coach && username) {
       const { data: coachByUsername } = await supabase
         .from("coaches")
@@ -316,35 +306,71 @@ Deno.serve(async (req: Request) => {
       coach = coachByUsername;
     }
 
+    // Background avatar sync helper (never blocks login response!)
+    const scheduleBackgroundAvatarSync = (table: "coaches" | "players", rowId: string) => {
+      if (webAppAvatarUrl || !botToken) return;
+      const task = (async () => {
+        const storedUrl = await fetchAndStoreCompactAvatar(
+          telegramId,
+          botToken,
+          supabase,
+          supabaseUrl,
+          supabaseServiceKey
+        );
+        if (storedUrl) {
+          await supabase.from(table).update({ avatar_url: storedUrl }).eq("id", rowId);
+        }
+      })();
+      try {
+        // @ts-ignore EdgeRuntime is available in Supabase Edge Functions
+        if (typeof EdgeRuntime !== "undefined" && typeof EdgeRuntime.waitUntil === "function") {
+          // @ts-ignore
+          EdgeRuntime.waitUntil(task);
+        }
+      } catch {
+        // ignore
+      }
+    };
+
     if (coach) {
-      const { data: updatedCoach } = await supabase
+      const finalAvatar = webAppAvatarUrl || coach.avatar_url || null;
+      const updateCoachPromise = supabase
         .from("coaches")
         .update({
           telegram_id: telegramId,
           telegram_username: username || coach.telegram_username,
           name: fullName || coach.name,
-          avatar_url: avatarUrl || coach.avatar_url,
+          avatar_url: finalAvatar,
           updated_at: new Date().toISOString(),
         })
         .eq("id", coach.id)
         .select("*")
         .single();
 
-      const finalCoach = updatedCoach || coach;
-      const [session, { data: allPlayers }] = await Promise.all([
-        issueSupabaseSession({
-          supabaseAdmin: supabase,
-          supabaseUrl,
-          supabaseAnonKey,
-          secretSalt: supabaseServiceKey,
-          telegramId,
-          role: "coach",
-          coachId: finalCoach.id,
-          playerId: null,
-          existingAuthUserId: finalCoach.auth_user_id || null,
-        }),
+      const sessionPromise = skipSession
+        ? Promise.resolve(null)
+        : issueSupabaseSession({
+            supabaseAdmin: supabase,
+            supabaseUrl,
+            supabaseAnonKey,
+            secretSalt: supabaseServiceKey,
+            telegramId,
+            role: "coach",
+            coachId: coach.id,
+            playerId: null,
+            existingAuthUserId: coach.auth_user_id || null,
+          });
+
+      const [{ data: updatedCoach }, session, { data: allPlayers }] = await Promise.all([
+        updateCoachPromise,
+        sessionPromise,
         supabase.from("players").select("*").order("created_at", { ascending: false }),
       ]);
+
+      const finalCoach = updatedCoach || coach;
+      if (!finalAvatar) {
+        scheduleBackgroundAvatarSync("coaches", finalCoach.id);
+      }
 
       return new Response(
         JSON.stringify({
@@ -358,13 +384,8 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // 3. Otherwise, check or create Player in public.players
-    let { data: player } = await supabase
-      .from("players")
-      .select("*")
-      .eq("telegram_id", telegramId)
-      .maybeSingle();
-
+    // 2. Player flow
+    let player = existingPlayer;
     let isFirstRegistration = false;
 
     if (!player) {
@@ -375,7 +396,7 @@ Deno.serve(async (req: Request) => {
           telegram_id: telegramId,
           telegram_username: username,
           name: fullName,
-          avatar_url: avatarUrl,
+          avatar_url: webAppAvatarUrl,
           level: 1,
           xp: 0,
           bp_total: 0,
@@ -386,7 +407,6 @@ Deno.serve(async (req: Request) => {
           games_played: 0,
           wins: 0,
           win_streak: 0,
-          // Mark onboarding_completed = true in DB immediately so any subsequent login never shows onboarding again
           onboarding_completed: true,
         })
         .select("*")
@@ -400,11 +420,12 @@ Deno.serve(async (req: Request) => {
       }
       player = newPlayer;
     } else {
+      const finalAvatar = webAppAvatarUrl || player.avatar_url || null;
       const { data: updatedPlayer } = await supabase
         .from("players")
         .update({
           name: fullName || player.name,
-          avatar_url: avatarUrl || player.avatar_url,
+          avatar_url: finalAvatar,
           telegram_username: username,
           onboarding_completed: true,
           updated_at: new Date().toISOString(),
@@ -415,23 +436,28 @@ Deno.serve(async (req: Request) => {
       if (updatedPlayer) player = updatedPlayer;
     }
 
-    const session = await issueSupabaseSession({
-      supabaseAdmin: supabase,
-      supabaseUrl,
-      supabaseAnonKey,
-      secretSalt: supabaseServiceKey,
-      telegramId,
-      role: "player",
-      coachId: null,
-      playerId: player.id,
-      existingAuthUserId: player.auth_user_id || null,
-    });
+    if (!player.avatar_url) {
+      scheduleBackgroundAvatarSync("players", player.id);
+    }
+
+    const session = skipSession
+      ? null
+      : await issueSupabaseSession({
+          supabaseAdmin: supabase,
+          supabaseUrl,
+          supabaseAnonKey,
+          secretSalt: supabaseServiceKey,
+          telegramId,
+          role: "player",
+          coachId: null,
+          playerId: player.id,
+          existingAuthUserId: player.auth_user_id || null,
+        });
 
     return new Response(
       JSON.stringify({
         role: "player",
         isVerified,
-        // Only show onboarding on the very first registration; returning users always have onboarding_completed: true
         player: {
           ...player,
           onboarding_completed: !isFirstRegistration,
