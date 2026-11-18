@@ -30,9 +30,15 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tg = (window as any).Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user) {
+      const u = tg.initDataUnsafe.user as TelegramUserPayload;
+      try {
+        localStorage.setItem('volley_tg_user_cache', JSON.stringify(u));
+      } catch {
+        // ignore
+      }
       return {
         initDataRaw: tg.initData || '',
-        user: tg.initDataUnsafe.user as TelegramUserPayload,
+        user: u,
       };
     }
   } catch {
@@ -46,6 +52,11 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tgUser = (launchParams.initData as any)?.user || null;
     if (tgUser) {
+      try {
+        localStorage.setItem('volley_tg_user_cache', JSON.stringify(tgUser));
+      } catch {
+        // ignore
+      }
       return { initDataRaw: raw, user: tgUser };
     }
   } catch {
@@ -76,7 +87,10 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
     if (cached) {
       return { initDataRaw: '', user: JSON.parse(cached) as TelegramUserPayload };
     }
-  } catch {}
+  } catch {
+    // ignore
+  }
+
   return { initDataRaw: '', user: null };
 }
 
@@ -87,6 +101,8 @@ export function mapDbPlayerToClient(row: any): Player {
     name: formatShortName(rawName),
     fullName: rawName,
     initials: getInitialsFromName(rawName),
+    telegramUsername: row.telegram_username || undefined,
+    telegramId: row.telegram_id ? Number(row.telegram_id) : undefined,
     avatarUrl: row.avatar_url || undefined,
     level: Number(row.level ?? 1),
     xp: Number(row.xp ?? 0),
@@ -110,6 +126,8 @@ export function mapDbCoachToPlayer(coach: any): Player {
     name: formatShortName(rawCoachName),
     fullName: rawCoachName,
     initials: getInitialsFromName(rawCoachName),
+    telegramUsername: coach.telegram_username || undefined,
+    telegramId: coach.telegram_id ? Number(coach.telegram_id) : undefined,
     avatarUrl: coach.avatar_url || undefined,
     level: 30,
     xp: 18000,
@@ -200,7 +218,6 @@ export function findNextScheduledSession(coachesList: any[], now = new Date()): 
 
   const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  // Allow sessions that started up to 2 hours ago today (in case coach hasn't clicked Start yet) or any future slot
   const cutoffTime = now.getTime() - 2 * 60 * 60 * 1000;
 
   const candidates: (NextScheduledSession & { timestamp: number })[] = [];
@@ -287,7 +304,7 @@ export function findNextScheduledSession(coachesList: any[], now = new Date()): 
 
 export async function fetchAllPlayersFromDb(): Promise<Player[]> {
   const PUBLIC_PLAYER_COLS =
-    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
+    'id, name, avatar_url, telegram_username, telegram_id, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
   const { data: rows } = await supabase
     .from('players')
     .select(PUBLIC_PLAYER_COLS)
@@ -298,7 +315,7 @@ export async function fetchAllPlayersFromDb(): Promise<Player[]> {
 
 export async function fetchProductionState(coachId?: string, playerId?: string) {
   const PUBLIC_PLAYER_COLS =
-    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
+    'id, name, avatar_url, telegram_username, telegram_id, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
 
   // 1. Fetch active training session, coaches, and all players in parallel
   let sessionQuery = supabase
@@ -314,7 +331,7 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
 
   const [{ data: activeSessions }, { data: coachesList }, allPlayers] = await Promise.all([
     sessionQuery,
-    supabase.from('coaches').select('id, name, avatar_url, weekly_schedule, special_dates'),
+    supabase.from('coaches').select('id, name, avatar_url, telegram_username, telegram_id, weekly_schedule, special_dates'),
     fetchAllPlayersFromDb(),
   ]);
 
@@ -452,15 +469,35 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
 
 export async function saveOnboardingSkillTier(playerId: string, tierId: SkillTierId) {
   const { level, xp } = getMinimumXpForTier(tierId);
-  await supabase
-    .from('players')
-    .update({
-      level,
-      xp,
-      onboarding_completed: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', playerId);
+  try {
+    localStorage.setItem('volley_onboarding_done', 'true');
+  } catch {
+    // ignore
+  }
+  await Promise.allSettled([
+    fetch(`${SUPABASE_URL}/functions/v1/telegram-auth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify({
+        action: 'complete_onboarding',
+        playerId,
+        level,
+        xp,
+      }),
+    }),
+    supabase
+      .from('players')
+      .update({
+        level,
+        xp,
+        onboarding_completed: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', playerId),
+  ]);
 }
 
 /**

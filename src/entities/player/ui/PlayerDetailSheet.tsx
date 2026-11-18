@@ -15,6 +15,7 @@ import { PrivateSessionFlow } from '../../../widgets/flows/PrivateSessionFlow';
 import { PlayerBillingSheet } from './PlayerBillingSheet';
 import { getPlayerTierInfo } from '../../../shared/lib/tier';
 import { formatShortName } from '../../../shared/lib/formatName';
+import { openTelegramChat } from '../../../shared/lib/telegramChat';
 import coachCardImg from '../../../shared/assets/images/coach-card.png';
 
 export interface PlayerDetailSheetProps {
@@ -139,9 +140,17 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
             icon={MessageCircle}
             label={t('common.contact', 'Contact')}
             showChevron={false}
+            onClick={player.hasTelegram ? () => openTelegramChat(player) : undefined}
             rightElement={
               player.hasTelegram ? (
-                <Badge variant="neutral" className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center">
+                <Badge
+                  variant="neutral"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openTelegramChat(player);
+                  }}
+                  className="px-3 cursor-pointer active:scale-95 transition-all text-white hover:bg-brand-surfaceElevated text-center"
+                >
                   {t('common.message', 'Message')}
                 </Badge>
               ) : isAdmin && !isCoachProfile ? (

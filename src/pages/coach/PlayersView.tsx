@@ -12,6 +12,7 @@ import { SelectPlayerForSessionSheet } from '../../features/session/SelectPlayer
 import { Player } from '../../shared/types/index';
 import { Dialog } from '../../shared/ui/Dialog';
 import { Button } from '../../shared/ui/button';
+import { openTelegramChat } from '../../shared/lib/telegramChat';
 
 type TabType = 'authorized' | 'manual';
 
@@ -22,6 +23,7 @@ export const PlayersView: React.FC = () => {
   useEffect(() => {
     refreshPlayers();
   }, [refreshPlayers]);
+
   const [tab, setTab] = useState<TabType>('authorized');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -35,12 +37,14 @@ export const PlayersView: React.FC = () => {
   const [isConfirmLinkOpen, setIsConfirmLinkOpen] = useState(false);
   const [playerToMerge, setPlayerToMerge] = useState<Player | null>(null);
 
-  const authorizedPlayers = allPlayers.filter(p => p.hasTelegram);
-  const manualPlayers = allPlayers.filter(p => !p.hasTelegram);
+  const authorizedPlayers = allPlayers.filter((p) => p.hasTelegram);
+  const manualPlayers = allPlayers.filter((p) => !p.hasTelegram);
 
-  const displayedPlayers = isSearchMode 
-    ? allPlayers.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : (tab === 'authorized' ? authorizedPlayers : manualPlayers);
+  const displayedPlayers = isSearchMode
+    ? allPlayers.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : tab === 'authorized'
+    ? authorizedPlayers
+    : manualPlayers;
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'authorized', label: t('coach.players.authorized', 'Authorized') },
@@ -50,12 +54,19 @@ export const PlayersView: React.FC = () => {
   return (
     <div className="bg-background text-white pb-32 px-4 max-w-[480px] select-none mx-auto relative">
       {/* Sticky Header */}
-      <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${scrolled || isSearchMode ? 'bg-background/90 backdrop-blur-md' : 'bg-transparent'}`}>
+      <div
+        className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
+          scrolled || isSearchMode ? 'bg-background/90 backdrop-blur-md' : 'bg-transparent'
+        }`}
+      >
         <div className="flex items-center h-[44px]">
           {isSearchMode ? (
             <div className="flex items-center gap-3 w-full animate-fade-in">
-              <button 
-                onClick={() => { setIsSearchMode(false); setSearchQuery(''); }}
+              <button
+                onClick={() => {
+                  setIsSearchMode(false);
+                  setSearchQuery('');
+                }}
                 className="flex shrink-0 h-[44px] w-[44px] items-center justify-center rounded-full bg-card hover:bg-brand-surfaceElevated active:scale-95 transition-all text-white"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -71,16 +82,18 @@ export const PlayersView: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center justify-between w-full animate-fade-in">
-              <h1 className="text-[30px] font-bold text-white tracking-tight">{t('nav.players', 'Players')}</h1>
+              <h1 className="text-[30px] font-bold text-white tracking-tight">
+                {t('nav.players', 'Players')}
+              </h1>
 
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={() => setIsSearchMode(true)}
                   className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-card hover:bg-brand-surfaceElevated active:scale-95 transition-all text-white"
                 >
                   <Search className="h-5 w-5" />
                 </button>
-                <button 
+                <button
                   onClick={() => setIsCreateOpen(true)}
                   className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30 active:scale-95 transition-all"
                 >
@@ -95,24 +108,33 @@ export const PlayersView: React.FC = () => {
       {!isSearchMode && (
         <>
           <div className="grid grid-cols-3 gap-3 pt-2 mb-6 animate-fade-in">
-            <StatCard value={allPlayers.length} label={t('coach.players.totalPlayers', 'Total players')} />
-            <StatCard value={allPlayers.length > 0 ? Math.max(1, Math.floor(allPlayers.length * 0.7)) : 0} label={t('coach.players.active7d', 'Active 7D')} />
-            <StatCard value={manualPlayers.length} label={t('coach.players.manual7d', 'Manual 7D')} />
+            <StatCard
+              value={allPlayers.length}
+              label={t('coach.players.totalPlayers', 'Total players')}
+            />
+            <StatCard
+              value={allPlayers.length > 0 ? Math.max(1, Math.floor(allPlayers.length * 0.7)) : 0}
+              label={t('coach.players.active7d', 'Active 7D')}
+            />
+            <StatCard
+              value={manualPlayers.length}
+              label={t('coach.players.manual7d', 'Manual 7D')}
+            />
           </div>
 
           {/* Segment Controller */}
           <div className="flex rounded-[20px] bg-card p-1 mb-6 relative w-full animate-fade-in">
-            {tabs.map((t, i) => {
-              const isActive = tab === t.id;
+            {tabs.map((tItem, i) => {
+              const isActive = tab === tItem.id;
               return (
-                <div key={t.id} className="relative flex-1 flex">
+                <div key={tItem.id} className="relative flex-1 flex">
                   <button
-                    onClick={() => setTab(t.id)}
+                    onClick={() => setTab(tItem.id)}
                     className={`flex-1 rounded-[20px] py-1.5 text-sm font-bold transition-all relative z-10 ${
                       isActive ? 'bg-secondary text-white shadow' : 'text-muted-foreground hover:text-white'
                     }`}
                   >
-                    {t.label}
+                    {tItem.label}
                   </button>
                   {/* Vertical Divider */}
                   {!isActive && i < tabs.length - 1 && tab !== tabs[i + 1].id && (
@@ -136,13 +158,13 @@ export const PlayersView: React.FC = () => {
                 onClick={(p) => setSelectedPlayer(p)}
                 rightContent={
                   player.hasTelegram ? (
-                    <Button 
+                    <Button
                       variant="secondary"
                       size="sm"
                       fullWidth={false}
-                      onClick={(e: React.MouseEvent) => { 
-                        e.stopPropagation(); 
-                        console.log('Message player', player.name); 
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        openTelegramChat(player);
                       }}
                       className="shadow-sm font-semibold"
                     >
@@ -150,15 +172,15 @@ export const PlayersView: React.FC = () => {
                       {t('common.message', 'Message')}
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       variant="secondary"
                       size="sm"
                       fullWidth={false}
-                      onClick={(e: React.MouseEvent) => { 
-                        e.stopPropagation(); 
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
                         setLinkTargetPlayer(player);
                         setIsSelectPlayerOpen(true);
-                      }} 
+                      }}
                       className="shadow-sm font-semibold"
                     >
                       {t('profile.linkAccount', 'Link account')}
@@ -200,10 +222,10 @@ export const PlayersView: React.FC = () => {
         subtitle={t('coach.players.selectPlayerToLink', 'Select a player to link')}
         mode="single"
         hideAddButtons
-        onSelectPlayer={(selectedPlayer) => {
+        onSelectPlayer={(selectedP) => {
           setIsSelectPlayerOpen(false);
-          if (selectedPlayer) {
-            setPlayerToMerge(selectedPlayer);
+          if (selectedP) {
+            setPlayerToMerge(selectedP);
             setIsConfirmLinkOpen(true);
           }
         }}
@@ -213,7 +235,10 @@ export const PlayersView: React.FC = () => {
         isOpen={isConfirmLinkOpen}
         onClose={() => setIsConfirmLinkOpen(false)}
         title={t('coach.players.confirmLinkTitle', 'Confirm merge')}
-        description={t('coach.players.confirmLinkDesc', 'Players will be merged. BP will be summed up, and the higher level and XP will be kept. the manual player will be removed.')}
+        description={t(
+          'coach.players.confirmLinkDesc',
+          'Players will be merged. BP will be summed up, and the higher level and XP will be kept. the manual player will be removed.'
+        )}
         primaryButtonText={t('common.confirm', 'Confirm')}
         primaryButtonOnClick={() => {
           console.log('Merging', linkTargetPlayer?.name, 'with', playerToMerge?.name);

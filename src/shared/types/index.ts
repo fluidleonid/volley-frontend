@@ -13,6 +13,8 @@ export interface Player {
   name: string;
   fullName?: string;
   initials?: string;
+  telegramUsername?: string;
+  telegramId?: number;
   avatarUrl?: string;
   level: number;
   xp: number;
