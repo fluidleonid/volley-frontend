@@ -31,7 +31,6 @@ import {
   fetchAllPlayersFromDb,
   fetchProductionState,
   findNextScheduledSession,
-  mapDbPlayerToClient,
   saveOnboardingSkillTier,
   updatePlayerTierByCoachInDb,
 } from '../../shared/api/supabase/volleyApi';
