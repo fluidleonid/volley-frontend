@@ -10,20 +10,35 @@ import { CreateNewPlayerSheet } from '../../features/player/CreateNewPlayerSheet
 import { CustomDatePicker } from '../../shared/ui/CustomDatePicker';
 import { CustomTimePicker } from '../../shared/ui/CustomTimePicker';
 import { Avatar } from '../../shared/ui/Avatar';
+import { useAppStore } from '../../app/store/appStore';
+import { supabase } from '../../shared/api/supabase/client';
 
 interface PrivateSessionFlowProps {
   isOpen: boolean;
   onClose: () => void;
-  onSchedule: (data: { player: Player | { name: string, level?: string }; date: string; time: string }) => void;
+  onSchedule: (data: { player: Player | { name: string; level?: string }; date: string; time: string }) => void;
   initialPlayer?: Player | null;
   readOnlyPlayer?: boolean;
   isReadOnly?: boolean;
   hasParent?: boolean;
   onCloseAll?: () => void;
 }
-export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, onClose, onSchedule, initialPlayer, readOnlyPlayer, isReadOnly, hasParent, onCloseAll }) => {
+
+export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({
+  isOpen,
+  onClose,
+  onSchedule,
+  initialPlayer,
+  readOnlyPlayer,
+  isReadOnly,
+  hasParent,
+  onCloseAll,
+}) => {
   const { t, i18n } = useTranslation();
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | { name: string, level?: string } | null>(initialPlayer || null);
+  const { isStaging, coachId, trainingCosts, refreshPlayers } = useAppStore();
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | { name: string; level?: string } | null>(
+    initialPlayer || null
+  );
   const todayStr = new Date().toISOString().split('T')[0];
   const [date, setDate] = useState<string>(todayStr);
   const [time, setTime] = useState<string>('10:00');
@@ -34,9 +49,31 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
-  const handleSchedule = () => {
-    if (selectedPlayer && date && time) {
-      onSchedule({ player: selectedPlayer, date, time });
+  const handleSchedule = async () => {
+    const targetPlayer = selectedPlayer || initialPlayer;
+    if (targetPlayer && date && time) {
+      if (!isStaging && 'id' in targetPlayer && coachId) {
+        await Promise.allSettled([
+          supabase.from('private_sessions').insert({
+            coach_id: coachId,
+            player_id: targetPlayer.id,
+            session_date: date,
+            session_time: time,
+            status: 'scheduled',
+            cost: trainingCosts.private,
+          }),
+          supabase.from('billing_transactions').insert({
+            coach_id: coachId,
+            player_id: targetPlayer.id,
+            session_type: 'private',
+            amount: trainingCosts.private,
+            status: 'unpaid',
+            session_date: date,
+          }),
+        ]);
+        refreshPlayers();
+      }
+      onSchedule({ player: targetPlayer, date, time });
       onClose();
       // Reset state
       setSelectedPlayer(null);
@@ -48,17 +85,30 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
   const titleNode = (
     <div className="text-center space-y-0.5">
       <h3 className="font-display text-lg font-bold text-white tracking-tight">
-        {readOnlyPlayer ? t('coach.session.reschedule', 'Reschedule session') : t('coach.session.privateSession', 'Private session')}
+        {readOnlyPlayer
+          ? t('coach.session.reschedule', 'Reschedule session')
+          : t('coach.session.privateSession', 'Private session')}
       </h3>
       <p className="font-sans text-xs text-muted-foreground font-normal">
-        {isReadOnly ? t('coach.session.viewDetails', 'View session details') : (readOnlyPlayer ? t('coach.session.selectNewDateTime', 'Select a new date and time') : t('coach.session.selectPlayerSchedule', 'Select player and schedule a session'))}
+        {isReadOnly
+          ? t('coach.session.viewDetails', 'View session details')
+          : readOnlyPlayer
+          ? t('coach.session.selectNewDateTime', 'Select a new date and time')
+          : t('coach.session.selectPlayerSchedule', 'Select player and schedule a session')}
       </p>
     </div>
   );
 
   return (
     <>
-      <BottomSheet isOpen={isOpen} onClose={onClose} onCloseAll={onCloseAll} hasParent={hasParent} title={titleNode} zIndex={150}>
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        onCloseAll={onCloseAll}
+        hasParent={hasParent}
+        title={titleNode}
+        zIndex={150}
+      >
         <div className="space-y-4 pt-2">
           {/* Select Player (Hidden in reschedule mode) */}
           {!readOnlyPlayer && (
@@ -86,13 +136,17 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
               <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center">
                 {selectedPlayer ? (
                   <div className="pt-5 pb-1 h-full flex flex-col justify-center">
-                    <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.player', 'Player')}</span>
+                    <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">
+                      {t('common.player', 'Player')}
+                    </span>
                     <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
-                      {'id' in selectedPlayer ? selectedPlayer.name : selectedPlayer.name}
+                      {selectedPlayer.name}
                     </span>
                   </div>
                 ) : (
-                  <span className="pl-2.5 pr-4 text-base text-muted-foreground font-medium tracking-tight truncate block">{t('coach.session.selectPlayer', 'Select player')}</span>
+                  <span className="pl-2.5 pr-4 text-base text-muted-foreground font-medium tracking-tight truncate block">
+                    {t('coach.session.selectPlayer', 'Select player')}
+                  </span>
                 )}
               </div>
               <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -102,15 +156,24 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
           {/* Date Picker */}
           <button
             onClick={() => !isReadOnly && setIsDatePickerOpen(true)}
-            className={`relative w-full h-[54px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
+            className={`relative w-full h-[54px] bg-card border border-transparent ${
+              isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'
+            } rounded-full flex items-center transition-colors text-left pr-4`}
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
               <Calendar className="h-5 w-5" />
             </div>
             <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
-              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.date', 'Date')}</span>
+              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">
+                {t('common.date', 'Date')}
+              </span>
               <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
-                {date === todayStr ? t('player.leaderboard.today', 'Today') : new Intl.DateTimeFormat(i18n.language === 'am' ? 'hy-AM' : (i18n.language === 'ru' ? 'ru-RU' : 'en-US'), { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(date))}
+                {date === todayStr
+                  ? t('player.leaderboard.today', 'Today')
+                  : new Intl.DateTimeFormat(
+                      i18n.language === 'am' ? 'hy-AM' : i18n.language === 'ru' ? 'ru-RU' : 'en-US',
+                      { month: 'long', day: 'numeric', year: 'numeric' }
+                    ).format(new Date(date))}
               </span>
             </div>
           </button>
@@ -118,14 +181,20 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
           {/* Time Picker */}
           <button
             onClick={() => !isReadOnly && setIsTimePickerOpen(true)}
-            className={`relative w-full h-[54px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
+            className={`relative w-full h-[54px] bg-card border border-transparent ${
+              isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'
+            } rounded-full flex items-center transition-colors text-left pr-4`}
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
               <Clock className="h-5 w-5" />
             </div>
             <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
-              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.time', 'Time')}</span>
-              <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">{time}</span>
+              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">
+                {t('common.time', 'Time')}
+              </span>
+              <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
+                {time}
+              </span>
             </div>
           </button>
 
@@ -138,7 +207,9 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
                 disabled={!readOnlyPlayer && !selectedPlayer}
                 className="shadow-lg shadow-primary/20"
               >
-                {readOnlyPlayer ? t('common.save', 'Save') : t('coach.session.scheduleSession', 'Schedule session')}
+                {readOnlyPlayer
+                  ? t('common.save', 'Save')
+                  : t('coach.session.scheduleSession', 'Schedule session')}
               </Button>
             </div>
           )}
@@ -181,7 +252,7 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
         onClose={() => setIsCreatePlayerOpen(false)}
         hasParent={true}
         onCreatePlayer={(data) => {
-          setSelectedPlayer(data); // In reality this would create it in the backend
+          setSelectedPlayer(data);
           setIsCreatePlayerOpen(false);
           setIsSelectPlayerOpen(false);
         }}
@@ -190,14 +261,20 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
       <CustomDatePicker
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
-        onConfirm={(d) => { setDate(d); setIsDatePickerOpen(false); }}
+        onConfirm={(d) => {
+          setDate(d);
+          setIsDatePickerOpen(false);
+        }}
         initialDate={date}
       />
 
       <CustomTimePicker
         isOpen={isTimePickerOpen}
         onClose={() => setIsTimePickerOpen(false)}
-        onConfirm={(t) => { setTime(t); setIsTimePickerOpen(false); }}
+        onConfirm={(tVal) => {
+          setTime(tVal);
+          setIsTimePickerOpen(false);
+        }}
         initialTime={time}
       />
     </>

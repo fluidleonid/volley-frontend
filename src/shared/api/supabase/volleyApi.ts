@@ -96,6 +96,7 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
 
 export function mapDbPlayerToClient(row: any): Player {
   const rawName = row.name || 'Player';
+  const gamesPlayed = Number(row.games_played ?? 0);
   return {
     id: row.id,
     name: formatShortName(rawName),
@@ -111,7 +112,8 @@ export function mapDbPlayerToClient(row: any): Player {
     status: row.status || 'spectating',
     isHardmode: Boolean(row.is_hardmode),
     hasTelegram: Boolean(row.has_telegram),
-    gamesPlayed: Number(row.games_played ?? 0),
+    hasAttendedTraining: gamesPlayed > 0 || Boolean(row.has_private_session),
+    gamesPlayed,
     wins: Number(row.wins ?? 0),
     winStreak: Number(row.win_streak ?? 0),
     created_at: row.created_at,
@@ -302,15 +304,36 @@ export function findNextScheduledSession(coachesList: any[], now = new Date()): 
   };
 }
 
+/**
+ * Fetches all players and marks `hasAttendedTraining = true` strictly if the player
+ * has attended a public training (`games_played > 0`) OR a private training (`private_sessions`).
+ */
 export async function fetchAllPlayersFromDb(): Promise<Player[]> {
   const PUBLIC_PLAYER_COLS =
     'id, name, avatar_url, telegram_username, telegram_id, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
-  const { data: rows } = await supabase
-    .from('players')
-    .select(PUBLIC_PLAYER_COLS)
-    .order('created_at', { ascending: false });
 
-  return (rows || []).map((row: any) => mapDbPlayerToClient(row));
+  const [{ data: rows }, { data: privRows }] = await Promise.all([
+    supabase
+      .from('players')
+      .select(PUBLIC_PLAYER_COLS)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('private_sessions')
+      .select('player_id')
+      .neq('status', 'cancelled'),
+  ]);
+
+  const privatePlayerIds = new Set(
+    (privRows || []).map((r: any) => r.player_id).filter(Boolean)
+  );
+
+  return (rows || []).map((row: any) => {
+    const p = mapDbPlayerToClient(row);
+    return {
+      ...p,
+      hasAttendedTraining: p.gamesPlayed > 0 || privatePlayerIds.has(p.id),
+    };
+  });
 }
 
 export async function fetchProductionState(coachId?: string, playerId?: string) {
