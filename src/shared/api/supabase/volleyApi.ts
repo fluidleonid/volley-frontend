@@ -493,6 +493,7 @@ export async function evaluateAndSyncAchievements(params: {
 }) {
   const {
     playerId,
+    gamesPlayed,
     matchesToday,
     hardmodeWins,
     winStreak,
