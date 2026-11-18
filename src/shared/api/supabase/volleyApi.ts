@@ -95,6 +95,7 @@ export function mapDbPlayerToClient(row: any): Player {
 /**
  * Authenticates the current user via Telegram WebApp SDK against the `telegram-auth` Edge Function.
  * Coaches are stored in `public.coaches`; Players are stored in `public.players`.
+ * Sets the signed Supabase Auth JWT session so all subsequent queries run as `authenticated`.
  */
 export async function authenticateWithTelegram(): Promise<AuthSessionResult | null> {
   const { initDataRaw, user } = extractTelegramContext();
@@ -117,6 +118,14 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
 
     if (res.ok) {
       const data = await res.json();
+
+      if (data.session?.access_token && data.session?.refresh_token) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+      }
+
       if (data.role === 'coach' && data.coach) {
         const coach = data.coach;
         return {
@@ -218,7 +227,7 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
   }
 
   const { data: activeSessions } = await sessionQuery;
-  let activeSession = activeSessions?.[0] || null;
+  const activeSession = activeSessions?.[0] || null;
   let isSessionActive = Boolean(activeSession);
 
   // If no manual session is active, check coaches' schedules
@@ -242,12 +251,15 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
       ? initialCourts
       : [];
 
+  const PUBLIC_PLAYER_COLS =
+    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
+
   // 2. Fetch today's checked-in players for the active session
   let todaysPlayers: Player[] = [];
   if (activeSession) {
     const { data: attendances } = await supabase
       .from('session_attendances')
-      .select('player_id, players(*)')
+      .select(`player_id, players(${PUBLIC_PLAYER_COLS})`)
       .eq('session_id', activeSession.id)
       .eq('is_active', true);
 
@@ -261,7 +273,7 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
   // 3. Fetch Leaderboard sorted strictly by BP (bp_total DESC)
   const { data: topPlayers } = await supabase
     .from('players')
-    .select('*')
+    .select(PUBLIC_PLAYER_COLS)
     .gt('bp_total', 0)
     .order('bp_total', { ascending: false })
     .limit(50);
@@ -407,7 +419,7 @@ export async function evaluateAndSyncAchievements(params: {
 }) {
   const {
     playerId,
-     matchesToday,
+    matchesToday,
     hardmodeWins,
     winStreak,
     partyMatchesPlayed,
