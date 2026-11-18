@@ -148,6 +148,18 @@ export function mapDbCoachToPlayer(coach: any): Player {
  * Coaches are stored in `public.coaches`; Players are stored in `public.players`.
  * Sets the signed Supabase Auth JWT session so all subsequent queries run as `authenticated`.
  */
+export function getCachedAuthSession(): AuthSessionResult | null {
+  try {
+    const { user } = extractTelegramContext();
+    if (!user?.id) return null;
+    const raw = localStorage.getItem(`volley_auth_cache_${user.id}`);
+    if (!raw) return null;
+    return JSON.parse(raw) as AuthSessionResult;
+  } catch {
+    return null;
+  }
+}
+
 export async function authenticateWithTelegram(): Promise<AuthSessionResult | null> {
   const { initDataRaw, user } = extractTelegramContext();
   if (!user) {
@@ -155,6 +167,17 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
   }
 
   try {
+    let skipSession = false;
+    try {
+      const { data: sessData } = await supabase.auth.getSession();
+      const existingTgId = sessData?.session?.user?.app_metadata?.telegram_id;
+      if (sessData?.session && Number(existingTgId) === Number(user.id)) {
+        skipSession = true;
+      }
+    } catch {
+      // ignore
+    }
+
     const res = await fetch(`${SUPABASE_URL}/functions/v1/telegram-auth`, {
       method: 'POST',
       headers: {
@@ -164,6 +187,7 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
       body: JSON.stringify({
         initData: initDataRaw,
         fallbackUser: user,
+        skipSession,
       }),
     });
 
@@ -177,12 +201,14 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
         });
       }
 
+      let result: AuthSessionResult | null = null;
+
       if (data.role === 'coach' && data.coach) {
         const coach = data.coach;
         const allPlayers = Array.isArray(data.allPlayers)
           ? data.allPlayers.map((row: any) => mapDbPlayerToClient(row))
           : undefined;
-        return {
+        result = {
           role: 'coach',
           coachId: coach.id,
           onboardingCompleted: true,
@@ -195,14 +221,22 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
           specialDates: Array.isArray(coach.special_dates) ? coach.special_dates : [],
           user: mapDbCoachToPlayer(coach),
         };
-      }
-
-      if (data.role === 'player' && data.player) {
-        return {
+      } else if (data.role === 'player' && data.player) {
+        result = {
           role: 'player',
           onboardingCompleted: Boolean(data.player.onboarding_completed),
           user: mapDbPlayerToClient(data.player),
         };
+      }
+
+      if (result) {
+        try {
+          const toCache: AuthSessionResult = { ...result, allPlayers: undefined };
+          localStorage.setItem(`volley_auth_cache_${user.id}`, JSON.stringify(toCache));
+        } catch {
+          // ignore
+        }
+        return result;
       }
     }
   } catch (err) {
