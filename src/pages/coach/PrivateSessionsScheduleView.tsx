@@ -130,7 +130,7 @@ export const PrivateSessionsScheduleView: React.FC<PrivateSessionsScheduleViewPr
         })}
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-8 scrollbar-none">
+      <div className="flex-1 overflow-y-auto pb-8 scrollbar-none flex flex-col">
         {displayGroups.length > 0 ? (
           displayGroups.map((group) => (
             <div key={group.dateLabel}>

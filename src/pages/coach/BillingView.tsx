@@ -172,21 +172,21 @@ export const BillingView: React.FC = () => {
         {/* Top Cards & Segments */}
         <div className="pt-2">
           {role === 'coach' ? (
-            <div className={`grid gap-3 ${dateRange.label === 'All time' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-3 mb-6 ${dateRange.label === 'All time' ? 'grid-cols-2' : 'grid-cols-1'}`}>
               <StatCard value={isStaging ? "160K ֏" : "0 ֏"} label={t('coach.total', 'Total')} />
               {dateRange.label === 'All time' && (
                 <StatCard value={isStaging ? "16,000 ֏" : "0 ֏"} label={t('coach.thisMonth', 'This month')} />
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mb-6">
               <StatCard value={isStaging ? "160K ֏" : "0 ֏"} label={t('coach.total', 'Total')} />
               <StatCard value={isStaging ? "16,000 ֏" : "0 ֏"} label={t('coach.thisMonth', 'This month')} />
             </div>
           )}
 
           {role === 'coach' && (
-            <div className="flex rounded-[20px] bg-card p-1 mt-6 relative w-full shadow-lg">
+            <div className="flex rounded-[20px] bg-card p-1 mb-6 relative w-full">
               {['public', 'private'].map((tab, i) => {
                 const isActive = coachTab === tab;
                 return (
@@ -210,7 +210,7 @@ export const BillingView: React.FC = () => {
         </div>
 
         {/* Billing Rows */}
-        <div className="mt-6 space-y-6">
+        <div className="flex flex-col space-y-6">
           {role === 'coach' ? (
             coachGroups.length > 0 ? coachGroups.map((group) => {
               const unpaidEarnedCount = group.records.filter(r => r.status === 'Settle').length;

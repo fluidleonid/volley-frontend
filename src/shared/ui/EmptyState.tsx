@@ -18,7 +18,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   if (variant === 'page') {
     return (
-      <div className={`flex flex-col items-center justify-center mt-12 py-4 text-center ${className}`}>
+      <div className={`flex flex-col items-center justify-center pt-8 pb-4 text-center w-full ${className}`}>
         {Icon && (
           <div className="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center mb-4 shrink-0">
             <Icon className="w-6 h-6 text-primary stroke-[2]" />
