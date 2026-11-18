@@ -315,13 +315,13 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
         <div className="space-y-4 pt-2 pb-4">
           <button
             onClick={() => setIsCustomDateOpen(true)}
-            className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
+            className="relative w-full h-[54px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4 pr-3">
               <Calendar className="h-5 w-5" />
             </div>
-            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.date', 'Date')}</span>
+            <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
+              <span className="absolute left-2 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.date', 'Date')}</span>
               <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {getFormattedDate(specialDateVal)}
               </span>
@@ -330,13 +330,13 @@ export const ScheduleSessionView: React.FC<ScheduleSessionViewProps> = ({ onClos
 
           <button
             onClick={() => setIsCustomTimeOpen(true)}
-            className="relative w-full h-[52px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
+            className="relative w-full h-[54px] bg-card border border-transparent hover:border-primary/50 rounded-full flex items-center transition-colors text-left pr-4"
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4 pr-3">
               <Clock className="h-5 w-5" />
             </div>
-            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.startTime', 'Start time')}</span>
+            <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
+              <span className="absolute left-2 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.startTime', 'Start time')}</span>
               <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {getFormattedTime(specialTimeVal)}
               </span>

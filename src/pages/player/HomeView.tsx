@@ -55,29 +55,29 @@ export const HomeView: React.FC = () => {
     <div className="space-y-6 pb-36 px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Statistics Section (Figma Node: 11420:16325, gap=8px, h=73px, radius=20px) */}
       <div className="grid grid-cols-3 gap-2">
-        <Card className="flex flex-col justify-between p-2.5 bg-card rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
+        <Card className="flex flex-col justify-between p-3 bg-card rounded-[20px] min-h-[73px] h-auto gap-1.5 min-w-0">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none truncate">
             {currentUser.gamesPlayed}
           </span>
-          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
+          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight leading-snug break-words">
             {t('home.gamesPlayed')}
           </span>
         </Card>
 
-        <Card className="flex flex-col justify-between p-2.5 bg-card rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
+        <Card className="flex flex-col justify-between p-3 bg-card rounded-[20px] min-h-[73px] h-auto gap-1.5 min-w-0">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none truncate">
             {currentUser.wins}
           </span>
-          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
+          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight leading-snug break-words">
             {t('home.wins')}
           </span>
         </Card>
 
-        <Card className="flex flex-col justify-between p-2.5 bg-card rounded-[20px] h-[73px]">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none">
+        <Card className="flex flex-col justify-between p-3 bg-card rounded-[20px] min-h-[73px] h-auto gap-1.5 min-w-0">
+          <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none truncate">
             {currentUser.bpToday.toFixed(1)}
           </span>
-          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight">
+          <span className="font-sans text-xs font-medium text-muted-foreground tracking-tight leading-snug break-words">
             {t('home.bpToday')}
           </span>
         </Card>

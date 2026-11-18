@@ -32,7 +32,7 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
   const finalDescription = description || defaultDescription;
 
   return (
-    <div className="relative overflow-hidden rounded-[40px] bg-card p-6 border border-border/60 shadow-2xl flex flex-col justify-between h-[400px]">
+    <div className="relative overflow-hidden rounded-[40px] bg-card p-6 border border-border/60 shadow-2xl flex flex-col justify-between min-h-[400px] h-auto gap-4">
       {/* Blur element: white, opacity 20, blur 240 */}
       <div className="absolute right-0 top-1/3 -translate-y-1/2 w-64 h-64 rounded-full bg-white/20 blur-[100px] pointer-events-none" />
 

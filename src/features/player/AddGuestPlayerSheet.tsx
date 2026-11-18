@@ -3,6 +3,7 @@ import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/Input';
+import { SegmentedControl } from '../../shared/ui/SegmentedControl';
 import { HatGlasses } from 'lucide-react';
 
 interface AddGuestPlayerSheetProps {
@@ -20,8 +21,8 @@ const levels = ['Beginner', 'Amateur', 'Advanced', 'Pro'];
 export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
   isOpen,
   onClose,
-  title = 'Add a guest player',
-  subtitle = 'Add guest for a session',
+  title,
+  subtitle,
   requireLevel = false,
   onAddGuest,
   hasParent,
@@ -29,6 +30,9 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [level, setLevel] = useState('Beginner');
+
+  const resolvedTitle = title || t('coach.players.addGuestPlayer', 'Add guest');
+  const resolvedSubtitle = subtitle || t('coach.players.checkInGuest', 'Check in guest for session');
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -49,10 +53,10 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
   const titleNode = (
     <div className="text-center space-y-0.5">
       <h3 className="font-display text-lg font-bold text-white tracking-tight">
-        {title}
+        {resolvedTitle}
       </h3>
       <p className="font-sans text-xs text-muted-foreground font-normal">
-        {subtitle}
+        {resolvedSubtitle}
       </p>
     </div>
   );
@@ -70,22 +74,14 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
           />
 
           {requireLevel && (
-            <div className="flex gap-2 justify-between mt-2">
-              {levels.map((lvl) => (
-                <button
-                  key={lvl}
-                  type="button"
-                  onClick={() => setLevel(lvl)}
-                  className={`flex-1 h-[52px] rounded-full text-base font-medium transition-all ${
-                    level === lvl
-                      ? 'border border-primary text-white'
-                      : 'bg-card text-muted-foreground hover:text-white border border-transparent'
-                  }`}
-                >
-                  {lvl}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              options={levels.map((lvl) => ({
+                value: lvl,
+                label: t(`levels.${lvl.toLowerCase()}`, lvl),
+              }))}
+              value={level}
+              onChange={(val) => setLevel(val as string)}
+            />
           )}
         </div>
 

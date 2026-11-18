@@ -120,14 +120,14 @@ export const PartySetupView: React.FC<PartySetupViewProps> = ({ onClose }) => {
             <button
               disabled={isPlacementLocked}
               onClick={() => setIsPlacementSheetOpen(true)}
-              className={`relative w-full h-[52px] bg-card border border-transparent rounded-full flex items-center transition-colors text-left pr-4 ${isPlacementLocked ? 'opacity-80 cursor-not-allowed' : 'hover:border-primary/50'}`}
+              className={`relative w-full h-[54px] bg-card border border-transparent rounded-full flex items-center transition-colors text-left pr-4 ${isPlacementLocked ? 'opacity-80 cursor-not-allowed' : 'hover:border-primary/50'}`}
             >
               <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4 pr-1">
                 {getPlacementIcon()}
               </div>
-              <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-                <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('party.teamPlacement', 'Team placement')}</span>
-                <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
+              <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
+                <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('party.teamPlacement', 'Team placement')}</span>
+                <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
                   {getPlacementLabel()}
                 </span>
               </div>

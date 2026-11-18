@@ -21,13 +21,13 @@ export const SquadGameBanner: React.FC<SquadGameBannerProps> = ({
     return (
       <div 
         onClick={onClick}
-        className="w-full h-[60px] rounded-[30px] bg-card border border-border/60 shadow-lg flex items-center justify-between px-4 cursor-pointer hover:bg-card/80 active:scale-[0.98] transition-all"
+        className="w-full min-h-[60px] py-2.5 rounded-[30px] bg-card border border-border/60 shadow-lg flex items-center justify-between gap-3 px-4 cursor-pointer hover:bg-card/80 active:scale-[0.98] transition-all"
       >
-        <div className="flex flex-col justify-center">
-          <span className="font-sans text-[15px] font-semibold text-white leading-tight">
+        <div className="flex flex-col justify-center min-w-0 flex-1">
+          <span className="font-sans text-[15px] font-semibold text-white leading-tight truncate">
             {t('party.active', 'Party active')}
           </span>
-          <span className="font-sans text-xs text-muted-foreground mt-0.5 leading-tight max-w-[180px] line-clamp-1">
+          <span className="font-sans text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-1">
             {t('party.activeDesc', 'Matches you together before other players')}
           </span>
         </div>

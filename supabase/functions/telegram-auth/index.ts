@@ -52,7 +52,7 @@ async function verifyTelegramWebAppData(initData: string, botToken: string): Pro
   }
 }
 
-async function fetchAndStoreAvatar(
+async function fetchAndStoreCompactAvatar(
   telegramId: number,
   botToken: string | undefined,
   supabase: any,
@@ -66,8 +66,9 @@ async function fetchAndStoreAvatar(
     const photosData = await photosRes.json();
     const firstPhotoSizes = photosData?.result?.photos?.[0];
     if (Array.isArray(firstPhotoSizes) && firstPhotoSizes.length > 0) {
-      const chosenSize = firstPhotoSizes[1] || firstPhotoSizes[0];
-      const fileId = chosenSize.file_id;
+      // Pick smallest 160x160 thumbnail (~8-10 KB) since max UI avatar is 80x80px (2x retina = 160px)
+      const compactSize = firstPhotoSizes[0];
+      const fileId = compactSize.file_id;
       const fileRes = await fetch(
         `https://api.telegram.org/bot${botToken}/getFile?file_id=${encodeURIComponent(fileId)}`
       );
@@ -83,6 +84,7 @@ async function fetchAndStoreAvatar(
             .from("avatars")
             .upload(storagePath, imgBytes, {
               contentType: "image/jpeg",
+              cacheControl: "86400",
               upsert: true,
             });
           if (!uploadError) {
@@ -149,14 +151,19 @@ Deno.serve(async (req: Request) => {
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || tgUser.username || `Player #${telegramId}`;
     let avatarUrl: string | null = tgUser.photo_url || null;
 
-    const storedPhotoUrl = await fetchAndStoreAvatar(telegramId, botToken, supabase, supabaseUrl);
-    if (storedPhotoUrl) {
+    // 1. If Telegram WebApp already gave a real public CDN image (not .svg initials), use it directly (0 bytes in Supabase!)
+    const isRealWebAppPhoto =
+      avatarUrl &&
+      !avatarUrl.endsWith(".svg") &&
+      !avatarUrl.includes("api.telegram.org/file/bot");
+
+    if (!isRealWebAppPhoto) {
+      // Fallback: fetch 160x160 (~10 KB) thumbnail via Bot API
+      const storedPhotoUrl = await fetchAndStoreCompactAvatar(telegramId, botToken, supabase, supabaseUrl);
       avatarUrl = storedPhotoUrl;
-    } else if (avatarUrl && (avatarUrl.endsWith(".svg") || avatarUrl.includes("api.telegram.org/file/bot"))) {
-      avatarUrl = null;
     }
 
-    // 1. Check if this Telegram user is a Coach (Admin) in public.coaches
+    // 2. Check if this Telegram user is a Coach (Admin) in public.coaches
     let { data: coach } = await supabase.from("coaches").select("*").eq("telegram_id", telegramId).maybeSingle();
 
     if (!coach && username) {
@@ -192,7 +199,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // 2. Otherwise, check or create Player in public.players
+    // 3. Otherwise, check or create Player in public.players
     let { data: player } = await supabase
       .from("players")
       .select("*")
