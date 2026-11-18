@@ -122,7 +122,7 @@ export const PlayersView: React.FC = () => {
       )}
 
       {/* Players List */}
-      <div className="flex flex-col mt-2">
+      <div className="flex flex-col">
         {displayedPlayers.length > 0 ? (
           displayedPlayers.map((player) => {
             return (
