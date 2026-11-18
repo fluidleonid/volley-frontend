@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BottomSheet } from '../../shared/ui/BottomSheet';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../shared/ui/Avatar';
@@ -37,7 +37,13 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
   hideAddButtons = false,
 }) => {
   const { t } = useTranslation();
-  const { allPlayers } = useAppStore();
+  const { allPlayers, refreshPlayers } = useAppStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      refreshPlayers();
+    }
+  }, [isOpen, refreshPlayers]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [localSelectedIds, setLocalSelectedIds] = useState<string[]>(selectedPlayerIds);

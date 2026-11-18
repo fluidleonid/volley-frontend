@@ -249,7 +249,6 @@ Deno.serve(async (req: Request) => {
         isVerified = true;
       }
     } else if (botToken) {
-      // When TELEGRAM_BOT_TOKEN is configured in production, disallow unsigned requests without initData
       return new Response(
         JSON.stringify({ error: "Telegram initData signature is required" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -327,23 +326,27 @@ Deno.serve(async (req: Request) => {
         .single();
 
       const finalCoach = updatedCoach || coach;
-      const session = await issueSupabaseSession({
-        supabaseAdmin: supabase,
-        supabaseUrl,
-        supabaseAnonKey,
-        secretSalt: supabaseServiceKey,
-        telegramId,
-        role: "coach",
-        coachId: finalCoach.id,
-        playerId: null,
-        existingAuthUserId: finalCoach.auth_user_id || null,
-      });
+      const [session, { data: allPlayers }] = await Promise.all([
+        issueSupabaseSession({
+          supabaseAdmin: supabase,
+          supabaseUrl,
+          supabaseAnonKey,
+          secretSalt: supabaseServiceKey,
+          telegramId,
+          role: "coach",
+          coachId: finalCoach.id,
+          playerId: null,
+          existingAuthUserId: finalCoach.auth_user_id || null,
+        }),
+        supabase.from("players").select("*").order("created_at", { ascending: false }),
+      ]);
 
       return new Response(
         JSON.stringify({
           role: "coach",
           isVerified,
           coach: finalCoach,
+          allPlayers: allPlayers || [],
           session,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }

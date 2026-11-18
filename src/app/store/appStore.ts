@@ -28,6 +28,7 @@ import { IS_STAGING, supabase } from '../../shared/api/supabase/client';
 import {
   authenticateWithTelegram,
   evaluateAndSyncAchievements,
+  fetchAllPlayersFromDb,
   fetchProductionState,
   findNextScheduledSession,
   mapDbPlayerToClient,
@@ -82,6 +83,7 @@ interface AppState {
 
   // Actions
   initProductionSession: () => Promise<void>;
+  refreshPlayers: () => Promise<void>;
   setRole: (role: UserRole) => void;
   setFlowState: (flowState: AppFlowState) => void;
   setActiveTab: (tab: NavigationTab) => void;
@@ -244,14 +246,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         !isCoach ? authResult.user.id : undefined
       );
 
-      const { data: dbPlayers } = await supabase
-        .from('players')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      const mappedAllPlayers: Player[] = (dbPlayers || []).map((row: any) =>
-        mapDbPlayerToClient(row)
-      );
+      const mappedAllPlayers: Player[] = (authResult.allPlayers && authResult.allPlayers.length > 0)
+        ? authResult.allPlayers
+        : prodData.allPlayers;
 
       set({
         role: authResult.role,
@@ -289,6 +286,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         achievements: prodData.achievements,
       });
     }
+  },
+
+  refreshPlayers: async () => {
+    if (IS_STAGING) return;
+    const players = await fetchAllPlayersFromDb();
+    set({ allPlayers: players });
   },
 
   setRole: (newRole) =>
