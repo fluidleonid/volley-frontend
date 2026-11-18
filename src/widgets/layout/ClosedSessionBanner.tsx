@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock } from 'lucide-react';
 import { Badge } from '../../shared/ui/badge';
+import { Avatar } from '../../shared/ui/Avatar';
 import publicSessionImg from '../../shared/assets/images/publicsession.png';
-
 import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
 
 interface ClosedSessionBannerProps {
@@ -11,6 +11,8 @@ interface ClosedSessionBannerProps {
   description?: string;
   nextSessionTime?: string;
   coachAvatar?: string;
+  coachName?: string;
+  coachInitials?: string;
   onCoachClick?: () => void;
   children?: React.ReactNode;
 }
@@ -20,14 +22,16 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
   description,
   nextSessionTime,
   coachAvatar,
+  coachName,
+  coachInitials,
   onCoachClick,
-  children
+  children,
 }) => {
   const { t } = useTranslation();
-  
+
   const defaultTitle = t('closedSession.title');
   const finalTitle = title || defaultTitle;
-  
+
   const defaultDescription = t('closedSession.description');
   const finalDescription = description || defaultDescription;
 
@@ -56,15 +60,32 @@ export const ClosedSessionBanner: React.FC<ClosedSessionBannerProps> = ({
               <CalendarClock className="w-4 h-4 mr-1" />
               <span>{nextSessionTime}</span>
             </Badge>
-            {coachAvatar && (
-              <div className="relative cursor-pointer hover:scale-105 active:scale-95 transition-all" onClick={onCoachClick}>
-                <img 
-                  src={coachAvatar} 
-                  alt="Coach" 
-                  className="w-7 h-7 rounded-full border border-card/50"
+            {(coachAvatar || coachName) && (
+              <div
+                className="relative cursor-pointer hover:scale-105 active:scale-95 transition-all"
+                onClick={onCoachClick}
+              >
+                <Avatar
+                  src={coachAvatar}
+                  alt={coachName || 'Coach'}
+                  initials={coachInitials}
+                  size="sm"
+                  className="w-7 h-7 border border-card/50"
                 />
                 <div className="absolute -bottom-1 -right-1 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-brand-coach border border-card">
-                  <div className="w-[7px] h-[7px] bg-white" style={{ maskImage: `url("${whistleIcon}")`, WebkitMaskImage: `url("${whistleIcon}")`, maskSize: 'contain', WebkitMaskSize: 'contain', maskRepeat: 'no-repeat', WebkitMaskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskPosition: 'center' }} />
+                  <div
+                    className="w-[7px] h-[7px] bg-white"
+                    style={{
+                      maskImage: `url("${whistleIcon}")`,
+                      WebkitMaskImage: `url("${whistleIcon}")`,
+                      maskSize: 'contain',
+                      WebkitMaskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      WebkitMaskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                      WebkitMaskPosition: 'center',
+                    }}
+                  />
                 </div>
               </div>
             )}

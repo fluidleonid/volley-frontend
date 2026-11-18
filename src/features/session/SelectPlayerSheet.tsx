@@ -141,7 +141,7 @@ export const SelectPlayerSheet: React.FC<SelectPlayerSheetProps> = ({
               <Avatar
                 src={player.avatarUrl}
                 alt={player.name}
-                initials={player.name[0]}
+                initials={player.initials}
                 size="lg"
                 hasBorder={false}
               />

@@ -26,18 +26,17 @@ interface PrivateSession {
 const mockPrivateSessions: PrivateSession[] = [
   {
     id: 'p-1',
-    name: 'John Doe',
+    name: 'John',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
     time: '10:00',
   },
   {
     id: 'p-2',
-    name: 'Alena Krasnova',
+    name: 'Alena',
     avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80',
     time: '12:00',
   },
 ];
-
 
 export const CoachHomeView: React.FC = () => {
   const { t } = useTranslation();
@@ -53,6 +52,8 @@ export const CoachHomeView: React.FC = () => {
     courts,
     todaysPlayers,
     isSessionActive,
+    nextScheduledSession,
+    currentUser,
     toggleSession,
     setActiveTab,
     createManualPlayer,
@@ -76,12 +77,33 @@ export const CoachHomeView: React.FC = () => {
     setIsInviteOpen(true);
   };
 
+  const nextSessionLabel = nextScheduledSession
+    ? nextScheduledSession.dayOffset === 0
+      ? `${t('player.leaderboard.today', 'Today')} ${nextScheduledSession.time}`
+      : nextScheduledSession.dayOffset === 1
+      ? `${t('common.tomorrow', 'Tomorrow')} ${nextScheduledSession.time}`
+      : nextScheduledSession.dayOffset >= 2 && nextScheduledSession.dayOffset <= 6
+      ? `${t(`common.days.${nextScheduledSession.dayId}`, nextScheduledSession.dayId)} ${nextScheduledSession.time}`
+      : `${nextScheduledSession.dateIso} ${nextScheduledSession.time}`
+    : isStaging
+    ? `${t('player.leaderboard.today', 'Today')} 20:00`
+    : undefined;
+
+  const scheduledCoach: Player | null = nextScheduledSession?.coach
+    ? nextScheduledSession.coach
+    : nextSessionLabel
+    ? { ...currentUser, isCoach: true }
+    : null;
+
   return (
     <div className="space-y-6 pb-28 px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Session Status Banner & Dynamic Action Buttons */}
       <CoachActiveSessionWidget
         isSessionActive={isSessionActive}
         playerState={playerState}
+        nextSessionTime={nextSessionLabel}
+        scheduledCoach={scheduledCoach}
+        onCoachClick={(coach) => setSelectedPlayer(coach)}
         onToggleSession={toggleSession}
         onScheduleTraining={() => setActiveTab('public_schedule')}
         onStartTraining={startTraining}
@@ -112,7 +134,7 @@ export const CoachHomeView: React.FC = () => {
         </>
       )}
 
-      {/* 4. Today's Privates Section (Figma Node: 11562:13788) */}
+      {/* 4. Today's Privates Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-start">
@@ -158,6 +180,7 @@ export const CoachHomeView: React.FC = () => {
         player={selectedPlayer}
         isOpen={!!selectedPlayer}
         onClose={() => setSelectedPlayer(null)}
+        isCoachProfile={selectedPlayer?.isCoach}
         hasParent={!!selectedPrivateSession}
         onCloseAll={() => {
           setSelectedPlayer(null);
@@ -217,7 +240,6 @@ export const CoachHomeView: React.FC = () => {
         </div>
       )}
 
-      {/* Full Page Schedule Session View Overlay */}
       {/* End Session Confirmation Dialog */}
       <Dialog
         isOpen={isEndSessionConfirmOpen}

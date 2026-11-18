@@ -7,6 +7,8 @@ import whistleIconSvg from '../../../shared/assets/icons/whistle-fill.svg';
 
 export interface PlayerCardProps {
   avatarUrl?: string;
+  name?: string;
+  initials?: string;
   accentColor?: string;
   ringColor?: string;
   glowColor?: string;
@@ -18,6 +20,8 @@ export interface PlayerCardProps {
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   avatarUrl,
+  name,
+  initials,
   accentColor = 'var(--brand-player)',
   ringColor = 'var(--brand-player)',
   iconCount = 3,
@@ -93,7 +97,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         >
           <Avatar
             src={avatarUrl}
-            alt="Player Avatar"
+            alt={name || 'Player Avatar'}
+            initials={initials}
             size="xl"
             className="border-2 shadow-xl"
             style={{ borderColor: ringColor }}

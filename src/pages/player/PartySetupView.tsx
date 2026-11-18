@@ -101,7 +101,7 @@ export const PartySetupView: React.FC<PartySetupViewProps> = ({ onClose }) => {
           <div className="bg-card rounded-[24px] p-4 flex flex-wrap gap-3">
             {localPlayers.map((p) => (
               <div key={p.id} className="flex flex-col items-center">
-                <Avatar src={p.avatarUrl} alt={p.name} initials={p.name[0]} size="lg" hasBorder={false} />
+                <Avatar src={p.avatarUrl} alt={p.name} initials={p.initials} size="lg" hasBorder={false} />
               </div>
             ))}
             

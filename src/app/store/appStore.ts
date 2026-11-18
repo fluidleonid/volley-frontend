@@ -10,6 +10,7 @@ import {
   LeaderboardEntry,
   BannerStage,
   AchievementData,
+  NextScheduledSession,
 } from '../../shared/types/index';
 import { initialCourts, joinedCourts } from '../../shared/api/mock/mockCourts';
 import { todaysPlayers12, mockLeaderboard, MOCK_PLAYERS } from '../../shared/api/mock/mockPlayers';
@@ -22,12 +23,14 @@ import {
   calculatePlayerMatchReward,
   getMinimumXpForTier,
 } from '../../shared/lib/rating-algorithm';
+import { formatShortName, getInitialsFromName } from '../../shared/lib/formatName';
 import { IS_STAGING, supabase } from '../../shared/api/supabase/client';
 import {
   authenticateWithTelegram,
   evaluateAndSyncAchievements,
   fetchProductionState,
-  isScheduleActiveNow,
+  findNextScheduledSession,
+  mapDbPlayerToClient,
   saveOnboardingSkillTier,
   updatePlayerTierByCoachInDb,
 } from '../../shared/api/supabase/volleyApi';
@@ -64,6 +67,8 @@ interface AppState {
   matchedTeamB: Player[];
 
   isSessionActive: boolean;
+  nextScheduledSession: NextScheduledSession | null;
+  coachesList: any[];
 
   trainingCosts: { public: number; private: number };
   weeklySchedule: any[];
@@ -116,6 +121,8 @@ interface AppState {
 const emptyProductionUser: Player = {
   id: 'prod-user',
   name: 'Player',
+  fullName: 'Player',
+  initials: 'P',
   avatarUrl: undefined,
   level: 1,
   xp: 0.0,
@@ -131,7 +138,9 @@ const emptyProductionUser: Player = {
 
 const stagingDefaultUser: Player = {
   id: 'p-me',
-  name: 'Anna P.',
+  name: 'Anna',
+  fullName: 'Anna P.',
+  initials: 'AP',
   avatarUrl:
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   level: 12,
@@ -192,6 +201,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   specialDates: [],
 
   isSessionActive: IS_STAGING ? true : false,
+  nextScheduledSession: null,
+  coachesList: [],
   blacklistedPlayerIds: IS_STAGING ? ['p3', 'p4'] : [],
 
   savedStates: {
@@ -203,7 +214,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       acceptProgress: 0,
       currentUser: {
         id: 'p-me',
-        name: 'Alexey S.',
+        name: 'Alexey',
+        fullName: 'Alexey S.',
+        initials: 'AS',
         avatarUrl:
           'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
         level: 12,
@@ -236,21 +249,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         .select('*')
         .order('created_at', { ascending: false });
 
-      const mappedAllPlayers: Player[] = (dbPlayers || []).map((row: any) => ({
-        id: row.id,
-        name: row.name,
-        avatarUrl: row.avatar_url || undefined,
-        level: Number(row.level ?? 1),
-        xp: Number(row.xp ?? 0),
-        bpToday: Number(row.bp_today ?? 0),
-        bpTotal: Number(row.bp_total ?? 0),
-        status: row.status || 'spectating',
-        isHardmode: Boolean(row.is_hardmode),
-        hasTelegram: Boolean(row.has_telegram),
-        gamesPlayed: Number(row.games_played ?? 0),
-        wins: Number(row.wins ?? 0),
-        winStreak: Number(row.win_streak ?? 0),
-      }));
+      const mappedAllPlayers: Player[] = (dbPlayers || []).map((row: any) =>
+        mapDbPlayerToClient(row)
+      );
 
       set({
         role: authResult.role,
@@ -262,6 +263,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         specialDates: authResult.specialDates || [],
         activeSessionId: prodData.activeSessionId,
         isSessionActive: prodData.isSessionActive,
+        nextScheduledSession: prodData.nextScheduledSession,
+        coachesList: prodData.coachesList,
         courts: prodData.courts,
         todaysPlayers: prodData.todaysPlayers,
         allPlayers: mappedAllPlayers,
@@ -271,12 +274,14 @@ export const useAppStore = create<AppState>((set, get) => ({
         blacklistedPlayerIds: prodData.blacklistedPlayerIds,
       });
     } else {
-      // Even without Telegram container (e.g. direct browser preview on prod), load live public state (empty by default)
+      // Even without Telegram container (e.g. direct browser preview on prod), load live public state
       const prodData = await fetchProductionState();
       set({
         flowState: 'onboarding',
         activeSessionId: prodData.activeSessionId,
         isSessionActive: prodData.isSessionActive,
+        nextScheduledSession: prodData.nextScheduledSession,
+        coachesList: prodData.coachesList,
         courts: prodData.courts,
         todaysPlayers: prodData.todaysPlayers,
         leaderboard: prodData.leaderboard,
@@ -344,13 +349,46 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   saveCoachSchedule: async (weeklySchedule, specialDates) => {
-    const { isStaging, coachId, activeSessionId } = get();
-    const schedState = isScheduleActiveNow(weeklySchedule, specialDates);
-    set((state) => ({
+    const { isStaging, coachId, coachesList, currentUser } = get();
+
+    let updatedCoaches = [...coachesList];
+    if (coachId) {
+      const idx = updatedCoaches.findIndex((c: any) => c.id === coachId);
+      if (idx >= 0) {
+        updatedCoaches[idx] = {
+          ...updatedCoaches[idx],
+          weekly_schedule: weeklySchedule,
+          special_dates: specialDates,
+        };
+      } else {
+        updatedCoaches.push({
+          id: coachId,
+          name: currentUser.fullName || currentUser.name,
+          avatar_url: currentUser.avatarUrl,
+          weekly_schedule: weeklySchedule,
+          special_dates: specialDates,
+        });
+      }
+    } else {
+      updatedCoaches = [
+        {
+          id: currentUser.id,
+          name: currentUser.fullName || currentUser.name,
+          avatar_url: currentUser.avatarUrl,
+          weekly_schedule: weeklySchedule,
+          special_dates: specialDates,
+        },
+      ];
+    }
+
+    const nextScheduledSession = findNextScheduledSession(updatedCoaches);
+
+    set({
       weeklySchedule,
       specialDates,
-      isSessionActive: Boolean(activeSessionId) || schedState.isActive || state.isSessionActive,
-    }));
+      coachesList: updatedCoaches,
+      nextScheduledSession,
+    });
 
     if (!isStaging && coachId) {
       await supabase
@@ -398,10 +436,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     let newPlayer: Player = {
       id: `manual-${Date.now()}`,
-      name,
+      name: formatShortName(name),
+      fullName: name,
+      initials: getInitialsFromName(name),
       level: numLevel,
       xp,
-      status: checkInToday ? 'spectating' : 'spectating',
+      status: 'spectating',
       hasTelegram: false,
       gamesPlayed: 0,
       wins: 0,

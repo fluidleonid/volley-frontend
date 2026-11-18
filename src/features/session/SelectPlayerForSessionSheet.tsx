@@ -153,7 +153,7 @@ export const SelectPlayerForSessionSheet: React.FC<SelectPlayerForSessionSheetPr
                     <Avatar
                       src={player.avatarUrl}
                       alt={player.name}
-                      initials={player.name[0]}
+                      initials={player.initials}
                       size="lg"
                       hasBorder={false}
                     />

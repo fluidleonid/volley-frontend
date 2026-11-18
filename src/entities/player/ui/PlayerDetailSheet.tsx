@@ -14,6 +14,7 @@ import { SessionDetailsSheet } from '../../../features/session/SessionDetailsShe
 import { PrivateSessionFlow } from '../../../widgets/flows/PrivateSessionFlow';
 import { PlayerBillingSheet } from './PlayerBillingSheet';
 import { getPlayerTierInfo } from '../../../shared/lib/tier';
+import { formatShortName } from '../../../shared/lib/formatName';
 import coachCardImg from '../../../shared/assets/images/coach-card.png';
 
 export interface PlayerDetailSheetProps {
@@ -71,14 +72,16 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
       <BottomSheet
         isOpen={!isAnySubSheetOpen}
         onClose={onClose}
-      onCloseAll={onCloseAll}
-      hasParent={hasParent}
-      title={isCoachProfile ? t('profile.coachDetails', 'Coach details') : t('coach.players.playerDetails', 'Player details')}
-      zIndex={140}
-    >
+        onCloseAll={onCloseAll}
+        hasParent={hasParent}
+        title={isCoachProfile ? t('profile.coachDetails', 'Coach details') : t('coach.players.playerDetails', 'Player details')}
+        zIndex={140}
+      >
       {/* Hero Player Card Banner */}
       <PlayerCard 
         avatarUrl={player.avatarUrl} 
+        name={player.fullName || player.name}
+        initials={player.initials}
         iconCount={tierInfo.iconCount}
         accentColor={isCoachProfile ? 'var(--brand-coach)' : tierInfo.accentColor}
         ringColor={isCoachProfile ? 'var(--brand-coach)' : tierInfo.ringColor}
@@ -91,7 +94,7 @@ export const PlayerDetailSheet: React.FC<PlayerDetailSheetProps> = ({
       <div className="space-y-3 mt-6">
         <div className="text-center space-y-1">
           <h2 className="font-display text-[30px] font-bold text-white tracking-tight leading-none">
-            {player.name}
+            {formatShortName(player.name)}
           </h2>
 
           <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mt-1">

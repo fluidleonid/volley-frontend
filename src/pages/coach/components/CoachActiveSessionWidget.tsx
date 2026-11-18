@@ -1,12 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Play, Pause, Square, Plus } from 'lucide-react';
-import { PlayerState } from '../../../shared/types/index';
+import { PlayerState, Player } from '../../../shared/types/index';
 import { ClosedSessionBanner } from '../../../widgets/layout/ClosedSessionBanner';
 
 export interface CoachActiveSessionWidgetProps {
   isSessionActive: boolean;
   playerState: PlayerState;
+  nextSessionTime?: string;
+  scheduledCoach?: Player | null;
+  onCoachClick?: (coach: Player) => void;
   onToggleSession: () => void;
   onScheduleTraining: () => void;
   onStartTraining: () => void;
@@ -19,6 +22,9 @@ export interface CoachActiveSessionWidgetProps {
 export const CoachActiveSessionWidget: React.FC<CoachActiveSessionWidgetProps> = ({
   isSessionActive,
   playerState,
+  nextSessionTime,
+  scheduledCoach,
+  onCoachClick,
   onToggleSession,
   onScheduleTraining,
   onStartTraining,
@@ -31,7 +37,14 @@ export const CoachActiveSessionWidget: React.FC<CoachActiveSessionWidgetProps> =
 
   if (!isSessionActive) {
     return (
-      <ClosedSessionBanner>
+      <ClosedSessionBanner
+        nextSessionTime={nextSessionTime}
+        description={nextSessionTime ? t('home.sessionScheduled') : undefined}
+        coachAvatar={scheduledCoach?.avatarUrl}
+        coachName={scheduledCoach?.fullName || scheduledCoach?.name}
+        coachInitials={scheduledCoach?.initials}
+        onCoachClick={() => scheduledCoach && onCoachClick?.(scheduledCoach)}
+      >
         <button
           onClick={onToggleSession}
           className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"

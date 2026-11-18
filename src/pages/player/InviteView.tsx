@@ -144,7 +144,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
                   key={player.id}
                   src={player.avatarUrl}
                   alt={player.name}
-                  initials={player.name[0]}
+                  initials={player.initials}
                   size="lg"
                   hasBorder={false}
                   className={`relative ring-2 ring-brand-surfaceElevated z-[${10 - idx}]`}
@@ -173,7 +173,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
                   key={player.id}
                   src={player.avatarUrl}
                   alt={player.name}
-                  initials={player.name[0]}
+                  initials={player.initials}
                   size="lg"
                   hasBorder={false}
                   className={`relative ring-2 ring-brand-surfaceElevated z-[${10 - idx}]`}

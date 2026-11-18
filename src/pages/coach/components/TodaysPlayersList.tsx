@@ -49,8 +49,8 @@ export const TodaysPlayersList: React.FC<TodaysPlayersListProps> = ({
             >
               <Avatar
                 src={player.avatarUrl}
-                alt={player.name}
-                initials={player.name[0]}
+                alt={player.fullName || player.name}
+                initials={player.initials}
                 size="lg"
                 hasBorder={false}
               />

@@ -1,8 +1,9 @@
 import { supabase, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './client';
-import { Player, Court, Match, LeaderboardEntry, UserRole, AchievementData } from '../../types/index';
+import { Player, Court, Match, LeaderboardEntry, UserRole, AchievementData, NextScheduledSession } from '../../types/index';
 import { initialCourts } from '../mock/mockCourts';
 import { MOCK_ACHIEVEMENTS } from '../mock/achievements';
 import { SkillTierId, getMinimumXpForTier } from '../../lib/rating-algorithm';
+import { formatShortName, getInitialsFromName } from '../../lib/formatName';
 import { retrieveLaunchParams } from '@tma.js/sdk';
 
 export interface TelegramUserPayload {
@@ -73,9 +74,12 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
 }
 
 export function mapDbPlayerToClient(row: any): Player {
+  const rawName = row.name || 'Player';
   return {
     id: row.id,
-    name: row.name || 'Player',
+    name: formatShortName(rawName),
+    fullName: rawName,
+    initials: getInitialsFromName(rawName),
     avatarUrl: row.avatar_url || undefined,
     level: Number(row.level ?? 1),
     xp: Number(row.xp ?? 0),
@@ -89,6 +93,26 @@ export function mapDbPlayerToClient(row: any): Player {
     winStreak: Number(row.win_streak ?? 0),
     created_at: row.created_at,
     updated_at: row.updated_at,
+  };
+}
+
+export function mapDbCoachToPlayer(coach: any): Player {
+  const rawCoachName = coach.name || 'Coach';
+  return {
+    id: coach.id,
+    name: formatShortName(rawCoachName),
+    fullName: rawCoachName,
+    initials: getInitialsFromName(rawCoachName),
+    avatarUrl: coach.avatar_url || undefined,
+    level: 30,
+    xp: 18000,
+    status: 'spectating',
+    isCoach: true,
+    hasTelegram: true,
+    gamesPlayed: 0,
+    wins: 0,
+    bpToday: 0,
+    winStreak: 0,
   };
 }
 
@@ -138,20 +162,7 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
           },
           weeklySchedule: Array.isArray(coach.weekly_schedule) ? coach.weekly_schedule : [],
           specialDates: Array.isArray(coach.special_dates) ? coach.special_dates : [],
-          user: {
-            id: coach.id,
-            name: coach.name,
-            avatarUrl: coach.avatar_url || undefined,
-            level: 30,
-            xp: 18000,
-            status: 'spectating',
-            isCoach: true,
-            hasTelegram: true,
-            gamesPlayed: 0,
-            wins: 0,
-            bpToday: 0,
-            winStreak: 0,
-          },
+          user: mapDbCoachToPlayer(coach),
         };
       }
 
@@ -171,46 +182,96 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
 }
 
 /**
- * Checks if any coach has an active manual session OR if current time falls within a coach's scheduled slot.
+ * Finds the nearest upcoming public session across all coaches' weekly schedules and special dates.
  */
-export function isScheduleActiveNow(weeklySchedule: any[], specialDates: any[]): { isActive: boolean; nextSessionLabel: string | null } {
-  const now = new Date();
+export function findNextScheduledSession(coachesList: any[], now = new Date()): NextScheduledSession | null {
+  if (!Array.isArray(coachesList) || coachesList.length === 0) return null;
+
   const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-  const todayId = dayNames[now.getDay()];
-  const todayIso = now.toISOString().split('T')[0];
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  // Allow sessions that started up to 2 hours ago today (in case coach hasn't clicked Start yet) or any future slot
+  const cutoffTime = now.getTime() - 2 * 60 * 60 * 1000;
 
-  // Check special dates for today (session active for 120 minutes from start time)
-  if (Array.isArray(specialDates)) {
+  const candidates: (NextScheduledSession & { timestamp: number })[] = [];
+
+  const toIsoDate = (d: Date) => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  for (const c of coachesList) {
+    const coachPlayer = mapDbCoachToPlayer(c);
+    const weeklySchedule = Array.isArray(c.weekly_schedule) ? c.weekly_schedule : [];
+    const specialDates = Array.isArray(c.special_dates) ? c.special_dates : [];
+
+    // 1. Check special dates
     for (const sp of specialDates) {
-      if (sp.date === todayIso && sp.time) {
+      if (sp?.date && sp?.time) {
+        const [y, mo, d] = String(sp.date).split('-').map(Number);
         const [h, m] = String(sp.time).split(':').map(Number);
-        const startMin = h * 60 + (m || 0);
-        if (currentMinutes >= startMin && currentMinutes <= startMin + 120) {
-          return { isActive: true, nextSessionLabel: `Today ${sp.time}` };
+        if (isNaN(y) || isNaN(h)) continue;
+        const slotDate = new Date(y, (mo || 1) - 1, d || 1, h, m || 0, 0);
+        if (slotDate.getTime() >= cutoffTime) {
+          const slotMidnight = new Date(y, (mo || 1) - 1, d || 1).getTime();
+          const dayOffset = Math.round((slotMidnight - todayMidnight) / (24 * 60 * 60 * 1000));
+          const dayId = dayNames[slotDate.getDay()];
+          candidates.push({
+            timestamp: slotDate.getTime(),
+            dayOffset,
+            dayId,
+            dateIso: sp.date,
+            time: sp.time,
+            coach: coachPlayer,
+          });
+        }
+      }
+    }
+
+    // 2. Check weekly schedule over the next 7 days (0..7)
+    for (let dayOffset = 0; dayOffset <= 7; dayOffset++) {
+      const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayOffset);
+      const dayId = dayNames[targetDate.getDay()];
+      const dayEntry = weeklySchedule.find((entry: any) => entry.id === dayId && entry.enabled);
+      if (dayEntry && Array.isArray(dayEntry.slots)) {
+        for (const slot of dayEntry.slots) {
+          const [h, m] = String(slot).split(':').map(Number);
+          if (isNaN(h)) continue;
+          const slotDate = new Date(
+            targetDate.getFullYear(),
+            targetDate.getMonth(),
+            targetDate.getDate(),
+            h,
+            m || 0,
+            0
+          );
+          if (slotDate.getTime() >= cutoffTime) {
+            candidates.push({
+              timestamp: slotDate.getTime(),
+              dayOffset,
+              dayId,
+              dateIso: toIsoDate(targetDate),
+              time: slot,
+              coach: coachPlayer,
+            });
+          }
         }
       }
     }
   }
 
-  // Check regular weekly schedule for today
-  if (Array.isArray(weeklySchedule)) {
-    const todayEntry = weeklySchedule.find((d: any) => d.id === todayId && d.enabled);
-    if (todayEntry && Array.isArray(todayEntry.slots)) {
-      for (const slot of todayEntry.slots) {
-        const [h, m] = String(slot).split(':').map(Number);
-        const startMin = h * 60 + (m || 0);
-        if (currentMinutes >= startMin && currentMinutes <= startMin + 120) {
-          return { isActive: true, nextSessionLabel: `Today ${slot}` };
-        }
-        if (currentMinutes < startMin) {
-          return { isActive: false, nextSessionLabel: `Today ${slot}` };
-        }
-      }
-    }
-  }
+  if (candidates.length === 0) return null;
 
-  return { isActive: false, nextSessionLabel: null };
+  candidates.sort((a, b) => a.timestamp - b.timestamp);
+  const nearest = candidates[0];
+  return {
+    dayOffset: nearest.dayOffset,
+    dayId: nearest.dayId,
+    dateIso: nearest.dateIso,
+    time: nearest.time,
+    coach: nearest.coach,
+  };
 }
 
 export async function fetchProductionState(coachId?: string, playerId?: string) {
@@ -226,23 +287,14 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
     sessionQuery = sessionQuery.eq('coach_id', coachId);
   }
 
-  const { data: activeSessions } = await sessionQuery;
-  const activeSession = activeSessions?.[0] || null;
-  let isSessionActive = Boolean(activeSession);
+  const [{ data: activeSessions }, { data: coachesList }] = await Promise.all([
+    sessionQuery,
+    supabase.from('coaches').select('id, name, avatar_url, weekly_schedule, special_dates'),
+  ]);
 
-  // If no manual session is active, check coaches' schedules
-  if (!isSessionActive) {
-    const { data: coachesList } = await supabase.from('coaches').select('id, weekly_schedule, special_dates');
-    if (coachesList) {
-      for (const c of coachesList) {
-        const sched = isScheduleActiveNow(c.weekly_schedule || [], c.special_dates || []);
-        if (sched.isActive) {
-          isSessionActive = true;
-          break;
-        }
-      }
-    }
-  }
+  const activeSession = activeSessions?.[0] || null;
+  const isSessionActive = Boolean(activeSession);
+  const nextScheduledSession = findNextScheduledSession(coachesList || []);
 
   const courts: Court[] =
     activeSession && Array.isArray(activeSession.courts) && activeSession.courts.length > 0
@@ -286,7 +338,7 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
       player: p,
       wins: p.wins,
       winRate,
-      xp: Number(row.bp_total ?? 0), // Leaderboard displays BP in the `xp` prop slot (`{p1?.xp} BP`)
+      xp: Number(row.bp_total ?? 0),
     };
   });
 
@@ -367,6 +419,8 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
   return {
     activeSessionId: activeSession?.id || null,
     isSessionActive,
+    nextScheduledSession,
+    coachesList: coachesList || [],
     courts,
     todaysPlayers,
     leaderboard,
