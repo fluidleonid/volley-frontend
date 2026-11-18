@@ -39,6 +39,9 @@ export const PlayersView: React.FC = () => {
 
   const authorizedPlayers = allPlayers.filter((p) => p.hasTelegram);
   const manualPlayers = allPlayers.filter((p) => !p.hasTelegram);
+  const activePlayersCount = allPlayers.filter(
+    (p) => p.hasAttendedTraining ?? p.gamesPlayed > 0
+  ).length;
 
   const displayedPlayers = isSearchMode
     ? allPlayers.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -113,7 +116,7 @@ export const PlayersView: React.FC = () => {
               label={t('coach.players.totalPlayers', 'Total players')}
             />
             <StatCard
-              value={allPlayers.length > 0 ? Math.max(1, Math.floor(allPlayers.length * 0.7)) : 0}
+              value={activePlayersCount}
               label={t('coach.players.active7d', 'Active 7D')}
             />
             <StatCard

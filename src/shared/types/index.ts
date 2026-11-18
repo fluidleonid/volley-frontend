@@ -21,6 +21,7 @@ export interface Player {
   status: PlayerState;
   isHardmode?: boolean;
   hasTelegram?: boolean;
+  hasAttendedTraining?: boolean;
   isCoach?: boolean;
   isAccepted?: boolean;
   gamesPlayed: number;
