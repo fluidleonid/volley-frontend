@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
@@ -17,7 +17,11 @@ type TabType = 'authorized' | 'manual';
 
 export const PlayersView: React.FC = () => {
   const { t } = useTranslation();
-  const { allPlayers, createManualPlayer } = useAppStore();
+  const { allPlayers, createManualPlayer, refreshPlayers } = useAppStore();
+
+  useEffect(() => {
+    refreshPlayers();
+  }, [refreshPlayers]);
   const [tab, setTab] = useState<TabType>('authorized');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);

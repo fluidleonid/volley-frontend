@@ -18,6 +18,7 @@ export interface AuthSessionResult {
   role: UserRole;
   coachId?: string;
   user: Player;
+  allPlayers?: Player[];
   onboardingCompleted: boolean;
   trainingCosts?: { public: number; private: number };
   weeklySchedule?: any[];
@@ -152,10 +153,14 @@ export async function authenticateWithTelegram(): Promise<AuthSessionResult | nu
 
       if (data.role === 'coach' && data.coach) {
         const coach = data.coach;
+        const allPlayers = Array.isArray(data.allPlayers)
+          ? data.allPlayers.map((row: any) => mapDbPlayerToClient(row))
+          : undefined;
         return {
           role: 'coach',
           coachId: coach.id,
           onboardingCompleted: true,
+          allPlayers,
           trainingCosts: {
             public: Number(coach.public_training_cost ?? 4000),
             private: Number(coach.private_training_cost ?? 10000),
@@ -274,8 +279,22 @@ export function findNextScheduledSession(coachesList: any[], now = new Date()): 
   };
 }
 
+export async function fetchAllPlayersFromDb(): Promise<Player[]> {
+  const PUBLIC_PLAYER_COLS =
+    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
+  const { data: rows } = await supabase
+    .from('players')
+    .select(PUBLIC_PLAYER_COLS)
+    .order('created_at', { ascending: false });
+
+  return (rows || []).map((row: any) => mapDbPlayerToClient(row));
+}
+
 export async function fetchProductionState(coachId?: string, playerId?: string) {
-  // 1. Fetch active training session (for specific coach if coachId given, or latest active session across coaches for players)
+  const PUBLIC_PLAYER_COLS =
+    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
+
+  // 1. Fetch active training session, coaches, and all players in parallel
   let sessionQuery = supabase
     .from('training_sessions')
     .select('*')
@@ -287,9 +306,10 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
     sessionQuery = sessionQuery.eq('coach_id', coachId);
   }
 
-  const [{ data: activeSessions }, { data: coachesList }] = await Promise.all([
+  const [{ data: activeSessions }, { data: coachesList }, allPlayers] = await Promise.all([
     sessionQuery,
     supabase.from('coaches').select('id, name, avatar_url, weekly_schedule, special_dates'),
+    fetchAllPlayersFromDb(),
   ]);
 
   const activeSession = activeSessions?.[0] || null;
@@ -302,9 +322,6 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
       : isSessionActive
       ? initialCourts
       : [];
-
-  const PUBLIC_PLAYER_COLS =
-    'id, name, avatar_url, level, xp, bp_total, bp_today, status, is_hardmode, has_telegram, games_played, wins, win_streak, created_at, updated_at';
 
   // 2. Fetch today's checked-in players for the active session
   let todaysPlayers: Player[] = [];
@@ -322,25 +339,21 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
     }
   }
 
-  // 3. Fetch Leaderboard sorted strictly by BP (bp_total DESC)
-  const { data: topPlayers } = await supabase
-    .from('players')
-    .select(PUBLIC_PLAYER_COLS)
-    .gt('bp_total', 0)
-    .order('bp_total', { ascending: false })
-    .limit(50);
-
-  const leaderboard: LeaderboardEntry[] = (topPlayers || []).map((row: any, idx: number) => {
-    const p = mapDbPlayerToClient(row);
-    const winRate = p.gamesPlayed > 0 ? Number(((p.wins / p.gamesPlayed) * 100).toFixed(1)) : 0;
-    return {
-      rank: idx + 1,
-      player: p,
-      wins: p.wins,
-      winRate,
-      xp: Number(row.bp_total ?? 0),
-    };
-  });
+  // 3. Leaderboard sorted strictly by BP (bp_total DESC)
+  const leaderboard: LeaderboardEntry[] = allPlayers
+    .filter((p) => (p.bpTotal ?? 0) > 0)
+    .sort((a, b) => (b.bpTotal ?? 0) - (a.bpTotal ?? 0))
+    .slice(0, 50)
+    .map((p, idx) => {
+      const winRate = p.gamesPlayed > 0 ? Number(((p.wins / p.gamesPlayed) * 100).toFixed(1)) : 0;
+      return {
+        rank: idx + 1,
+        player: p,
+        wins: p.wins,
+        winRate,
+        xp: Number(p.bpTotal ?? 0),
+      };
+    });
 
   // 4. Fetch Recent Matches
   let matchesQuery = supabase
@@ -421,6 +434,7 @@ export async function fetchProductionState(coachId?: string, playerId?: string) 
     isSessionActive,
     nextScheduledSession,
     coachesList: coachesList || [],
+    allPlayers,
     courts,
     todaysPlayers,
     leaderboard,
