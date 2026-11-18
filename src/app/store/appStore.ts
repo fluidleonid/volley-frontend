@@ -498,14 +498,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             },
             { onConflict: 'session_id,player_id' }
           );
-          await supabase.from('billing_transactions').insert({
-            coach_id: state.coachId,
-            player_id: inserted.id,
-            session_type: 'public',
-            amount: state.trainingCosts.public,
-            status: 'unpaid',
-            session_date: new Date().toISOString().split('T')[0],
-          });
+          // Public session attendance & billing are only counted once the player plays >= 1 game
         }
       }
     }
@@ -539,14 +532,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           },
           { onConflict: 'session_id,player_id' }
         );
-        await supabase.from('billing_transactions').insert({
-          coach_id: state.coachId,
-          player_id: p.id,
-          session_type: 'public',
-          amount: state.trainingCosts.public,
-          status: 'unpaid',
-          session_date: new Date().toISOString().split('T')[0],
-        });
+        // Public session attendance & billing are only counted once the player plays >= 1 game
       }
     }
   },

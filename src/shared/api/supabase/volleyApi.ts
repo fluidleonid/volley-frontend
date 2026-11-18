@@ -501,7 +501,7 @@ export async function evaluateAndSyncAchievements(params: {
   } = params;
 
   const checks: { id: string; progress: number; max: number }[] = [
-    { id: 'ach-1', progress: Math.min(1, Math.max(1, sessionsAttended)), max: 1 },
+    { id: 'ach-1', progress: gamesPlayed > 0 ? Math.min(1, Math.max(1, sessionsAttended)) : 0, max: 1 },
     { id: 'ach-2', progress: Math.min(15, matchesToday), max: 15 },
     { id: 'ach-3', progress: Math.min(1, hardmodeWins), max: 1 },
     { id: 'ach-4', progress: Math.min(25, hardmodeWins), max: 25 },
