@@ -83,16 +83,16 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
                   <IdCardLanyard className="h-5 w-5" />
                 )}
               </div>
-              <div className="relative flex-1 h-full flex flex-col justify-center">
+              <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center">
                 {selectedPlayer ? (
-                  <div className="pt-4 pb-1 h-full flex flex-col justify-center">
-                    <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.player', 'Player')}</span>
-                    <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
+                  <div className="pt-5 pb-1 h-full flex flex-col justify-center">
+                    <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.player', 'Player')}</span>
+                    <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
                       {'id' in selectedPlayer ? selectedPlayer.name : selectedPlayer.name}
                     </span>
                   </div>
                 ) : (
-                  <span className="pl-2 pr-4 text-base text-muted-foreground font-medium tracking-tight block">{t('coach.session.selectPlayer', 'Select player')}</span>
+                  <span className="pl-2.5 pr-4 text-base text-muted-foreground font-medium tracking-tight truncate block">{t('coach.session.selectPlayer', 'Select player')}</span>
                 )}
               </div>
               <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -102,14 +102,14 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
           {/* Date Picker */}
           <button
             onClick={() => !isReadOnly && setIsDatePickerOpen(true)}
-            className={`relative w-full h-[52px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
+            className={`relative w-full h-[54px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
               <Calendar className="h-5 w-5" />
             </div>
-            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.date', 'Date')}</span>
-              <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">
+            <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
+              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.date', 'Date')}</span>
+              <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">
                 {date === todayStr ? t('player.leaderboard.today', 'Today') : new Intl.DateTimeFormat(i18n.language === 'am' ? 'hy-AM' : (i18n.language === 'ru' ? 'ru-RU' : 'en-US'), { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(date))}
               </span>
             </div>
@@ -118,14 +118,14 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
           {/* Time Picker */}
           <button
             onClick={() => !isReadOnly && setIsTimePickerOpen(true)}
-            className={`relative w-full h-[52px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
+            className={`relative w-full h-[54px] bg-card border border-transparent ${isReadOnly ? '' : 'hover:border-primary/50 cursor-pointer'} rounded-full flex items-center transition-colors text-left pr-4`}
           >
             <div className="text-muted-foreground shrink-0 pointer-events-none flex items-center justify-center pl-4">
               <Clock className="h-5 w-5" />
             </div>
-            <div className="relative flex-1 h-full flex flex-col justify-center pt-4 pb-1">
-              <span className="absolute left-2 top-[4px] text-xs text-muted-foreground font-medium pointer-events-none">{t('common.time', 'Time')}</span>
-              <span className="pl-2 pr-4 text-base text-white font-medium tracking-tight truncate block">{time}</span>
+            <div className="relative flex-1 min-w-0 h-full flex flex-col justify-center pt-5 pb-1">
+              <span className="absolute left-2.5 right-2 top-[7px] text-[11px] leading-none text-muted-foreground/80 font-medium pointer-events-none truncate">{t('common.time', 'Time')}</span>
+              <span className="pl-2.5 pr-4 text-base text-white font-medium tracking-tight truncate block">{time}</span>
             </div>
           </button>
 
@@ -149,8 +149,8 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
         isOpen={isSelectPlayerOpen}
         onClose={() => setIsSelectPlayerOpen(false)}
         mode="single"
-        title="Private session"
-        subtitle="Select player for a session"
+        title={t('coach.session.privateSession', 'Private session')}
+        subtitle={t('coach.session.selectPlayerSchedule', 'Select player and time')}
         selectedPlayerIds={selectedPlayer && 'id' in selectedPlayer ? [selectedPlayer.id] : []}
         onSelectPlayer={(p) => {
           setSelectedPlayer(p);
