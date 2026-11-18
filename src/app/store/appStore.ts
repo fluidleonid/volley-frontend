@@ -168,7 +168,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   role: 'player',
   coachId: null,
   activeSessionId: null,
-  flowState: IS_STAGING ? 'onboarding' : 'splash',
+  flowState: IS_STAGING ? ((typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true') ? 'app' : 'onboarding') : 'splash',
   activeTab: 'home',
   previousTab: null,
   playerState: 'spectating',
@@ -239,6 +239,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     const authResult = await authenticateWithTelegram();
     if (authResult) {
+      if (authResult.onboardingCompleted) {
+        try { localStorage.setItem('volley_onboarding_done', 'true'); } catch {}
+      }
       const isCoach = authResult.role === 'coach';
       const prodData = await fetchProductionState(
         isCoach ? authResult.coachId : undefined,
@@ -253,7 +256,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         role: authResult.role,
         coachId: authResult.coachId || null,
         currentUser: authResult.user,
-        flowState: authResult.onboardingCompleted ? 'app' : 'onboarding',
+        flowState: (authResult.onboardingCompleted || (typeof window !== 'undefined' && localStorage.getItem('volley_onboarding_done') === 'true')) ? 'app' : 'onboarding',
         trainingCosts: authResult.trainingCosts || { public: 4000, private: 10000 },
         weeklySchedule: authResult.weeklySchedule || [],
         specialDates: authResult.specialDates || [],

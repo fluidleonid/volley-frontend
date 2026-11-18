@@ -71,6 +71,12 @@ export function extractTelegramContext(): { initDataRaw: string; user: TelegramU
     // ignore
   }
 
+  try {
+    const cached = localStorage.getItem('volley_tg_user_cache');
+    if (cached) {
+      return { initDataRaw: '', user: JSON.parse(cached) as TelegramUserPayload };
+    }
+  } catch {}
   return { initDataRaw: '', user: null };
 }
 
