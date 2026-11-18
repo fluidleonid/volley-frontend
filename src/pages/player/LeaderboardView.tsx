@@ -20,7 +20,7 @@ type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
 export const LeaderboardView: React.FC = () => {
   const { t } = useTranslation();
   const { leaderboard, currentUser, role } = useAppStore();
-  const [tab, setTab] = useState<TabType>('total');
+  const [tab, setTab] = useState<TabType>('today');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const scrolled = useScroll();
 
