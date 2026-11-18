@@ -7,6 +7,21 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+async function hmacSha256Hex(keyStr: string, message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(keyStr),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(message));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 async function verifyTelegramWebAppData(initData: string, botToken: string): Promise<boolean> {
   try {
     const params = new URLSearchParams(initData);
@@ -56,7 +71,8 @@ async function fetchAndStoreCompactAvatar(
   telegramId: number,
   botToken: string | undefined,
   supabase: any,
-  supabaseUrl: string
+  supabaseUrl: string,
+  secretSalt: string
 ): Promise<string | null> {
   if (!botToken) return null;
   try {
@@ -66,7 +82,7 @@ async function fetchAndStoreCompactAvatar(
     const photosData = await photosRes.json();
     const firstPhotoSizes = photosData?.result?.photos?.[0];
     if (Array.isArray(firstPhotoSizes) && firstPhotoSizes.length > 0) {
-      // Pick smallest 160x160 thumbnail (~8-10 KB) since max UI avatar is 80x80px (2x retina = 160px)
+      // Smallest 160x160 thumbnail (~8-10 KB) since max UI avatar is 80x80px (2x retina = 160px)
       const compactSize = firstPhotoSizes[0];
       const fileId = compactSize.file_id;
       const fileRes = await fetch(
@@ -79,7 +95,9 @@ async function fetchAndStoreCompactAvatar(
         const imgRes = await fetch(tgFileUrl);
         if (imgRes.ok) {
           const imgBytes = await imgRes.arrayBuffer();
-          const storagePath = `tg_${telegramId}.jpg`;
+          // Use unguessable HMAC hash path so avatars cannot be enumerated by telegram_id
+          const fileHash = await hmacSha256Hex(secretSalt, `avatar:${telegramId}`);
+          const storagePath = `u_${fileHash.slice(0, 32)}.jpg`;
           const { error: uploadError } = await supabase.storage
             .from("avatars")
             .upload(storagePath, imgBytes, {
@@ -97,6 +115,103 @@ async function fetchAndStoreCompactAvatar(
     // ignore
   }
   return null;
+}
+
+async function issueSupabaseSession(params: {
+  supabaseAdmin: any;
+  supabaseUrl: string;
+  supabaseAnonKey: string;
+  secretSalt: string;
+  telegramId: number;
+  role: "coach" | "player";
+  coachId: string | null;
+  playerId: string | null;
+  existingAuthUserId: string | null;
+}): Promise<{ access_token: string; refresh_token: string } | null> {
+  const {
+    supabaseAdmin,
+    supabaseUrl,
+    supabaseAnonKey,
+    secretSalt,
+    telegramId,
+    role,
+    coachId,
+    playerId,
+    existingAuthUserId,
+  } = params;
+
+  const email = `tg_${telegramId}@telegram.volley.internal`;
+  const password = await hmacSha256Hex(secretSalt, `tg-auth-pwd:${telegramId}`);
+  const appMetadata = {
+    telegram_id: telegramId,
+    role_type: role,
+    coach_id: coachId,
+    player_id: playerId,
+  };
+
+  let authUserId = existingAuthUserId;
+
+  if (authUserId) {
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(authUserId, {
+      email,
+      password,
+      email_confirm: true,
+      app_metadata: appMetadata,
+    });
+    if (error) {
+      authUserId = null;
+    }
+  }
+
+  if (!authUserId) {
+    const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      app_metadata: appMetadata,
+    });
+
+    if (created?.user?.id) {
+      authUserId = created.user.id;
+    } else if (createError) {
+      // User already exists with this deterministic email; sign in to get their ID, then update app_metadata
+      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data: signInData } = await tempClient.auth.signInWithPassword({ email, password });
+      if (signInData?.user?.id) {
+        authUserId = signInData.user.id;
+        await supabaseAdmin.auth.admin.updateUserById(authUserId, {
+          app_metadata: appMetadata,
+        });
+      }
+    }
+
+    if (authUserId) {
+      if (role === "coach" && coachId) {
+        await supabaseAdmin.from("coaches").update({ auth_user_id: authUserId }).eq("id", coachId);
+      } else if (role === "player" && playerId) {
+        await supabaseAdmin.from("players").update({ auth_user_id: authUserId }).eq("id", playerId);
+      }
+    }
+  }
+
+  const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: sessionData, error: sessionErr } = await anonClient.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (sessionErr || !sessionData?.session) {
+    return null;
+  }
+
+  return {
+    access_token: sessionData.session.access_token,
+    refresh_token: sessionData.session.refresh_token,
+  };
 }
 
 Deno.serve(async (req: Request) => {
@@ -133,6 +248,12 @@ Deno.serve(async (req: Request) => {
       } else {
         isVerified = true;
       }
+    } else if (botToken) {
+      // When TELEGRAM_BOT_TOKEN is configured in production, disallow unsigned requests without initData
+      return new Response(
+        JSON.stringify({ error: "Telegram initData signature is required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     if (!tgUser || !tgUser.id) {
@@ -144,27 +265,43 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || supabaseServiceKey;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
 
     const telegramId = Number(tgUser.id);
     const username = tgUser.username ? String(tgUser.username).toLowerCase().replace(/^@/, "") : null;
-    const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || tgUser.username || `Player #${telegramId}`;
+    const fullName =
+      [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") ||
+      tgUser.username ||
+      `Player #${telegramId}`;
     let avatarUrl: string | null = tgUser.photo_url || null;
 
-    // 1. If Telegram WebApp already gave a real public CDN image (not .svg initials), use it directly (0 bytes in Supabase!)
+    // 1. If Telegram WebApp already gave a real public CDN image (not .svg initials), use it directly (0 bytes in Supabase)
     const isRealWebAppPhoto =
       avatarUrl &&
       !avatarUrl.endsWith(".svg") &&
       !avatarUrl.includes("api.telegram.org/file/bot");
 
     if (!isRealWebAppPhoto) {
-      // Fallback: fetch 160x160 (~10 KB) thumbnail via Bot API
-      const storedPhotoUrl = await fetchAndStoreCompactAvatar(telegramId, botToken, supabase, supabaseUrl);
+      // Fallback: fetch 160x160 (~10 KB) thumbnail via Bot API and store under unguessable hash
+      const storedPhotoUrl = await fetchAndStoreCompactAvatar(
+        telegramId,
+        botToken,
+        supabase,
+        supabaseUrl,
+        supabaseServiceKey
+      );
       avatarUrl = storedPhotoUrl;
     }
 
     // 2. Check if this Telegram user is a Coach (Admin) in public.coaches
-    let { data: coach } = await supabase.from("coaches").select("*").eq("telegram_id", telegramId).maybeSingle();
+    let { data: coach } = await supabase
+      .from("coaches")
+      .select("*")
+      .eq("telegram_id", telegramId)
+      .maybeSingle();
 
     if (!coach && username) {
       const { data: coachByUsername } = await supabase
@@ -189,11 +326,25 @@ Deno.serve(async (req: Request) => {
         .select("*")
         .single();
 
+      const finalCoach = updatedCoach || coach;
+      const session = await issueSupabaseSession({
+        supabaseAdmin: supabase,
+        supabaseUrl,
+        supabaseAnonKey,
+        secretSalt: supabaseServiceKey,
+        telegramId,
+        role: "coach",
+        coachId: finalCoach.id,
+        playerId: null,
+        existingAuthUserId: finalCoach.auth_user_id || null,
+      });
+
       return new Response(
         JSON.stringify({
           role: "coach",
           isVerified,
-          coach: updatedCoach || coach,
+          coach: finalCoach,
+          session,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -251,11 +402,24 @@ Deno.serve(async (req: Request) => {
       if (updatedPlayer) player = updatedPlayer;
     }
 
+    const session = await issueSupabaseSession({
+      supabaseAdmin: supabase,
+      supabaseUrl,
+      supabaseAnonKey,
+      secretSalt: supabaseServiceKey,
+      telegramId,
+      role: "player",
+      coachId: null,
+      playerId: player.id,
+      existingAuthUserId: player.auth_user_id || null,
+    });
+
     return new Response(
       JSON.stringify({
         role: "player",
         isVerified,
         player,
+        session,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
