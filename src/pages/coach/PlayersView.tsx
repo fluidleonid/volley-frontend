@@ -90,7 +90,7 @@ export const PlayersView: React.FC = () => {
 
       {!isSearchMode && (
         <>
-          <div className="grid grid-cols-3 gap-3 my-6 animate-fade-in">
+          <div className="grid grid-cols-3 gap-3 pt-2 mb-6 animate-fade-in">
             <StatCard value={allPlayers.length} label={t('coach.players.totalPlayers', 'Total players')} />
             <StatCard value={allPlayers.length > 0 ? Math.max(1, Math.floor(allPlayers.length * 0.7)) : 0} label={t('coach.players.active7d', 'Active 7D')} />
             <StatCard value={manualPlayers.length} label={t('coach.players.manual7d', 'Manual 7D')} />

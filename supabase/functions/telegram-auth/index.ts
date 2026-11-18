@@ -52,7 +52,12 @@ async function verifyTelegramWebAppData(initData: string, botToken: string): Pro
   }
 }
 
-async function fetchBotApiProfilePhoto(telegramId: number, botToken?: string): Promise<string | null> {
+async function fetchAndStoreAvatar(
+  telegramId: number,
+  botToken: string | undefined,
+  supabase: any,
+  supabaseUrl: string
+): Promise<string | null> {
   if (!botToken) return null;
   try {
     const photosRes = await fetch(
@@ -61,15 +66,29 @@ async function fetchBotApiProfilePhoto(telegramId: number, botToken?: string): P
     const photosData = await photosRes.json();
     const firstPhotoSizes = photosData?.result?.photos?.[0];
     if (Array.isArray(firstPhotoSizes) && firstPhotoSizes.length > 0) {
-      const bestSize = firstPhotoSizes[firstPhotoSizes.length - 1];
-      const fileId = bestSize.file_id;
+      const chosenSize = firstPhotoSizes[1] || firstPhotoSizes[0];
+      const fileId = chosenSize.file_id;
       const fileRes = await fetch(
         `https://api.telegram.org/bot${botToken}/getFile?file_id=${encodeURIComponent(fileId)}`
       );
       const fileData = await fileRes.json();
       const filePath = fileData?.result?.file_path;
       if (filePath) {
-        return `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+        const tgFileUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+        const imgRes = await fetch(tgFileUrl);
+        if (imgRes.ok) {
+          const imgBytes = await imgRes.arrayBuffer();
+          const storagePath = `tg_${telegramId}.jpg`;
+          const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(storagePath, imgBytes, {
+              contentType: "image/jpeg",
+              upsert: true,
+            });
+          if (!uploadError) {
+            return `${supabaseUrl}/storage/v1/object/public/avatars/${storagePath}`;
+          }
+        }
       }
     }
   } catch {
@@ -130,11 +149,11 @@ Deno.serve(async (req: Request) => {
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || tgUser.username || `Player #${telegramId}`;
     let avatarUrl: string | null = tgUser.photo_url || null;
 
-    if (!avatarUrl || avatarUrl.endsWith(".svg")) {
-      const botPhotoUrl = await fetchBotApiProfilePhoto(telegramId, botToken);
-      if (botPhotoUrl) {
-        avatarUrl = botPhotoUrl;
-      }
+    const storedPhotoUrl = await fetchAndStoreAvatar(telegramId, botToken, supabase, supabaseUrl);
+    if (storedPhotoUrl) {
+      avatarUrl = storedPhotoUrl;
+    } else if (avatarUrl && (avatarUrl.endsWith(".svg") || avatarUrl.includes("api.telegram.org/file/bot"))) {
+      avatarUrl = null;
     }
 
     // 1. Check if this Telegram user is a Coach (Admin) in public.coaches

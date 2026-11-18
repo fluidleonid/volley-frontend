@@ -67,7 +67,6 @@ export const AddGuestPlayerSheet: React.FC<AddGuestPlayerSheetProps> = ({
             icon={<HatGlasses className="h-5 w-5" />}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            autoFocus
           />
 
           {requireLevel && (
