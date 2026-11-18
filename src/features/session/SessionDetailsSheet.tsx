@@ -79,7 +79,7 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
               <Avatar 
                 src={displayPlayer.avatarUrl} 
                 alt={displayPlayer.name} 
-                initials={displayPlayer.name[0]} 
+                initials={displayPlayer.initials} 
                 size="xl" 
                 className="border-0"
               />
@@ -92,7 +92,7 @@ export const SessionDetailsSheet: React.FC<SessionDetailsSheetProps> = ({
               <Avatar 
                 src={displayCoach.avatarUrl} 
                 alt={displayCoach.name} 
-                initials={displayCoach.name[0]} 
+                initials={displayCoach.initials} 
                 size="xl" 
                 className="border-0"
               />

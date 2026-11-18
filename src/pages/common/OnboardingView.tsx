@@ -7,6 +7,7 @@ import playerCardPng from '../../shared/assets/images/player-card.png';
 import shuttleIconSvg from '../../shared/assets/icons/shuttle-icon.svg';
 import { Button } from '../../shared/ui/button';
 import { Avatar } from '../../shared/ui/Avatar';
+import { SkillTierId } from '../../shared/lib/rating-algorithm';
 
 export interface SkillLevelOption {
   id: string;
@@ -21,7 +22,7 @@ export interface SkillLevelOption {
 export const skillLevels: SkillLevelOption[] = [
   {
     id: 'beginner',
-    title: 'Beginner', // Localized in component
+    title: 'Beginner',
     subtitle: 'I want to learn',
     accentColor: 'var(--level-beginner)',
     ringColor: 'var(--level-beginner)',
@@ -57,12 +58,10 @@ export const skillLevels: SkillLevelOption[] = [
   },
 ];
 
-import { SkillTierId } from '../../shared/lib/rating-algorithm';
-
 export const OnboardingView: React.FC = () => {
   const { t } = useTranslation();
   const [selectedLevelId, setSelectedLevelId] = useState<string>('beginner');
-  const { completeOnboarding } = useAppStore();
+  const { completeOnboarding, currentUser } = useAppStore();
 
   const activeLevel = skillLevels.find((l) => l.id === selectedLevelId) || skillLevels[0];
 
@@ -92,7 +91,7 @@ export const OnboardingView: React.FC = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-start bg-background px-4 pt-[84px] pb-10 text-white w-full max-w-[480px] mx-auto select-none">
-      {/* Group 1: Top Header & Brand Logo (Figma Node: 11411:13797, h=28px) */}
+      {/* Group 1: Top Header & Brand Logo */}
       <div className="flex flex-col items-center text-center w-full">
         <img
           src={logotextSvg}
@@ -108,11 +107,9 @@ export const OnboardingView: React.FC = () => {
         </p>
       </div>
 
-      {/* Group 2: Center Player Card Component (40px empty space above and below) */}
+      {/* Group 2: Center Player Card Component */}
       <div className="my-[40px] flex w-full justify-center">
         <div className="relative flex flex-col items-center justify-center rounded-[32px] bg-card p-3.5 transition-all duration-300 w-full">
-          
-          {/* True Vector Shape Card Window */}
           <div className="relative w-full">
             <svg
               viewBox="0 0 333 172"
@@ -122,13 +119,11 @@ export const OnboardingView: React.FC = () => {
               }}
             >
               <defs>
-                {/* SVG ClipPath with exact cutout contour */}
                 <clipPath id="playerCardContourClip">
                   <path d={cardContourPath} />
                 </clipPath>
               </defs>
 
-              {/* Background Image clipped to exact contour path */}
               <image
                 href={playerCardPng}
                 width="333"
@@ -138,7 +133,6 @@ export const OnboardingView: React.FC = () => {
                 opacity="0.85"
               />
 
-              {/* Contour Stroke along exact cutout shape */}
               <path
                 d={cardContourPath}
                 fill="none"
@@ -151,15 +145,16 @@ export const OnboardingView: React.FC = () => {
             {/* Central Circular Avatar */}
             <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300" style={{ filter: `drop-shadow(0 0 8px ${activeLevel.glowColor})` }}>
               <Avatar
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
-                alt="Player Avatar"
+                src={currentUser.avatarUrl}
+                alt={currentUser.fullName || currentUser.name}
+                initials={currentUser.initials}
                 size="xl"
                 className="border-2 shadow-xl"
                 style={{ borderColor: activeLevel.ringColor }}
               />
             </div>
 
-            {/* Shuttlecock Level Icons (Inside the bottom cutout tab) */}
+            {/* Shuttlecock Level Icons */}
             <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
               {Array.from({ length: activeLevel.iconCount }).map((_, idx) => (
                 <div
@@ -183,7 +178,7 @@ export const OnboardingView: React.FC = () => {
         </div>
       </div>
 
-      {/* Group 3: Skill Level Options List (Full width w-full inside px-4 16px side padding) */}
+      {/* Group 3: Skill Level Options List */}
       <div className="space-y-2.5 w-full mb-8">
         {skillLevels.map((level) => {
           const isSelected = selectedLevelId === level.id;
@@ -198,7 +193,6 @@ export const OnboardingView: React.FC = () => {
                   : 'bg-card/70 hover:bg-card border border-transparent'
               }`}
             >
-              {/* Left Side: Title & Subtitle ONLY */}
               <div>
                 <div className="text-base font-semibold text-white leading-snug">
                   {t(`onboarding.levels.${level.id}.title`, level.title)}
@@ -208,7 +202,6 @@ export const OnboardingView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Side: Checkmark Badge in Primary Brand Green #68BD44 when selected */}
               {isSelected && (
                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-black font-bold shadow-md">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
@@ -219,7 +212,7 @@ export const OnboardingView: React.FC = () => {
         })}
       </div>
 
-      {/* Group 4: Bottom Continue Action Button (Using Reusable Button Component) */}
+      {/* Group 4: Bottom Continue Action Button */}
       <div className="mt-auto w-full">
         <Button fullWidth size="xl" onClick={handleContinue}>
           {t('common.continue', 'Continue')}

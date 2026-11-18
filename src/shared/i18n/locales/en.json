@@ -121,7 +121,8 @@
       "sat": "Saturday",
       "sun": "Sunday"
     },
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow"
   },
   "home": {
     "gamesPlayed": "Games",

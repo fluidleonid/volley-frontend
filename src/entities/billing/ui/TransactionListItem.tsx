@@ -38,7 +38,7 @@ export const TransactionListItem: React.FC<TransactionListItemProps> = ({
           <Avatar
             src={player.avatarUrl}
             alt={player.name}
-            initials={player.name[0]}
+            initials={player.initials}
             size="sm"
             hasBorder={false}
           />

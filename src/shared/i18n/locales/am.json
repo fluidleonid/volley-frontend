@@ -121,7 +121,8 @@
       "sat": "Շաբաթ",
       "sun": "Կիրակի"
     },
-    "yesterday": "Երեկ"
+    "yesterday": "Երեկ",
+    "tomorrow": "Վաղը"
   },
   "home": {
     "gamesPlayed": "Խաղեր",

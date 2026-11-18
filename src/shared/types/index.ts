@@ -11,6 +11,8 @@ export type CourtStatus = 'matchmaking' | 'in_progress' | 'reserved';
 export interface Player {
   id: string;
   name: string;
+  fullName?: string;
+  initials?: string;
   avatarUrl?: string;
   level: number;
   xp: number;
@@ -26,6 +28,14 @@ export interface Player {
   winStreak: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface NextScheduledSession {
+  dayOffset: number;
+  dayId: string;
+  dateIso: string;
+  time: string;
+  coach: Player;
 }
 
 export interface Court {

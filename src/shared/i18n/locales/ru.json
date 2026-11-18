@@ -121,7 +121,8 @@
       "sat": "Суббота",
       "sun": "Воскресенье"
     },
-    "yesterday": "Вчера"
+    "yesterday": "Вчера",
+    "tomorrow": "Завтра"
   },
   "home": {
     "gamesPlayed": "Игры",

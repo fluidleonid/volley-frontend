@@ -6,7 +6,7 @@ export interface AvatarGroupProps {
   players: Player[];
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
-  stacked?: boolean; // Whether avatars overlap or just sit side by side
+  stacked?: boolean;
   ringColor?: string;
   hasBorder?: boolean;
   onSelectPlayer?: (player: Player) => void;
@@ -51,8 +51,8 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
           ) : (
             <Avatar
               src={p.avatarUrl}
-              alt={p.name}
-              initials={p.name[0]}
+              alt={p.fullName || p.name}
+              initials={p.initials}
               size={size}
               hasBorder={hasBorder}
               onClick={(e) => {

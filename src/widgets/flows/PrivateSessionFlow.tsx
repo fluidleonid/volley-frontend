@@ -72,7 +72,7 @@ export const PrivateSessionFlow: React.FC<PrivateSessionFlowProps> = ({ isOpen, 
                     <Avatar
                       src={selectedPlayer.avatarUrl}
                       alt={selectedPlayer.name}
-                      initials={selectedPlayer.name.charAt(0).toUpperCase()}
+                      initials={selectedPlayer.initials}
                       size="xs"
                       hasBorder={false}
                     />

@@ -12,6 +12,7 @@ import { XpBar } from '../../shared/ui/XpBar';
 import { Header } from '../../widgets/layout/Header';
 import { MOCK_ACHIEVEMENTS } from '../../shared/api/mock/achievements';
 import { getPlayerTierInfo } from '../../shared/lib/tier';
+import { formatShortName } from '../../shared/lib/formatName';
 import { TrainingCostsView } from '../coach/TrainingCostsView';
 import { PrivateSessionsScheduleView } from '../coach/PrivateSessionsScheduleView';
 import { CoachPublicGamesView } from '../coach/CoachPublicGamesView';
@@ -45,6 +46,8 @@ export const ProfileView: React.FC = () => {
 
       <PlayerCard 
         avatarUrl={currentUser.avatarUrl} 
+        name={currentUser.fullName || currentUser.name}
+        initials={currentUser.initials}
         iconCount={tierInfo.iconCount}
         accentColor={role === 'coach' ? 'var(--brand-coach)' : tierInfo.accentColor}
         ringColor={role === 'coach' ? 'var(--brand-coach)' : tierInfo.ringColor}
@@ -55,7 +58,7 @@ export const ProfileView: React.FC = () => {
 
       <div className="space-y-3 mt-6">
         <h2 className="font-display text-[30px] font-bold text-white text-center tracking-tight leading-none">
-          {currentUser.name}
+          {formatShortName(currentUser.name)}
         </h2>
 
         {role === 'player' && (
@@ -182,4 +185,3 @@ export const ProfileView: React.FC = () => {
     </div>
   );
 };
-

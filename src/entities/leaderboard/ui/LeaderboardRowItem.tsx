@@ -1,6 +1,7 @@
 import React from 'react';
-import { User } from 'lucide-react';
 import { Player } from '../../../shared/types/index';
+import { Avatar } from '../../../shared/ui/Avatar';
+import { formatShortName } from '../../../shared/lib/formatName';
 
 export interface LeaderboardRowItemProps {
   rank: number;
@@ -17,14 +18,15 @@ export const LeaderboardRowItem: React.FC<LeaderboardRowItemProps> = ({ rank, pl
     >
       <div className="w-[60px] text-left shrink-0 font-bold text-white text-[20px]">{rank}</div>
       <div className="flex-1 flex items-center">
-        <div className="w-10 h-10 rounded-full bg-card mr-3 border border-border flex items-center justify-center overflow-hidden">
-          {player.avatarUrl ? (
-            <img src={player.avatarUrl} className="w-full h-full object-cover" alt={player.name} />
-          ) : (
-            <User className="h-5 w-5 text-muted-foreground" />
-          )}
-        </div>
-        <span className="text-white text-[16px] font-medium">{player.name}</span>
+        <Avatar
+          src={player.avatarUrl}
+          alt={player.fullName || player.name}
+          initials={player.initials}
+          size="md"
+          hasBorder={false}
+          className="w-10 h-10 mr-3 border border-border"
+        />
+        <span className="text-white text-[16px] font-medium">{formatShortName(player.name)}</span>
       </div>
       <div className="text-right flex items-center gap-1.5">
         <span className="text-muted-foreground text-[13px] font-bold">{xp} BP</span>

@@ -5,6 +5,7 @@ import { useAppStore } from '../../app/store/appStore';
 import { ChevronLeft, X, Popcorn, Radar, Dumbbell, Armchair } from 'lucide-react';
 import { Avatar } from '../../shared/ui/Avatar';
 import { getPlayerTierInfo } from '../../shared/lib/tier';
+import { formatShortName } from '../../shared/lib/formatName';
 import whistleIcon from '../../shared/assets/icons/whistle-fill.svg';
 
 export interface HeaderProps {
@@ -83,8 +84,8 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Avatar
                 src={currentUser.avatarUrl}
-                alt={currentUser.name}
-                initials={currentUser.name[0]}
+                alt={currentUser.fullName || currentUser.name}
+                initials={currentUser.initials}
                 className="w-[44px] h-[44px] border-none"
               />
             </div>
@@ -98,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex flex-col h-[46px] justify-between">
             <div className="flex items-center leading-none">
               <span className="font-display text-[30px] font-bold tracking-tight text-white leading-none">
-                {currentUser.name}
+                {formatShortName(currentUser.name)}
               </span>
             </div>
             <div className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground h-[18px]">

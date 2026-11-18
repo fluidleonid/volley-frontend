@@ -62,7 +62,7 @@ export const SettlePaymentSheet: React.FC<SettlePaymentSheetProps> = ({
                 className="flex items-center gap-2 cursor-pointer transition-transform active:scale-95 hover:opacity-80"
                 onClick={() => onPlayerClick && onPlayerClick(player)}
               >
-                <Avatar src={player.avatarUrl} alt={player.name} initials={player.name[0]} size="sm" hasBorder={false} />
+                <Avatar src={player.avatarUrl} alt={player.name} initials={player.initials} size="sm" hasBorder={false} />
                 <span className="font-bold text-white text-[16px]">{player.name}</span>
               </div>
             )}

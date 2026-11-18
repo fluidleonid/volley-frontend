@@ -13,6 +13,8 @@ import { useScroll } from '../../shared/hooks/useScroll';
 import { Badge } from '../../shared/ui/badge';
 import { BpIcon } from '../../shared/ui/icons/BpIcon';
 import { EmptyState } from '../../shared/ui/EmptyState';
+import { Avatar } from '../../shared/ui/Avatar';
+import { formatShortName } from '../../shared/lib/formatName';
 import { ClipboardList } from 'lucide-react';
 
 type TabType = 'today' | 'week' | 'month' | 'total' | 'empty';
@@ -88,81 +90,90 @@ export const LeaderboardView: React.FC = () => {
           {/* 2nd Place */}
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
-              {isEmpty ? (
+              {isEmpty || !p2 ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-secondary flex items-center justify-center z-10">
                   <span className="text-white text-xl font-bold">?</span>
                 </div>
               ) : (
-                <img 
-                  src={p2?.player.avatarUrl} 
-                  className="w-[60px] h-[60px] rounded-full object-cover z-10 cursor-pointer active:scale-95 transition-transform" 
-                  alt={p2?.player.name} 
-                  onClick={() => p2 && setSelectedPlayer(p2.player)}
+                <Avatar
+                  src={p2.player.avatarUrl}
+                  alt={p2.player.fullName || p2.player.name}
+                  initials={p2.player.initials}
+                  hasBorder={false}
+                  className="w-[60px] h-[60px] text-lg z-10"
+                  onClick={() => setSelectedPlayer(p2.player)}
                 />
               )}
               <div className="absolute -bottom-2 bg-primary text-primary-foreground w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">2</div>
             </div>
-            {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => p2 && setSelectedPlayer(p2.player)}>
-                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p2?.player.name}</span>
-                <span className="text-[11px] text-muted-foreground">{p2?.xp} BP</span>
+            {!isEmpty && p2 ? (
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => setSelectedPlayer(p2.player)}>
+                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{formatShortName(p2.player.name)}</span>
+                <span className="text-[11px] text-muted-foreground">{p2.xp} BP</span>
               </div>
+            ) : (
+              <div className="h-[40px] mt-3 mb-2" />
             )}
-            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
             <img src={place2Svg} className="w-[100px] h-[70px] object-fill" alt="2nd place pedestal" />
           </div>
 
           {/* 1st Place */}
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-20">
             <div className="flex flex-col items-center mb-1 relative">
-              {isEmpty ? (
+              {isEmpty || !p1 ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-secondary flex items-center justify-center z-10">
                   <span className="text-white text-2xl font-bold">?</span>
                 </div>
               ) : (
-                <img 
-                  src={p1?.player.avatarUrl} 
-                  className="w-[60px] h-[60px] rounded-full object-cover z-10 cursor-pointer active:scale-95 transition-transform" 
-                  alt={p1?.player.name} 
-                  onClick={() => p1 && setSelectedPlayer(p1.player)}
+                <Avatar
+                  src={p1.player.avatarUrl}
+                  alt={p1.player.fullName || p1.player.name}
+                  initials={p1.player.initials}
+                  hasBorder={false}
+                  className="w-[60px] h-[60px] text-lg z-10"
+                  onClick={() => setSelectedPlayer(p1.player)}
                 />
               )}
               <div className="absolute -bottom-2.5 bg-primary text-primary-foreground w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">1</div>
             </div>
-            {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => p1 && setSelectedPlayer(p1.player)}>
-                <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{p1?.player.name}</span>
-                <span className="text-[11px] text-muted-foreground">{p1?.xp} BP</span>
+            {!isEmpty && p1 ? (
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => setSelectedPlayer(p1.player)}>
+                <span className="text-[14px] font-bold text-white max-w-[86px] text-center truncate leading-tight">{formatShortName(p1.player.name)}</span>
+                <span className="text-[11px] text-muted-foreground">{p1.xp} BP</span>
               </div>
+            ) : (
+              <div className="h-[40px] mt-3 mb-2" />
             )}
-            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
             <img src={place1Svg} className="w-[100px] h-[98px] object-fill" alt="1st place pedestal" />
           </div>
 
           {/* 3rd Place */}
           <div className="relative flex flex-col items-center justify-end w-[100px] h-full z-10">
             <div className="flex flex-col items-center mb-1 relative">
-              {isEmpty ? (
+              {isEmpty || !p3 ? (
                 <div className="w-[60px] h-[60px] rounded-full bg-secondary flex items-center justify-center z-10">
                   <span className="text-white text-xl font-bold">?</span>
                 </div>
               ) : (
-                <img 
-                  src={p3?.player.avatarUrl} 
-                  className="w-[60px] h-[60px] rounded-full object-cover z-10 cursor-pointer active:scale-95 transition-transform" 
-                  alt={p3?.player.name} 
-                  onClick={() => p3 && setSelectedPlayer(p3.player)}
+                <Avatar
+                  src={p3.player.avatarUrl}
+                  alt={p3.player.fullName || p3.player.name}
+                  initials={p3.player.initials}
+                  hasBorder={false}
+                  className="w-[60px] h-[60px] text-lg z-10"
+                  onClick={() => setSelectedPlayer(p3.player)}
                 />
               )}
               <div className="absolute -bottom-2 bg-primary text-primary-foreground w-[20px] h-[20px] rounded-full flex items-center justify-center text-[14px] font-black leading-none z-20">3</div>
             </div>
-            {!isEmpty && (
-              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => p3 && setSelectedPlayer(p3.player)}>
-                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{p3?.player.name}</span>
-                <span className="text-[11px] text-muted-foreground">{p3?.xp} BP</span>
+            {!isEmpty && p3 ? (
+              <div className="flex flex-col items-center mt-3 mb-2 h-[40px] justify-start cursor-pointer active:scale-95 transition-transform" onClick={() => setSelectedPlayer(p3.player)}>
+                <span className="text-[13px] font-bold text-white max-w-[80px] text-center truncate leading-tight">{formatShortName(p3.player.name)}</span>
+                <span className="text-[11px] text-muted-foreground">{p3.xp} BP</span>
               </div>
+            ) : (
+              <div className="h-[40px] mt-3 mb-2" />
             )}
-            {isEmpty && <div className="h-[40px] mt-3 mb-2" />}
             <img src={place3Svg} className="w-[100px] h-[42px] object-fill" alt="3rd place pedestal" />
           </div>
         </div>

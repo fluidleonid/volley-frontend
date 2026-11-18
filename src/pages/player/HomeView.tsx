@@ -11,7 +11,6 @@ import { ActiveGameSheet } from '../../entities/match/ui/ActiveGameSheet';
 import { InviteView } from './InviteView';
 import { Player, Court } from '../../shared/types/index';
 import { Play, Plus, Pause, Square, Zap, Users, History } from 'lucide-react';
-
 import { Dialog } from '../../shared/ui/Dialog';
 import { ClosedSessionBanner } from '../../widgets/layout/ClosedSessionBanner';
 import { SquadGameBanner } from '../../widgets/layout/SquadGameBanner';
@@ -33,6 +32,7 @@ export const HomeView: React.FC = () => {
     todaysPlayers,
     recentMatches,
     isSessionActive,
+    nextScheduledSession,
     toggleSession,
     setActiveTab,
     isPartyActive,
@@ -53,7 +53,7 @@ export const HomeView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-36 px-4 max-w-[480px] mx-auto select-none">
-      {/* 1. Statistics Section (Figma Node: 11420:16325, gap=8px, h=73px, radius=20px) */}
+      {/* 1. Statistics Section */}
       <div className="grid grid-cols-3 gap-2">
         <Card className="flex flex-col justify-between p-3 bg-card rounded-[20px] min-h-[73px] h-auto gap-1.5 min-w-0">
           <span className="font-display text-2xl font-extrabold text-white tracking-tight leading-none truncate">
@@ -136,10 +136,11 @@ export const HomeView: React.FC = () => {
               <div className={`flex flex-col items-center ${isPartyActive ? 'flex-1' : 'flex-[0.9]'}`}>
                 <button
                   onClick={toggleHardmode}
-                  className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${isHardmode
+                  className={`flex h-[44px] w-full items-center justify-center rounded-[20px] transition-all active:scale-95 ${
+                    isHardmode
                       ? 'bg-primary/20 text-primary'
                       : 'bg-secondary text-white hover:bg-brand-surfaceElevated'
-                    }`}
+                  }`}
                 >
                   <Zap className="h-5 w-5" />
                 </button>
@@ -184,71 +185,94 @@ export const HomeView: React.FC = () => {
       )}
 
       {isSessionActive && role !== 'coach' && (
-        <SquadGameBanner 
-           isPartyActive={isPartyActive} 
-           partyPlayers={partyPlayers} 
-           onClick={() => setIsPartySetupOpen(true)} 
+        <SquadGameBanner
+          isPartyActive={isPartyActive}
+          partyPlayers={partyPlayers}
+          onClick={() => setIsPartySetupOpen(true)}
         />
       )}
 
       {/* 3. Session Status Banner / Controls (Courts & Players disabled when training has not started) */}
       {!isSessionActive ? (
         (() => {
-          const nextSession = isStaging ? `${t('player.leaderboard.today', 'Today')} 20:00` : undefined;
+          const nextSession = nextScheduledSession
+            ? nextScheduledSession.dayOffset === 0
+              ? `${t('player.leaderboard.today', 'Today')} ${nextScheduledSession.time}`
+              : nextScheduledSession.dayOffset === 1
+              ? `${t('common.tomorrow', 'Tomorrow')} ${nextScheduledSession.time}`
+              : nextScheduledSession.dayOffset >= 2 && nextScheduledSession.dayOffset <= 6
+              ? `${t(`common.days.${nextScheduledSession.dayId}`, nextScheduledSession.dayId)} ${nextScheduledSession.time}`
+              : `${nextScheduledSession.dateIso} ${nextScheduledSession.time}`
+            : isStaging
+            ? `${t('player.leaderboard.today', 'Today')} 20:00`
+            : undefined;
+
+          const scheduledCoach: Player | null = nextScheduledSession?.coach
+            ? nextScheduledSession.coach
+            : isStaging && nextSession
+            ? {
+                id: 'coach-1',
+                name: 'Ivan',
+                fullName: 'Ivan P.',
+                initials: 'IP',
+                avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&auto=format&fit=crop&q=80',
+                level: 12,
+                xp: 9062.0,
+                status: 'spectating',
+                isHardmode: false,
+                gamesPlayed: 122,
+                wins: 70,
+                bpToday: 0.0,
+                winStreak: 4,
+                hasTelegram: true,
+                isCoach: true,
+              }
+            : null;
+
           return (
             <div className="space-y-4">
               <ClosedSessionBanner
                 nextSessionTime={nextSession}
                 description={
-                  role === 'coach'
+                  nextSession
+                    ? t('home.sessionScheduled')
+                    : role === 'coach'
                     ? undefined
-                    : nextSession
-                      ? t('home.sessionScheduled')
-                      : t('home.noSession')
+                    : t('home.noSession')
                 }
-                coachAvatar={isStaging && role === 'player' ? 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' : undefined}
+                coachAvatar={scheduledCoach?.avatarUrl}
+                coachName={scheduledCoach?.fullName || scheduledCoach?.name}
+                coachInitials={scheduledCoach?.initials}
                 onCoachClick={() => {
-                  setSelectedPlayer({
-                    id: 'coach-1',
-                    name: 'Ivan P.',
-                    avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&auto=format&fit=crop&q=80',
-                    level: 12,
-                    xp: 9062.0,
-                    status: 'spectating',
-                    isHardmode: false,
-                    gamesPlayed: 122,
-                    wins: 70,
-                    bpToday: 0.0,
-                    winStreak: 4,
-                    hasTelegram: true,
-                    isCoach: true
-                  });
+                  if (scheduledCoach) {
+                    setSelectedPlayer(scheduledCoach);
+                  }
                 }}
               >
-            {/* Coach Actions */}
-            {role === 'coach' && (
-              <>
-                <button
-                  onClick={toggleSession}
-                  className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
-                >
-                  {t('home.startTraining')}
-                </button>
-                <button
-                  onClick={() => setActiveTab('public_schedule')}
-                  className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
-                >
-                  {t('home.scheduleTraining')}
-                </button>
-              </>
-            )}
+                {/* Coach Actions */}
+                {role === 'coach' && (
+                  <>
+                    <button
+                      onClick={toggleSession}
+                      className="w-full h-12 rounded-full bg-primary text-primary-foreground font-sans text-sm font-bold transition-all active:scale-95 hover:bg-primary/90 cursor-pointer shadow-lg shadow-primary/20"
+                    >
+                      {t('home.startTraining')}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('public_schedule')}
+                      className="w-full h-12 rounded-full bg-secondary text-white font-sans text-sm font-bold transition-all active:scale-95 hover:bg-secondary/80 cursor-pointer border border-secondary/80"
+                    >
+                      {t('home.scheduleTraining')}
+                    </button>
+                  </>
+                )}
               </ClosedSessionBanner>
             </div>
           );
         })()
       ) : (
         <>
-          {/* 3. Courts Horizontal Slider Section (Scrollbar Hidden, radius=24px) */}
+          {/* 3. Courts Horizontal Slider Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-start">
@@ -270,11 +294,10 @@ export const HomeView: React.FC = () => {
               )}
             </div>
 
-            {/* Horizontal Scrollable Courts with Invisible Scrollbar */}
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
               {courts.map((court) => {
-                const teamAPlayers = court.teamAIds.map(id => todaysPlayers.find(p => p.id === id)).filter(Boolean) as Player[];
-                const teamBPlayers = court.teamBIds.map(id => todaysPlayers.find(p => p.id === id)).filter(Boolean) as Player[];
+                const teamAPlayers = court.teamAIds.map((id) => todaysPlayers.find((p) => p.id === id)).filter(Boolean) as Player[];
+                const teamBPlayers = court.teamBIds.map((id) => todaysPlayers.find((p) => p.id === id)).filter(Boolean) as Player[];
                 return (
                   <CourtCard
                     key={court.id}
@@ -311,8 +334,8 @@ export const HomeView: React.FC = () => {
                   >
                     <Avatar
                       src={player.avatarUrl}
-                      alt={player.name}
-                      initials={player.name[0]}
+                      alt={player.fullName || player.name}
+                      initials={player.initials}
                       size="lg"
                       hasBorder={false}
                     />
@@ -326,17 +349,17 @@ export const HomeView: React.FC = () => {
         </>
       )}
 
-      <PlayerDetailSheet 
-        isOpen={selectedPlayer !== null} 
-        onClose={() => setSelectedPlayer(null)} 
+      <PlayerDetailSheet
+        isOpen={selectedPlayer !== null}
+        onClose={() => setSelectedPlayer(null)}
         player={selectedPlayer}
         isCoachProfile={selectedPlayer?.isCoach}
       />
-      <ActiveGameSheet 
-        isOpen={!!selectedGameCourt} 
-        onClose={() => setSelectedGameCourt(null)} 
+      <ActiveGameSheet
+        isOpen={!!selectedGameCourt}
+        onClose={() => setSelectedGameCourt(null)}
       />
-      
+
       {isInviteOpen && <InviteView onClose={() => setIsInviteOpen(false)} />}
       {isPartySetupOpen && <PartySetupView onClose={() => setIsPartySetupOpen(false)} />}
 
@@ -355,14 +378,12 @@ export const HomeView: React.FC = () => {
         )}
       </div>
 
-      {/* Full Page Invite View Overlay (z-[100] hides tab bar completely) */}
+      {/* Full Page Invite View Overlay */}
       {isInviteOpen && (
         <div className="fixed inset-0 z-[100] bg-background animate-in fade-in slide-in-from-bottom duration-200 !mt-0">
           <InviteView onClose={() => setIsInviteOpen(false)} />
         </div>
       )}
-
-      {/* Modals and Sheets */}
 
       {/* End Session Confirmation Dialog */}
       <Dialog
