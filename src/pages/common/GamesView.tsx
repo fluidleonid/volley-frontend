@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
 import { MatchHistoryCard } from '../../entities/match/ui/MatchHistoryCard';
@@ -52,7 +53,7 @@ export const GamesView: React.FC = () => {
     <div className="pb-32 select-none bg-background">
       <div className="relative z-10 px-4 max-w-[480px] mx-auto">
         {/* Sticky Header */}
-        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
+        <div className={`sticky top-0 z-40 -mx-4 px-4 ${HEADER_TOP_PADDING} pb-5 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
           }`}>
           <div className="flex items-center h-[44px]">
             <h1 className="text-[30px] font-bold text-white tracking-tight">{t('games.title')}</h1>

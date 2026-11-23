@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
@@ -104,7 +105,7 @@ export const InviteView: React.FC<InviteViewProps> = ({ onClose }) => {
   return (
     <div className="h-full min-h-screen flex flex-col bg-background text-white px-4 max-w-[480px] mx-auto select-none">
       {/* 1. Page Header (Single unified PageHeader component) */}
-      <div className="sticky top-0 z-40 bg-background pt-[84px] pb-5 -mx-4 px-4">
+      <div className={`sticky top-0 z-40 bg-background ${HEADER_TOP_PADDING} pb-5 -mx-4 px-4`}>
         <Header
           variant="page"
           title={t('home.inviteToPlay', 'Invite to play')}

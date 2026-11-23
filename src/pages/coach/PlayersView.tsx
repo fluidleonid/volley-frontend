@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { StatCard } from '../../entities/stats/ui/StatCard';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../app/store/appStore';
@@ -58,7 +59,7 @@ export const PlayersView: React.FC = () => {
     <div className="bg-background text-white pb-32 px-4 max-w-[480px] select-none mx-auto relative">
       {/* Sticky Header */}
       <div
-        className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
+        className={`sticky top-0 z-40 -mx-4 px-4 ${HEADER_TOP_PADDING} pb-5 transition-all duration-300 ${
           scrolled || isSearchMode ? 'bg-background/90 backdrop-blur-md' : 'bg-transparent'
         }`}
       >

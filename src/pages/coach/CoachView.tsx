@@ -1,4 +1,5 @@
 import React from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../../shared/ui/card';
 import { Shield, Users, UserPlus, Calendar, DollarSign } from 'lucide-react';
@@ -10,7 +11,7 @@ export const CoachView: React.FC = () => {
   return (
     <div className="space-y-4 pb-24 px-4 max-w-[480px] mx-auto select-none">
       {/* Sticky Header Banner (No border) */}
-      <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-3 transition-all duration-300 ${
+      <div className={`sticky top-0 z-40 -mx-4 px-4 ${HEADER_TOP_PADDING} pb-3 transition-all duration-300 ${
         scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
       }`}>
         <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4 text-primary">

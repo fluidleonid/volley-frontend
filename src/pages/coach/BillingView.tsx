@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { useAppStore } from '../../app/store/appStore';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../shared/ui/badge';
@@ -128,7 +129,7 @@ export const BillingView: React.FC = () => {
       
       <div className="relative z-10 px-4 max-w-[480px] mx-auto">
         {/* Header section (Sticky) */}
-        <div className={`sticky top-0 z-40 -mx-4 px-4 pt-[84px] pb-5 transition-all duration-300 ${
+        <div className={`sticky top-0 z-40 -mx-4 px-4 ${HEADER_TOP_PADDING} pb-5 transition-all duration-300 ${
           scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
         }`}>
           <div className="flex items-center justify-between h-[44px]">
