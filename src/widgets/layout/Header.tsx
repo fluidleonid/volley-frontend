@@ -1,4 +1,5 @@
 import React from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useScroll } from '../../shared/hooks/useScroll';
 import { useAppStore } from '../../app/store/appStore';
@@ -201,7 +202,7 @@ export const Header: React.FC<HeaderProps> = ({
     return variant === 'main' ? renderMainHeader() : renderPageHeader();
   }
 
-  const stickyStyles = `sticky top-0 z-40 transition-all duration-300 pt-[84px] pb-5 text-white ${
+  const stickyStyles = `sticky top-0 z-40 transition-all duration-300 ${HEADER_TOP_PADDING} pb-5 text-white ${
     scrolled ? 'bg-background/80 backdrop-blur-md' : 'bg-transparent'
   } ${stickyClassName}`;
 

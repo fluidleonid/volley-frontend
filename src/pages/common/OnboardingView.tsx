@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HEADER_TOP_PADDING } from '../../shared/lib/utils';
 import { useAppStore } from '../../app/store/appStore';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
@@ -90,7 +91,7 @@ export const OnboardingView: React.FC = () => {
   `;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start bg-background px-4 pt-[84px] pb-10 text-white w-full max-w-[480px] mx-auto select-none">
+    <div className={`flex min-h-screen flex-col items-center justify-start bg-background px-4 ${HEADER_TOP_PADDING} pb-10 text-white w-full max-w-[480px] mx-auto select-none`}>
       {/* Group 1: Top Header & Brand Logo */}
       <div className="flex flex-col items-center text-center w-full">
         <img
